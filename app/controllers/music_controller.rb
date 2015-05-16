@@ -13,7 +13,7 @@ class MusicController < ApplicationController
     get_release
     respond_to do |format|
       format.json do
-        render json: @release.to_json
+        render json: @tracks.to_json
       end
     end
   end
@@ -30,20 +30,18 @@ class MusicController < ApplicationController
   private
 
   def get_releases
-    @releases = Release.order(:name).map{|release| { release: { id: release.id, name: release.name } } }
+    @releases = Release.order "LOWER(#{Release.table_name}.name)"
   end
 
   def get_release
-    @release = Release.find(params[:id]).tracks.map{|track| { track: { id: track.id, name: track.title } } }
+    release = Release.find params[:id]
+    @tracks = { release.id => { name: release.name, tracks: release.tracks.order(:name) } }
   end
 
   def find_tracks
-    @search = Track.includes(:release).search do
-      fulltext params[:q]
-      paginate :page => params[:page], :per_page => params[:per_page]
-    end
-    @tracks = @search.hits.map do |hit|
-      [hit.score, hit.result.id, hit.result.artist, hit.result.title, hit.result.bitrate]
+    @tracks = Track.search(include: [:release]) { fulltext params[:q] ; paginate :page => params[:page], :per_page => params[:per_page] }.hits.each_with_object({}) do |hit, hash|
+      hash[hit.result.release_id] = { name: hit.result.release.name, tracks: [] } if !hash.has_key?(hit.result.release_id)
+      hash[hit.result.release_id][:tracks] << hit.result.attributes.merge(score: hit.score)
     end
   end
 
