@@ -1,0 +1,27 @@
+---
+pid: 9151
+config: !ruby/object:Puma::Configuration
+  options:
+    :min_threads: 8
+    :max_threads: 32
+    :quiet: false
+    :debug: false
+    :binds:
+    - tcp://0.0.0.0:9292
+    - unix:///Users/enyo/Sites/music-rails/tmp/puma/socket
+    :workers: 3
+    :daemon: false
+    :worker_directory: "/Users/enyo/Sites/music-rails"
+    :config_file: config/puma.rb
+    :mode: :http
+    :worker_timeout: 15
+    :worker_shutdown_timeout: 30
+    :preload_app: true
+    :pidfile: "/Users/enyo/Sites/music-rails/tmp/puma/pid"
+    :state: "/Users/enyo/Sites/music-rails/tmp/puma/state"
+    :rackup: "/Users/enyo/Sites/music-rails/config.ru"
+    :control_url: unix:///var/folders/6k/y2_0d4450bv0q5tfnwv0nfw00000gn/T/puma-status-1431805207868-9151
+    :control_url_temp: "/var/folders/6k/y2_0d4450bv0q5tfnwv0nfw00000gn/T/puma-status-1431805207868-9151"
+    :control_auth_token: 52a85d96d833f7c0dc4d977fc1b1849
+    :tag: music-rails
+    :environment: development
