@@ -8,9 +8,6 @@ class Track < ActiveRecord::Base
     text :release do
       release.name
     end
-    string :sort_title do
-      title.downcase.gsub(/^(an?|the)/, '') rescue title
-    end
   end
 
 end
