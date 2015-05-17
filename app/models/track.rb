@@ -10,4 +10,8 @@ class Track < ActiveRecord::Base
     end
   end
 
+  def file_url
+    [ BASE_URL, release.folder, release.name, URI::escape(name) ].join("/")
+  end
+
 end

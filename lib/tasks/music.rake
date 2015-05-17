@@ -4,20 +4,31 @@ namespace "music" do
   desc "load data"
   task load_data: :environment do
 
+    require 'progress_bar'
+
     require 'taglib'
 
     t1 = Time.now ; count = 0
 
     main_folders = ["dnb","hc","other"]
     allowed_formats = ["mp3","mp4","m4a","flac","wav"]
+    base_path = "/Volumes/FreeAgent\ GoFlex\ Drive/music"
 
     main_folders.each do |folder|
 
-      Dir["/Volumes/FreeAgent\ GoFlex\ Drive/music/#{folder}/**"].each do |path|
+      @directories = Dir["#{base_path}/#{folder}/**"]
+
+      puts "Indexing folder: #{base_path}/#{folder}/"
+
+      bar = ProgressBar.new @directories.count
+
+      @directories.each do |path|
+
+        bar.increment!
 
         release_name = path.split("/").last
-        release = Release.where(name: release_name).take
-        release = Release.create!(name: release_name) if !release
+        release = Release.where(name: release_name, folder: folder).take
+        release = Release.create!(name: release_name, folder: folder) if !release
 
         allowed_formats.each do |format|
           Dir["#{path}/*.#{format}"].each do |file|
