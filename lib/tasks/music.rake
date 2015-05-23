@@ -18,7 +18,7 @@ namespace "music" do
 
       @directories = Dir["#{base_path}/#{folder}/**"]
 
-      puts "Indexing folder: #{base_path}/#{folder}/"
+      puts "Update folder: #{base_path}/#{folder}/"
 
       bar = ProgressBar.new @directories.count
 
@@ -27,8 +27,10 @@ namespace "music" do
         bar.increment!
 
         release_name = path.split("/").last
-        release = Release.where(name: release_name, folder: folder).take
-        release = Release.create!(name: release_name, folder: folder) if !release
+
+        next if Release.where(name: release_name, folder: folder).any?
+
+        release = Release.create!(name: release_name, folder: folder)
 
         allowed_formats.each do |format|
           Dir["#{path}/*.#{format}"].each do |file|
@@ -37,7 +39,7 @@ namespace "music" do
             track = release.tracks.where(name: track_name).take
             track = release.tracks.new(name: track_name) if !track
 
-            track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8')
+            track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "")
 
             TagLib::FileRef.open(file) do |infos|
 
