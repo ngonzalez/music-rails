@@ -1,16 +1,22 @@
-source 'https://rubygems.org'
+source "https://rubygems.org" do 
 
-gem 'rails', '4.2.1'
-gem 'pg'
+  gem 'rails', '4.2.1'
+  gem 'pg'
 
-gem 'taglib-ruby'
+  gem 'taglib-ruby'
 
-gem 'sunspot_rails'
-gem 'sunspot_solr'
+  gem 'sunspot_rails'
+  gem 'sunspot_solr'
 
-gem 'progress_bar'
-gem 'puma'
+  gem 'progress_bar'
+  gem 'puma'
+  
+  gem 'bootstrap-sass'
+  gem 'sass-rails'
+  gem 'haml-rails'
 
-group :development, :test do
-  gem 'pry'
+  group :development, :test do
+    gem 'pry'
+  end
+
 end

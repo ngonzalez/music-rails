@@ -8,6 +8,9 @@ class Track < ActiveRecord::Base
     text :release do
       release.name
     end
+    integer :year do
+      year.to_i
+    end
   end
 
   def file_url

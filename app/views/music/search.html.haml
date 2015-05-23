@@ -1,0 +1,4 @@
+%ul
+  - @tracks.each do |release_id, infos|
+    %li
+      %strong= link_to highlight(infos[:name], params[:q]), music_path(release_id, params.slice("format"))
