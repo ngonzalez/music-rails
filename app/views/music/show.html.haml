@@ -1,17 +1,11 @@
-- @release.each do |release_id, infos|
-  %ul
-    %li
-      %strong= link_to infos[:name], music_path(release_id, params.slice("format"))
-    %li{ style: "list-style-type:none;" }
-      - infos[:tracks].each do |track|
-        .row
-          %ol{ style: "list-style-type: none; margin: 20px 0" }
-            - track.each do |k, v|
-              - if k == :path
-                %li= link_to "URL", track[:path]
-              - else
-                %li
-                  = k
-                  %strong
-                    = v
-  
+- @release.each do |track|
+  .row
+    %ol{ style: "list-style-type: none; margin: 20px 0" }
+      - track.each do |k, v|
+        - if k == :path
+          %li= link_to "URL", track[:path]
+        - else
+          %li
+            = k
+            %strong
+              = v
