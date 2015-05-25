@@ -49,16 +49,23 @@ class MusicController < ApplicationController
   end
 
   def find_tracks
+    return [] if params[:q].blank?
     search = Track.search(include: [:release]) {
       fulltext params[:q]
       paginate :page => params[:page], :per_page => params[:rows]
     }
-    search.hits.each_with_object({}) do |hit, hash|
-      hash[hit.result.release_id] = {
-        name: hit.result.release.name,
-        url: music_url(hit.result.release, format: params.slice("format"))
-      }
+    hash = {}
+    search.hits.each do |hit|
+      begin
+        hash[hit.result.release_id] = {
+          name: hit.result.release.name,
+          url: music_url(hit.result.release, format: params.slice("format"))
+        }
+      rescue
+        next
+      end
     end
+    return hash.sort_by{|k, v| v[:name] }
   end
 
 end

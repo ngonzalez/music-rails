@@ -1,11 +1,24 @@
+.row
+  %ul
+    %li
+      = link_to search_music_index_path(params.slice("q", "rows")), { "data-transition" => "none" } do
+        %i.fa.fa-list.fa-4
+
 - @release.each do |track|
   .row
-    %ol{ style: "list-style-type: none; margin: 20px 0" }
-      - track.each do |k, v|
-        - if k == :path
-          %li= link_to "URL", track[:path]
-        - else
-          %li
-            = k
+    %ul
+      - track.slice("artist", "title", "album", "genre", "year").each do |k, v|
+        %li
+          .col-md-2
             %strong
+            - if ["artist", "year"].include?(k)
+              = link_to v, search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
+            - else
               = v
+      - if track["format"] =~ /MPEG|ID3/
+        %li
+          .col-md-2
+            %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
+
+:javascript
+  observePlayers();

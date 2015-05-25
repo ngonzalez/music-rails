@@ -1,4 +1,4 @@
-source "https://rubygems.org" do 
+source "https://rubygems.org" do
 
   gem 'rails', '4.2.1'
   gem 'pg'
@@ -10,10 +10,15 @@ source "https://rubygems.org" do
 
   gem 'progress_bar'
   gem 'puma'
-  
+
+  gem 'uglifier'
   gem 'bootstrap-sass'
   gem 'sass-rails'
   gem 'haml-rails'
+  gem 'font-awesome-sass'
+  gem 'jquery-rails'
+  gem 'jquery-ui-rails'
+  gem 'jquery_mobile_rails'
 
   group :development, :test do
     gem 'pry'

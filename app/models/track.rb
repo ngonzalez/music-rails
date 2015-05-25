@@ -5,6 +5,7 @@ class Track < ActiveRecord::Base
     text :artist
     text :album
     text :title, :default_boost => 2
+    text :genre
     text :release do
       release.name
     end
