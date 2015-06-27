@@ -12,9 +12,9 @@
           .col-md-2
             %strong
             - if ["artist", "year"].include?(k)
-              = link_to v, search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
+              = link_to highlight(v, params[:q]), search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
             - else
-              = v
+              = highlight(v, params[:q])
       - if track["format"] =~ /MPEG|ID3/
         %li
           .col-md-2

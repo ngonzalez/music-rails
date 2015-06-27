@@ -17,7 +17,6 @@ source "https://rubygems.org" do
   gem 'haml-rails'
   gem 'font-awesome-sass'
   gem 'jquery-rails'
-  gem 'jquery-ui-rails'
   gem 'jquery_mobile_rails'
 
   group :development, :test do
