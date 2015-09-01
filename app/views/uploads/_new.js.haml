@@ -1,0 +1,33 @@
+:javascript
+
+    (function($) {
+        $(function() {
+
+            function upload_files(options) {
+                send_files($.extend({
+                    url: "http://192.168.2.11/uploads",
+                    type: "POST",
+                    complete: function() {
+                        console.log('complete');
+                    },
+                    error: function(textStatus, errorThrown) {
+                        console.log(textStatus + ": " + errorThrown);
+                    },
+                    progress: function(options) {
+                        console.log(options.counter + '/' + options.total_files)
+                        console.log(options.response);
+                    }
+                }, options));
+            }
+
+            $(document).ready(function() {
+                $("#Filedata").change(function(e) {
+                    upload_files({
+                        input_id: $(e.target).attr("id"),
+                        name: $(e.target).attr("id")
+                    });
+                });
+            })
+
+        });
+    })(jQuery);

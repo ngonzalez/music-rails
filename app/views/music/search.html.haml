@@ -1,3 +1,6 @@
+- content_for :head do
+  = javascript_include_tag :music
+
 .container
 
   = form_tag search_music_index_path, method: :get do
@@ -9,6 +12,9 @@
         %button.btn.btn-default{ type: "submit" } Search
 
   .clear
+
+  %small{ style: "margin:0 15px; color: #000;" }
+    = "Found %s results in %s seconds" % [ @tracks.length, (Time.now - @t1) ]
 
   %ol
     - @tracks.each do |release_id, infos|

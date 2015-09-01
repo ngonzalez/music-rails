@@ -1,3 +1,6 @@
+- content_for :head do
+  = javascript_include_tag :music
+
 .row
   %ul
     %li
@@ -15,10 +18,10 @@
               = link_to highlight(v, params[:q]), search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
             - else
               = highlight(v, params[:q])
-      - if track["format"] =~ /MPEG|ID3/
-        %li
-          .col-md-2
-            %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
+      / - if track["format"] =~ /MPEG|ID3/
+      %li
+        .col-md-2
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
 
 :javascript
   observePlayers();

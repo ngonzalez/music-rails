@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150516233141) do
+ActiveRecord::Schema.define(version: 20150829150052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,14 @@ ActiveRecord::Schema.define(version: 20150516233141) do
     t.integer "channels"
     t.integer "length"
     t.integer "sample_rate"
+    t.string  "format_name"
+  end
+
+  add_index "tracks", ["format_name"], name: "index_tracks_on_format_name", using: :btree
+
+  create_table "uploads", force: :cascade do |t|
+    t.string "file_uid",  null: false
+    t.string "file_name", null: false
   end
 
 end

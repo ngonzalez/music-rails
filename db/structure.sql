@@ -1,0 +1,280 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: search_cfg_en; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION search_cfg_en (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION search_cfg_en
+    ADD MAPPING FOR asciiword WITH english_stem;
+
+ALTER TEXT SEARCH CONFIGURATION search_cfg_en
+    ADD MAPPING FOR version WITH simple;
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: releases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE releases (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    folder character varying
+);
+
+
+--
+-- Name: releases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE releases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: releases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE releases_id_seq OWNED BY releases.id;
+
+
+--
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE schema_migrations (
+    version character varying NOT NULL
+);
+
+
+--
+-- Name: tracks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tracks (
+    id integer NOT NULL,
+    release_id integer NOT NULL,
+    name character varying NOT NULL,
+    format character varying NOT NULL,
+    artist character varying,
+    title character varying,
+    album character varying,
+    genre character varying,
+    year character varying,
+    bitrate integer,
+    channels integer,
+    length integer,
+    sample_rate integer,
+    format_name character varying
+);
+
+
+--
+-- Name: tracks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tracks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tracks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tracks_id_seq OWNED BY tracks.id;
+
+
+--
+-- Name: uploads; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE uploads (
+    id integer NOT NULL,
+    file_uid character varying NOT NULL,
+    file_name character varying NOT NULL
+);
+
+
+--
+-- Name: uploads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE uploads_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: uploads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE uploads_id_seq OWNED BY uploads.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY releases ALTER COLUMN id SET DEFAULT nextval('releases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tracks ALTER COLUMN id SET DEFAULT nextval('tracks_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY uploads ALTER COLUMN id SET DEFAULT nextval('uploads_id_seq'::regclass);
+
+
+--
+-- Name: releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY releases
+    ADD CONSTRAINT releases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY tracks
+    ADD CONSTRAINT tracks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: uploads_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY uploads
+    ADD CONSTRAINT uploads_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tracks_on_format_name ON tracks USING btree (format_name);
+
+
+--
+-- Name: tsv_album; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX tsv_album ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_album'::text));
+
+
+--
+-- Name: tsv_artist; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX tsv_artist ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_artist'::text));
+
+
+--
+-- Name: tsv_release_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX tsv_release_name ON releases USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_name'::text));
+
+
+--
+-- Name: tsv_title; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX tsv_title ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_title'::text));
+
+
+--
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+SET search_path TO "$user",public;
+
+INSERT INTO schema_migrations (version) VALUES ('20150326232536');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327010840');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327024244');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327024513');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327025444');
+
+INSERT INTO schema_migrations (version) VALUES ('20150516193607');
+
+INSERT INTO schema_migrations (version) VALUES ('20150516233141');
+
+INSERT INTO schema_migrations (version) VALUES ('20150822175748');
+
+INSERT INTO schema_migrations (version) VALUES ('20150829150052');
+

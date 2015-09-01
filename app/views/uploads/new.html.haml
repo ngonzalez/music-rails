@@ -1,0 +1,9 @@
+
+- content_for :head do
+  = javascript_include_tag "upload.js"
+
+%hr
+
+%input{ type: "file", id: "Filedata", name: "Filedata[]", multiple: "multiple" }
+
+= render partial: "uploads/new.js"

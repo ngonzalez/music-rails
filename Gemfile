@@ -1,6 +1,6 @@
 source "https://rubygems.org" do
 
-  gem 'rails', '4.2.1'
+  gem 'rails', '4.2.3'
   gem 'pg'
 
   gem 'taglib-ruby'
@@ -18,6 +18,10 @@ source "https://rubygems.org" do
   gem 'font-awesome-sass'
   gem 'jquery-rails'
   gem 'jquery_mobile_rails'
+  
+  gem 'rack-cors', :require => 'rack/cors'
+
+  gem 'dragonfly', github: 'markevans/dragonfly'
 
   group :development, :test do
     gem 'pry'

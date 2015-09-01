@@ -3,8 +3,13 @@ Rails.application.routes.draw do
   resources :music, only: [:index, :show] do
     collection do
       get :search
+      get :stats
+      get :upload
+      post :send_file
     end
   end
+
+  resources :uploads, only: [:new, :create]
 
   get '*unmatched_route', :to => 'errors#raise_not_found!'
 
