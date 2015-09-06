@@ -64,7 +64,8 @@ SET default_with_oids = false;
 CREATE TABLE releases (
     id integer NOT NULL,
     name character varying NOT NULL,
-    folder character varying
+    folder character varying,
+    last_verified_at timestamp without time zone
 );
 
 
@@ -220,34 +221,6 @@ CREATE INDEX index_tracks_on_format_name ON tracks USING btree (format_name);
 
 
 --
--- Name: tsv_album; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX tsv_album ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_album'::text));
-
-
---
--- Name: tsv_artist; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX tsv_artist ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_artist'::text));
-
-
---
--- Name: tsv_release_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX tsv_release_name ON releases USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_name'::text));
-
-
---
--- Name: tsv_title; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX tsv_title ON tracks USING gin (to_tsvector('search_cfg_en'::regconfig, 'tsv_title'::text));
-
-
---
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -277,4 +250,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150516233141');
 INSERT INTO schema_migrations (version) VALUES ('20150822175748');
 
 INSERT INTO schema_migrations (version) VALUES ('20150829150052');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906182151');
 

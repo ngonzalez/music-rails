@@ -70,42 +70,56 @@ namespace "music" do
 
         # next if Release.where(name: release_name, folder: folder).any?
 
-        release = Release.find_by(name: release_name, folder: folder)
+        ActiveRecord::Base.transaction do
 
-        release = Release.create!(name: release_name, folder: folder) if !release
+          begin
 
-        allowed_formats.each do |format|
-          Dir["#{path}/*.#{format}"].each do |file|
+            release = Release.find_by(name: release_name, folder: folder)
 
-            track_name = file.split("/").last
-            track = release.tracks.where(name: track_name).take
-            if !track
+            release = Release.create!(name: release_name, folder: folder) if !release
 
-              track = release.tracks.new(name: track_name)
+            allowed_formats.each do |format|
+              Dir["#{path}/*.#{format}"].each do |file|
 
-              track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "")
+                track_name = file.split("/").last
+                track = release.tracks.where(name: track_name).take
+                if !track
 
-              TagLib::FileRef.open(file) do |infos|
+                  track = release.tracks.new(name: track_name)
 
-                tag = infos.tag
-                ["artist", "title", "album", "genre", "year"].each do |name|
-                  track.send("#{name}=", tag.send(name))
+                  track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "")
+
+                  TagLib::FileRef.open(file) do |infos|
+
+                    tag = infos.tag
+                    ["artist", "title", "album", "genre", "year"].each do |name|
+                      track.send("#{name}=", tag.send(name))
+                    end
+
+                    audio_properties = infos.audio_properties
+                    ["bitrate", "channels", "length", "sample_rate"].each do |name|
+                      track.send("#{name}=", audio_properties.send(name))
+                    end
+
+                  end
+
                 end
 
-                audio_properties = infos.audio_properties
-                ["bitrate", "channels", "length", "sample_rate"].each do |name|
-                  track.send("#{name}=", audio_properties.send(name))
-                end
+                track.save!
+
+                count += 1
 
               end
-
             end
 
-            track.save!
+          rescue
 
-            count += 1
+            puts "FAILED: %s" % [ release_name ]
+
+            raise ActiveRecord::Rollback
 
           end
+
         end
 
       end
@@ -121,20 +135,25 @@ namespace "music" do
 
     res = []
 
-    [
-      "Lenzman-Looking_At_The_Stars_Remix_EP-META030D-WEB-2015",
-      "Optiv__Btk-Dive_Bomb-VRS033-WEB-2015-PITY",
-      "DRS-Mid_Mic_Crisis-2015-uC",
-      "Kimyan_Law-Coeur_Calme-2014-uC",
-      "Future_Brown-Future_Brown-WEB-2015-ANGER",
-      "Alix_Perez_&_EPROM-Shades_EP-APR076-WEB-2105"
-    ].each do |name|
+    sql_base = <<-SQL
+      SELECT DISTINCT(t1.id)
+      FROM releases t1
+      WHERE (
+        SELECT count(t2.id)
+        FROM releases t2
+        WHERE t1.name = t2.name
+      ) > 1;
+    SQL
+
+    result = ActiveRecord::Base.connection.select_all sql_base
+
+    Release.find(result.rows).each do |name|
 
       releases = Release.where(name: name)
 
       releases.each do |release|
         release.tracks.each do |track|
-          next if File.exists?("/usr/local/var/www/" + track.file_url)
+          next if File.exists?(PUBLIC_PATH + track.file_url)
           res << release.id if res.exclude?(release.id)
         end
       end
@@ -145,6 +164,23 @@ namespace "music" do
       release.destroy
     end
 
+  end
+
+  desc "check releases"
+  task check_releases: :environment do
+    cmd = "cfv" # cfv 1.18.3
+    Release.where(last_verified_at: nil).each do |release|
+      path = [PUBLIC_PATH, release.path].join "/"
+      if Dir["#{path}/*.sfv"].empty? # No SFV
+        puts release.inspect
+        next
+      end
+      if Dir.chdir(path) { %x[#{cmd}] } =~ /badcrc|chksum file errors/
+        puts release.inspect
+        next
+      end
+      release.update! last_verified_at: Time.now
+    end
   end
 
 end

@@ -49,4 +49,10 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # The simplest way to cache content in Rails is with Rack::Cache.
+  # In your Gemfile, for production environment you should have
+  # gem 'rack-cache', :require => 'rack/cache'
+  config.action_dispatch.rack_cache = true
+
 end

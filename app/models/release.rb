@@ -3,4 +3,8 @@ class Release < ActiveRecord::Base
   searchable do
     text :name
   end
+
+  def path
+    [BASE_URL, self.folder, self.name].join("/")
+  end
 end
