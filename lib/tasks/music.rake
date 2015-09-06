@@ -157,7 +157,7 @@ namespace "music" do
           res << release.id if res.exclude?(release.id)
         end
       end
-      
+
     end
 
     Release.find(res).each do |release|
@@ -175,7 +175,7 @@ namespace "music" do
         puts release.inspect
         next
       end
-      if Dir.chdir(path) { %x[#{cmd}] } =~ /badcrc|chksum file errors/
+      if Dir.chdir(path) { %x[#{cmd}] } =~ /badcrc|chksum file errors|not found/
         puts release.inspect
         next
       end
