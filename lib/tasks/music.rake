@@ -132,9 +132,6 @@ namespace "music" do
 
   desc "remove duplicates"
   task remove_duplicates: :environment do
-
-    res = []
-
     sql_base = <<-SQL
       SELECT DISTINCT(t1.id)
       FROM releases t1
@@ -147,23 +144,17 @@ namespace "music" do
 
     result = ActiveRecord::Base.connection.select_all sql_base
 
-    Release.find(result.rows).each do |name|
-
-      releases = Release.where(name: name)
-
-      releases.each do |release|
-        release.tracks.each do |track|
-          next if File.exists?(PUBLIC_PATH + track.file_url)
-          res << release.id if res.exclude?(release.id)
-        end
+    res = []
+    Release.find(result.rows).each do |release|
+      release.tracks.each do |track|
+        next if File.exists?(PUBLIC_PATH + track.file_url)
+        res << release.id if res.exclude?(release.id)
       end
-
     end
 
     Release.find(res).each do |release|
       release.destroy
     end
-
   end
 
   desc "check releases"
