@@ -87,7 +87,7 @@ namespace "music" do
 
                   track = release.tracks.new(name: track_name)
 
-                  track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "")
+                  track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
 
                   TagLib::FileRef.open(file) do |infos|
 
@@ -145,7 +145,7 @@ namespace "music" do
     result = ActiveRecord::Base.connection.select_all sql_base
 
     res = []
-    Release.find(result.rows).each do |release|
+    Release.find([7667]).each do |release|
       release.tracks.each do |track|
         next if File.exists?(PUBLIC_PATH + track.file_url)
         res << release.id if res.exclude?(release.id)
@@ -160,7 +160,7 @@ namespace "music" do
   desc "check releases"
   task check_releases: :environment do
     cmd = "cfv" # cfv 1.18.3
-    Release.where(last_verified_at: nil).each do |release|
+    Release.where(last_verified_at: nil).order("id desc").each do |release|
       path = [PUBLIC_PATH, release.path].join "/"
       if Dir["#{path}/*.sfv"].empty? # No SFV
         puts release.inspect
@@ -172,6 +172,47 @@ namespace "music" do
       end
       release.update! last_verified_at: Time.now
     end
+  end
+
+  desc "import images"
+  task import_images: :environment do
+    allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
+    Release.find_each do |release|
+      path = [PUBLIC_PATH, release.path].join "/"
+      allowed_formats.each do |format|
+        Dir["#{path}/*.#{format}"].each do |path|
+          begin
+            next if release.images.where(file_name: path.split("/").last).any?
+            release.images.create! file: File.open(path)
+          rescue
+            binding.pry
+            raise
+          end
+        end
+      end
+    end
+  end
+
+  desc "import NFO"
+  task import_nfo: :environment do
+    temp_file = "/tmp/#{Time.now.to_i}"
+    font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
+    Release.includes(:images).each do |release|
+      begin
+        next if release.images.select{|item| item.file_type == "nfo" }.any?
+        Dir[PUBLIC_PATH + release.path + "/*.nfo"].each do |file|
+          File.open(temp_file, 'w:UTF-8') do |f|
+            # https://en.wikipedia.org/wiki/Code_page_437
+            f.write File.read(file).force_encoding("CP437")
+          end
+          content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s })
+          release.images.create! file: content, file_type: 'nfo'
+        end
+      rescue
+        next
+      end
+    end
+    FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
 
 end

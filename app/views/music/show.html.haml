@@ -1,11 +1,20 @@
 - content_for :head do
   = javascript_include_tag :music
+  = stylesheet_link_tag :music
 
 .row
   %ul
     %li
       = link_to search_music_index_path(params.slice("q", "rows")), { "data-transition" => "none" } do
         %i.fa.fa-list.fa-4
+
+- if @images.any?
+  .row
+    %ul
+      - @images.each do |image|
+        %li{ style: "display:inline; margin: 10px;" }
+          = link_to image.file.url, class: "swipebox" do
+            = image_tag image.file.thumb("400x300>").url
 
 - @release.each do |track|
   .row
@@ -18,10 +27,12 @@
               = link_to highlight(v, params[:q]), search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
             - else
               = highlight(v, params[:q])
-      / - if track["format"] =~ /MPEG|ID3/
-      %li
-        .col-md-2
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
+
+      - if ["FLAC"].exclude? track["format_name"]
+        %li
+          .col-md-2
+            %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
 
 :javascript
   observePlayers();
+  $('.swipebox').swipebox();

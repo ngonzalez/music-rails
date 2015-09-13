@@ -5,8 +5,8 @@ source "https://rubygems.org" do
 
   gem 'taglib-ruby'
 
-  gem 'sunspot_rails'
   gem 'sunspot_solr'
+  gem 'sunspot_rails'
 
   gem 'progress_bar'
   gem 'puma'
@@ -19,12 +19,14 @@ source "https://rubygems.org" do
   gem 'jquery-rails'
   gem 'jquery_mobile_rails'
 
-  gem 'rack-cors', :require => 'rack/cors'
+  gem 'rack-cors', require: 'rack/cors'
 
-  gem 'rack-cache', :require => 'rack/cache'
+  gem 'rack-cache', require: 'rack/cache'
 
   gem 'dragonfly', github: 'markevans/dragonfly'
 
+  gem 'swipebox'
+  
   group :development, :test do
     gem 'pry'
   end

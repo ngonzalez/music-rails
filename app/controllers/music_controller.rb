@@ -12,6 +12,7 @@ class MusicController < ApplicationController
 
   def show
     @release = get_release
+    @images = get_images
     respond_to do |format|
       format.html
       format.json do
@@ -62,6 +63,10 @@ class MusicController < ApplicationController
     Release.find(params[:id]).tracks.map do |track|
       track.attributes.merge(path: track.file_url)
     end
+  end
+
+  def get_images
+    Image.where(release_id: params[:id])
   end
 
   def find_tracks

@@ -58,6 +58,37 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: images; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE images (
+    id integer NOT NULL,
+    release_id integer NOT NULL,
+    file_uid character varying NOT NULL,
+    file_name character varying NOT NULL
+);
+
+
+--
+-- Name: images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE images_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE images_id_seq OWNED BY images.id;
+
+
+--
 -- Name: releases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -172,6 +203,13 @@ ALTER SEQUENCE uploads_id_seq OWNED BY uploads.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY images ALTER COLUMN id SET DEFAULT nextval('images_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY releases ALTER COLUMN id SET DEFAULT nextval('releases_id_seq'::regclass);
 
 
@@ -187,6 +225,14 @@ ALTER TABLE ONLY tracks ALTER COLUMN id SET DEFAULT nextval('tracks_id_seq'::reg
 --
 
 ALTER TABLE ONLY uploads ALTER COLUMN id SET DEFAULT nextval('uploads_id_seq'::regclass);
+
+
+--
+-- Name: images_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY images
+    ADD CONSTRAINT images_pkey PRIMARY KEY (id);
 
 
 --
@@ -252,4 +298,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150822175748');
 INSERT INTO schema_migrations (version) VALUES ('20150829150052');
 
 INSERT INTO schema_migrations (version) VALUES ('20150906182151');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906201817');
 
