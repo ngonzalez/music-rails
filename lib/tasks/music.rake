@@ -145,7 +145,7 @@ namespace "music" do
     result = ActiveRecord::Base.connection.select_all sql_base
 
     res = []
-    Release.find([7667]).each do |release|
+    Release.find(result.rows).each do |release|
       release.tracks.each do |track|
         next if File.exists?(PUBLIC_PATH + track.file_url)
         res << release.id if res.exclude?(release.id)
@@ -197,15 +197,18 @@ namespace "music" do
   task import_nfo: :environment do
     temp_file = "/tmp/#{Time.now.to_i}"
     font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
-    Release.includes(:images).each do |release|
+    Release.includes(:images).order("id desc").each do |release|
       begin
         next if release.images.select{|item| item.file_type == "nfo" }.any?
         Dir[PUBLIC_PATH + release.path + "/*.nfo"].each do |file|
           File.open(temp_file, 'w:UTF-8') do |f|
-            # https://en.wikipedia.org/wiki/Code_page_437
-            f.write File.read(file).force_encoding("CP437")
+            File.open(file).each_line do |line|
+              # Remove ^M when copy files from Windows
+              # https://en.wikipedia.org/wiki/Code_page_437
+              f.write line.gsub("\C-M", "").force_encoding("CP437")
+            end
           end
-          content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s })
+          content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
           release.images.create! file: content, file_type: 'nfo'
         end
       rescue
