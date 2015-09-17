@@ -1,0 +1,32 @@
+.margin-20 {
+  margin: 20px;
+}
+
+.margin-10 {
+  margin: 10px;
+}
+
+.shadow-light {
+  text-shadow: 2px 2px 1px rgba(150, 150, 150, 0.4);
+}
+
+div.row .images {
+  margin: 30px;
+}
+
+ul li a :hover {
+  text-decoration: none;
+}
+
+ul li a .nfo {
+  display: inline;
+  margin: 10px;
+  background: #EEE;
+  padding: 10px;
+  border: 1px solid #DDD;
+  border-radius: 5px;
+}
+
+ul li.img {
+  display: inline;
+}

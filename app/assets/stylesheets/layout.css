@@ -1,0 +1,21 @@
+body {
+  font-size: 15px;
+}
+.ui-page {
+  -webkit-backface-visibility: hidden;
+}
+.clear {
+  clear: both;
+}
+ol, ul {
+  margin: 20px 0 !important;
+}
+ol {
+  font-size: 20px !important;
+}
+ul {
+  list-style-type: none;
+}
+i.fa-4 {
+  font-size: 70px !important;
+}
