@@ -1,3 +1,3 @@
 //= require jquery.mobile
-//= require player
 //= require swipebox
+//= require player

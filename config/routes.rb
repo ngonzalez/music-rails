@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  resources :music, only: [:index, :show] do
+  resources :music, only: [:index, :show], except: :all do
     collection do
       get :search
       get :stats

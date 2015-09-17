@@ -2,24 +2,35 @@
 function observePlayers() {
 
   function pausePlayer() {
-    if ($("audio").length > 0) {
+    if (typeof AV != "undefined") {
+      if (window.player) {
+        window.player.stop();
+        window.player = undefined;
+      }
+    } else if ($("audio").length > 0) {
       $($("audio").get(0)).stop();
       $($("audio").get(0)).attr("src", "");
     }
-  };
+  }
 
   function playFile(file_uri) {
-    if ($("audio").length > 0) {
+    if (typeof AV != "undefined") {
       pausePlayer();
-      $($("audio").get(0)).attr("src", file_uri);
-      $("audio").get(0).play();
+      window["player"] = AV.Player.fromURL(file_uri)
+      window.player.play();
     } else {
-      $("body").append(
-        $(document.createElement("audio"))
-                  .attr("src", file_uri)
-                  .addClass("hidden")
-      );
-      $("audio").get(0).play();
+      if ($("audio").length > 0) {
+        pausePlayer();
+        $($("audio").get(0)).attr("src", file_uri);
+        $("audio").get(0).play();
+      } else {
+        $("body").append(
+          $(document.createElement("audio"))
+                    .attr("src", file_uri)
+                    .addClass("hidden")
+        );
+        $("audio").get(0).play();
+      }
     }
   }
 

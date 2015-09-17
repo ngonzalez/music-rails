@@ -13,6 +13,7 @@ class MusicController < ApplicationController
   def show
     @release = get_release
     @images = get_images
+    @nfo = get_nfo
     respond_to do |format|
       format.html
       format.json do
@@ -66,7 +67,11 @@ class MusicController < ApplicationController
   end
 
   def get_images
-    Image.where(release_id: params[:id])
+    Image.where(release_id: params[:id]).reject{|image| image.file_type == "nfo" }
+  end
+
+  def get_nfo
+    Image.where(release_id: params[:id]).where(file_type: "nfo")
   end
 
   def find_tracks

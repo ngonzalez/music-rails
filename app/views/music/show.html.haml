@@ -1,6 +1,11 @@
 - content_for :head do
   = javascript_include_tag :music
-  = stylesheet_link_tag :music
+
+= stylesheet_link_tag :music
+
+- if @release.all?{|track| track["format_name"] == "FLAC" }
+  = javascript_include_tag :aurora
+  = javascript_include_tag :flac
 
 .row
   %ul
@@ -9,12 +14,19 @@
         %i.fa.fa-list.fa-4
 
 - if @images.any?
+  .row.images.margin-20
+    .polaroid-images
+      - @images.each do |image|
+        = link_to image.file.url, class: "swipebox" do
+          = image_tag image.file.thumb("300x250>").url
+
+- if @nfo.any?
   .row
     %ul
-      - @images.each do |image|
-        %li{ style: "display:inline; margin: 10px;" }
-          = link_to image.file.url, class: "swipebox" do
-            = image_tag image.file.thumb("400x300>").url
+      - @nfo.each do |nfo|
+        %li
+          = link_to nfo.file.url, target: "_blank" do
+            %i.fa.fa-sticky-note.fa-4.shadow-light.margin-10
 
 - @release.each do |track|
   .row
@@ -28,11 +40,15 @@
             - else
               = highlight(v, params[:q])
 
-      - if ["FLAC"].exclude? track["format_name"]
-        %li
-          .col-md-2
-            %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
+      %li
+        .col-md-2
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
 
 :javascript
   observePlayers();
   $('.swipebox').swipebox();
+  $.each($('.polaroid-images a'), function(i, element) {
+    var i = parseInt(Math.random() * 10);
+    var m = Math.random() < 0.5 ? -1 : 1;
+    $(element).css('transform', 'rotate(' + i * m + 'deg)');
+  });

@@ -26,7 +26,7 @@ source "https://rubygems.org" do
   gem 'dragonfly', github: 'markevans/dragonfly'
 
   gem 'swipebox'
-  
+
   group :development, :test do
     gem 'pry'
   end
