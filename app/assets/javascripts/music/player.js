@@ -41,15 +41,14 @@ function observe_btn(options) {
     element.removeClass("fa-play-circle");
     element.addClass("active");
   }
-  $.each($('.play-btn'), function(i, btn) {
-    if (typeof(window.current_file) != "undefined" && $(btn).data("uri") == window.current_file) {
-      enable_btn($(btn));
+  $.each($('.play-btn'), function(i, element) {
+    if (typeof(window.current_file) != "undefined" && $(element).data("uri") == window.current_file) {
+      enable_btn($(element));
     }
-    $(btn).click(function(e) {
-      if ($(btn).hasClass("active")) {
-        reset_btn($(e.target));
-        window.player.pause();
-        $(e.target).addClass("pulsate");
+    $(element).click(function(e) {
+      if ($(element).hasClass("active")) {
+        $(e.target).toggleClass("pulsate");
+        window.player.paused ? window.player.play() : window.player.pause();
       } else {
         clear_active();
         enable_btn($(e.target));
