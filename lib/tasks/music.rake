@@ -1,18 +1,43 @@
 
 namespace "music" do
 
-  desc "set format names"
-  task set_format_names: :environment do
+  desc "update data"
+  task update: :environment do
+    [ "load_data", "import_images", "import_nfo",
+      "check_releases", "clean_images",
+      "set_format_names", "set_formatted_names"].each do |name|
+      Rake::Task["music:#{name}"].execute
+    end
+  end
 
+  desc "set formatted releases names"
+  task set_formatted_names: :environment do
+    def format_name name
+      year = name.match(/-(\d+)-/).to_s.gsub("-", "")
+      name.gsub("_-_", "-").split("-").each_with_object([]){|string, array|
+        next if array.include? year
+        str = string.gsub("_", " ")
+        next if str.blank?
+        next if ["WEB", "VA"].include?(str)
+        array << str
+      }.join " "
+    end
+    Release.where(formatted_name: nil).each do |release|
+      release.update! formatted_name: format_name(release.name)
+    end
+  end
+
+  desc "set encoding format names"
+  task set_format_names: :environment do
     def format_track_format track
       case track.format
         when /FLAC/ then "FLAC"
         when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
         when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
         when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
-          case track.release.tracks.map(&:bitrate).sum / track.release.tracks.length
-            when 192 then "MP3-192CBR"
-            when 320 then "MP3-320CBR"
+          case track.release.tracks.map(&:bitrate).sum.to_f / track.release.tracks.length
+            when 192.0 then "MP3-192CBR"
+            when 320.0 then "MP3-320CBR"
             else
               "MP3"
           end
@@ -22,7 +47,6 @@ namespace "music" do
         when /clip art|BINARY|data/ then "DATA"
       end
     end
-
     def get_format_from_release_name release
       case release.name
         # when /\-WEB\-/ then "MP3-320CBR"
@@ -31,7 +55,6 @@ namespace "music" do
         when /\-WAV\-/ then "WAV"
       end
     end
-
     Release.find_each do |release|
       format_name = get_format_from_release_name release
       release.tracks.where(format_name: nil).each do |track|
@@ -39,7 +62,6 @@ namespace "music" do
         track.update format_name: format_name
       end
     end
-
   end
 
   desc "load data"
@@ -52,7 +74,7 @@ namespace "music" do
     t1 = Time.now ; count = 0
 
     main_folders = ["dnb","hc","other"]
-    allowed_formats = ["mp3","mp4","m4a","flac","wav"]
+    allowed_formats = ["mp3","mp4","m4a","flac","wav", "aiff"]
 
     main_folders.each do |folder|
 
@@ -68,7 +90,7 @@ namespace "music" do
 
         release_name = path.split("/").last
 
-        # next if Release.where(name: release_name, folder: folder).any?
+        next if Release.where(name: release_name, folder: folder).any?
 
         ActiveRecord::Base.transaction do
 
@@ -82,7 +104,9 @@ namespace "music" do
               Dir["#{path}/*.#{format}"].each do |file|
 
                 track_name = file.split("/").last
-                track = release.tracks.where(name: track_name).take
+
+                track = release.tracks.find_by name: track_name
+
                 if !track
 
                   track = release.tracks.new(name: track_name)
@@ -103,11 +127,11 @@ namespace "music" do
 
                   end
 
+                  track.save!
+
+                  count += 1
+
                 end
-
-                track.save!
-
-                count += 1
 
               end
             end
@@ -130,7 +154,14 @@ namespace "music" do
 
   end
 
-  desc "remove duplicates"
+  desc "remove invalid images"
+  task clean_images: :environment do
+    # Image.find_each do |image|
+    #   image.destroy if !File.exists?(image.file.path)
+    # end
+  end
+
+  desc "remove duplicate releases"
   task remove_duplicates: :environment do
     sql_base = <<-SQL
       SELECT DISTINCT(t1.id)
@@ -161,16 +192,22 @@ namespace "music" do
   task check_releases: :environment do
     cmd = "cfv" # cfv 1.18.3
     Release.where(last_verified_at: nil).order("id desc").each do |release|
+      next if !release.details.empty? && release.details.has_key?("sfv")
       path = [PUBLIC_PATH, release.path].join "/"
       if Dir["#{path}/*.sfv"].empty? # No SFV
-        puts release.inspect
+        release.update details: { "sfv" => "not found" }
         next
       end
-      if Dir.chdir(path) { %x[#{cmd}] } =~ /badcrc|chksum file errors|not found/
-        puts release.inspect
-        next
+      details = case Dir.chdir(path) { %x[#{cmd}] }
+        when /badcrc/ then "badcrc"
+        when /chksum file errors/ then "chksum file errors"
+        when /not found/ then "missing files"
       end
-      release.update! last_verified_at: Time.now
+      if details
+        release.update! details: { "sfv" => details }
+      else
+        release.update! last_verified_at: Time.now
+      end
     end
   end
 

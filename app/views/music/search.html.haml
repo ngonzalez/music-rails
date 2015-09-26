@@ -3,7 +3,7 @@
 
 .container
   = form_tag search_music_index_path, method: :get do
-    = hidden_field_tag :rows, 1000000
+    = hidden_field_tag :rows, search_rows
     .form-group
       .col-md-5
         = text_field_tag :q, params[:q], class: 'form-control'
@@ -12,12 +12,14 @@
 
   .clear
 
-  %small{ style: "margin:0 15px; color: #000;" }
+  %small.margin-20-0
     = "Found %s results in %s seconds" % [ @tracks.length, (Time.now - @t1) ]
 
   %ol
     - @tracks.each do |release_id, infos|
       %li
-        %strong= link_to highlight(infos[:name].split("_").join(" "), params[:q]),      |
-                         music_path(release_id, params.slice("format", "q", "rows")),   |
-                         { "data-transition" => "none" }                                |
+        %span.label.label-info= infos[:folder].upcase
+        %span.badge= infos[:format_name]
+        %strong= link_to highlight(infos[:name], search_terms_array),                  |
+                         music_path(release_id, params.slice("format", "q", "rows")),  |
+                         { "data-transition" => "none" }                               |

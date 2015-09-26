@@ -62,7 +62,9 @@ class MusicController < ApplicationController
 
   def get_release
     Release.find(params[:id]).tracks.map do |track|
-      track.attributes.merge(path: track.file_url)
+      track.attributes.merge(
+        "path" => track.file_url
+      )
     end
   end
 
@@ -84,7 +86,9 @@ class MusicController < ApplicationController
     search.hits.each do |hit|
       begin
         hash[hit.result.release_id] = {
-          name: hit.result.release.name,
+          name: hit.result.release.formatted_name,
+          folder: hit.result.release.folder,
+          format_name: hit.result.format_name,
           url: music_url(hit.result.release, format: params.slice("format"))
         }
       rescue

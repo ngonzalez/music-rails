@@ -28,27 +28,32 @@
           = link_to nfo.file.url, target: "_blank" do
             %i.fa.fa-sticky-note.fa-4.shadow-light.margin-10
 
-- @release.each do |track|
+- @release.each do |infos|
   .row
     %ul
-      - track.slice("artist", "title", "album", "genre", "year").each do |k, v|
+      - infos.slice("artist", "title", "album", "genre", "year", "length").each do |k, v|
         %li
-          .col-md-2
+          .col-md-1
             %strong
             - if ["artist", "year"].include?(k)
-              = link_to highlight(v, params[:q]), search_music_index_path(params.slice("rows").merge("q" => v)), { "data-transition" => "none" }
+              = link_to highlight(v, search_terms_array),                                            |
+                  search_music_index_path(rows: search_rows, q: v), { "data-transition" => "none" }  |
+            - elsif ["length"].include?(k)
+              .badge= Time.at(v).utc.strftime(v.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
             - else
-              = highlight(v, params[:q])
+              = highlight(v, search_terms_array)
 
       %li
         .col-md-2
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(track[:path]) }
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(infos["path"]) }
 
 :javascript
-  observePlayers();
-  $('.swipebox').swipebox();
-  $.each($('.polaroid-images a'), function(i, element) {
-    var i = parseInt(Math.random() * 10);
-    var m = Math.random() < 0.5 ? -1 : 1;
-    $(element).css('transform', 'rotate(' + i * m + 'deg)');
+  $(document).ready(function(e) {
+    observe_btn();
+    $('.swipebox').swipebox();
+    $.each($('.polaroid-images a'), function(i, element) {
+      var i = parseInt(Math.random() * 10);
+      var m = Math.random() < 0.5 ? -0.5 : 0.5;
+      $(element).css('transform', 'rotate(' + i * m + 'deg)');
+    });
   });
