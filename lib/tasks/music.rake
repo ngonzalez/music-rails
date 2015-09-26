@@ -219,7 +219,9 @@ namespace "music" do
       allowed_formats.each do |format|
         Dir["#{path}/*.#{format}"].each do |path|
           begin
-            next if release.images.where(file_name: path.split("/").last).any?
+            file_name = path.split("/").last
+            next if file_name =~ /.log./
+            next if release.images.where(file_name: file_name).any?
             release.images.create! file: File.open(path)
           rescue
             binding.pry

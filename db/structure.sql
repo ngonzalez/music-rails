@@ -65,7 +65,10 @@ CREATE TABLE images (
     id integer NOT NULL,
     release_id integer NOT NULL,
     file_uid character varying NOT NULL,
-    file_name character varying NOT NULL
+    file_name character varying NOT NULL,
+    file_type character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -96,7 +99,11 @@ CREATE TABLE releases (
     id integer NOT NULL,
     name character varying NOT NULL,
     folder character varying,
-    last_verified_at timestamp without time zone
+    last_verified_at timestamp without time zone,
+    details text,
+    formatted_name character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -146,7 +153,9 @@ CREATE TABLE tracks (
     channels integer,
     length integer,
     sample_rate integer,
-    format_name character varying
+    format_name character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -176,7 +185,9 @@ ALTER SEQUENCE tracks_id_seq OWNED BY tracks.id;
 CREATE TABLE uploads (
     id integer NOT NULL,
     file_uid character varying NOT NULL,
-    file_name character varying NOT NULL
+    file_name character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -300,4 +311,12 @@ INSERT INTO schema_migrations (version) VALUES ('20150829150052');
 INSERT INTO schema_migrations (version) VALUES ('20150906182151');
 
 INSERT INTO schema_migrations (version) VALUES ('20150906201817');
+
+INSERT INTO schema_migrations (version) VALUES ('20150913185133');
+
+INSERT INTO schema_migrations (version) VALUES ('20150920123243');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924012943');
+
+INSERT INTO schema_migrations (version) VALUES ('20150926131407');
 

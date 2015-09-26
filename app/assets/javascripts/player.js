@@ -6,20 +6,19 @@ function pausePlayer() {
       window.player = undefined;
     }
   } else if ($("audio").length > 0) {
-    $($("audio").get(0)).stop();
-    $($("audio").get(0)).attr("src", "");
+    $("audio").attr("src", "");
   }
 }
 
 function playFile(file_uri) {
   if (typeof AV != "undefined") {
     pausePlayer();
-    window["player"] = AV.Player.fromURL(file_uri)
+    window["player"] = AV.Player.fromURL(file_uri);
     window.player.play();
   } else {
     if ($("audio").length > 0) {
       pausePlayer();
-      $($("audio").get(0)).attr("src", file_uri);
+      $("audio").attr("src", file_uri);
       $("audio").get(0).play();
     } else {
       $("body").append(

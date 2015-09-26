@@ -9,9 +9,9 @@
       .form-group
         .col-md-2.col-xs-2
           %p
-            = select_tag :m1, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @metric1)
-          %p
             = select_tag :m2, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @metric2)
+          %p
+            = select_tag :m1, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @metric1)
         .col-md-2.col-xs-2
           %button.btn.btn-default{ type: "submit" } Update
 

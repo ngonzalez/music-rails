@@ -11,17 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150924012943) do
+ActiveRecord::Schema.define(version: 20150926131407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
 
   create_table "images", force: :cascade do |t|
-    t.integer "release_id", null: false
-    t.string  "file_uid",   null: false
-    t.string  "file_name",  null: false
-    t.string  "file_type"
+    t.integer  "release_id", null: false
+    t.string   "file_uid",   null: false
+    t.string   "file_name",  null: false
+    t.string   "file_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "releases", force: :cascade do |t|
@@ -30,29 +32,35 @@ ActiveRecord::Schema.define(version: 20150924012943) do
     t.datetime "last_verified_at"
     t.text     "details"
     t.string   "formatted_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tracks", force: :cascade do |t|
-    t.integer "release_id",  null: false
-    t.string  "name",        null: false
-    t.string  "format",      null: false
-    t.string  "artist"
-    t.string  "title"
-    t.string  "album"
-    t.string  "genre"
-    t.string  "year"
-    t.integer "bitrate"
-    t.integer "channels"
-    t.integer "length"
-    t.integer "sample_rate"
-    t.string  "format_name"
+    t.integer  "release_id",  null: false
+    t.string   "name",        null: false
+    t.string   "format",      null: false
+    t.string   "artist"
+    t.string   "title"
+    t.string   "album"
+    t.string   "genre"
+    t.string   "year"
+    t.integer  "bitrate"
+    t.integer  "channels"
+    t.integer  "length"
+    t.integer  "sample_rate"
+    t.string   "format_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "tracks", ["format_name"], name: "index_tracks_on_format_name", using: :btree
 
   create_table "uploads", force: :cascade do |t|
-    t.string "file_uid",  null: false
-    t.string "file_name", null: false
+    t.string   "file_uid",   null: false
+    t.string   "file_name",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

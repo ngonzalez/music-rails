@@ -120,7 +120,7 @@ class MusicController < ApplicationController
   end
 
   def get_values metric
-    Track.select(metric).group(metric).order(metric).map{|item| item.send(metric) }.reject(&:blank?).map(&:to_s)
+    Track.pluck(metric).uniq.map &:to_s
   end
 
   def find_releases m2_value
