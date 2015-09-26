@@ -38,6 +38,7 @@ namespace "music" do
         when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
           case track.release.tracks.map(&:bitrate).sum.to_f / track.release.tracks.length
             when 192.0 then "MP3-192CBR"
+            when 256.0 then "MP3-256CBR"
             when 320.0 then "MP3-320CBR"
             else
               "MP3"
