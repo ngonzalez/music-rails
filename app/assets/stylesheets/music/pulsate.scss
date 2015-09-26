@@ -1,0 +1,71 @@
+
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+
+    @-ms-keyframes #{$name} {
+        @content;
+    }
+
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+@mixin animation-name($name) {
+  -webkit-animation-name: $name;
+     -moz-animation-name: $name;
+       -o-animation-name: $name;
+          animation-name: $name;
+}
+
+@mixin animation-duration($duration) {
+  -webkit-animation-duration: $duration;
+     -moz-animation-duration: $duration;
+       -o-animation-duration: $duration;
+          animation-duration: $duration;
+}
+
+@mixin animation-timing-function($timing-function) {
+  -webkit-animation-timing-function: $timing-function;
+     -moz-animation-timing-function: $timing-function;
+       -o-animation-timing-function: $timing-function;
+          animation-timing-function: $timing-function;
+}
+
+@mixin animation-iteration-count($iteration-count) {
+  -webkit-animation-iteration-count: $iteration-count;
+     -moz-animation-iteration-count: $iteration-count;
+       -o-animation-iteration-count: $iteration-count;
+          animation-iteration-count: $iteration-count;
+}
+
+@mixin animation-direction($direction) {
+  -webkit-animation-direction: $direction;
+     -moz-animation-direction: $direction;
+       -o-animation-direction: $direction;
+          animation-direction: $direction;
+}
+
+@include keyframes(change_background_color) {
+  to {
+    opacity: 0.0;
+  }
+}
+
+@mixin pulsate($time: 0.2s, $count: 8) {
+  @include animation-name(change_background_color);
+  @include animation-duration($time);
+  @include animation-iteration-count($count);
+  @include animation-direction(alternate);
+  @include animation-timing-function(ease-in-out);
+}
+
+.pulsate {
+  @include pulsate(0.4s, 32);
+}

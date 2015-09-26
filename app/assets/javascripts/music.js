@@ -1,3 +1,3 @@
 //= require jquery.mobile
 //= require swipebox
-//= require player
+//= require_tree ./music
