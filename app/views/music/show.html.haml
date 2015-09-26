@@ -15,7 +15,7 @@
 
 - if @images.any?
   .row.margin-20
-    .polaroid-images
+    .polaroid-images.margin-20
       - @images.each do |image|
         = link_to image.file.url, class: "swipebox" do
           = image_tag image.file.thumb("300x250>").url

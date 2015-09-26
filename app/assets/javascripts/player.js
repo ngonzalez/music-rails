@@ -11,6 +11,7 @@ function pausePlayer() {
 }
 
 function playFile(file_uri) {
+  window["current_file"] = file_uri;
   if (typeof AV != "undefined") {
     pausePlayer();
     window["player"] = AV.Player.fromURL(file_uri);
@@ -43,6 +44,9 @@ function enable_btn(element) {
 }
 function observe_btn() {
   $.each($('.play-btn'), function(i, btn) {
+    if (typeof(window.current_file) != "undefined" && $(btn).data("uri") == window.current_file) {
+      enable_btn($(btn));
+    }
     $(btn).click(function(e) {
       if ($(btn).hasClass("active")) {
         reset_btn($(e.target));
