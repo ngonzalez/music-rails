@@ -2,7 +2,7 @@
   = javascript_include_tag :music
 
 .container
-  = form_tag search_music_index_path, method: :get do
+  = form_tag search_music_index_path, { method: :get, "data-transition" => "none" } do
     = hidden_field_tag :rows, search_rows
     .form-group
       .col-md-5
@@ -12,7 +12,7 @@
 
   .clear
 
-  %small.margin-20-0
+  %small.margin-20
     = "Found %s results in %s seconds" % [ @tracks.length, (Time.now - @t1) ]
 
   %ol

@@ -14,7 +14,7 @@
         %i.fa.fa-list.fa-4
 
 - if @images.any?
-  .row.images.margin-20
+  .row.margin-20
     .polaroid-images
       - @images.each do |image|
         = link_to image.file.url, class: "swipebox" do
@@ -34,7 +34,6 @@
       - infos.slice("artist", "title", "album", "genre", "year", "length").each do |k, v|
         %li
           .col-md-1
-            %strong
             - if ["artist", "year"].include?(k)
               = link_to highlight(v, search_terms_array),                                            |
                   search_music_index_path(rows: search_rows, q: v), { "data-transition" => "none" }  |
@@ -45,7 +44,7 @@
 
       %li
         .col-md-2
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(infos["path"]) }
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(infos["path"]), "data-length" => infos["length"] }
 
 :javascript
   $(document).ready(function(e) {

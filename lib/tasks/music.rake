@@ -32,8 +32,9 @@ namespace "music" do
     def format_track_format track
       case track.format
         when /FLAC/ then "FLAC"
-        when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
         when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
+        when /MPEG ADTS, layer III, v1, 256 kbps/ then "MP3-256CBR"
+        when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
         when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
           case track.release.tracks.map(&:bitrate).sum.to_f / track.release.tracks.length
             when 192.0 then "MP3-192CBR"
@@ -49,7 +50,6 @@ namespace "music" do
     end
     def get_format_from_release_name release
       case release.name
-        # when /\-WEB\-/ then "MP3-320CBR"
         when /\-FLAC\-/ then "FLAC"
         when /\-ALAC\-/ then "ALAC"
         when /\-WAV\-/ then "WAV"

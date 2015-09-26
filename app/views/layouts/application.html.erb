@@ -11,11 +11,11 @@
   <body>
     <%= yield %>
     <script type="text/javascript">
-    $(document).bind("mobileinit", function(){
-      $.extend($.mobile, {
+      $(document).bind("mobileinit", function() {
+        $.extend($.mobile, {
           defaultPageTransition: "none"
+        });
       });
-    });
     </script>
   </body>
 </html>

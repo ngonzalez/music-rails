@@ -54,6 +54,9 @@ function observe_btn() {
         });
         enable_btn($(e.target));
         playFile($(e.target).data("uri"));
+        setTimeout(function() {
+          reset_btn($(e.target));
+        }, Number($(e.target).data("length")) * 1000);
       }
     });
   });
