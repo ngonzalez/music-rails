@@ -4,8 +4,8 @@
 = stylesheet_link_tag :music
 
 - if @release.all?{|track| track["format_name"] == "FLAC" }
-  = javascript_include_tag :aurora
-  = javascript_include_tag :flac
+  = javascript_include_tag "aurora/aurora"
+  = javascript_include_tag "aurora/flac"
 
 .row
   %ul
