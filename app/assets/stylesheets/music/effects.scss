@@ -1,4 +1,7 @@
 
+/*
+  Animation
+*/
 @mixin keyframes($name) {
     @-webkit-keyframes #{$name} {
         @content;
@@ -52,20 +55,64 @@
           animation-direction: $direction;
 }
 
-@include keyframes(change_background_color) {
+@mixin animation-fill-mode($direction) {
+  -webkit-animation-fill-mode: $direction;
+     -moz-animation-fill-mode: $direction;
+       -o-animation-fill-mode: $direction;
+          animation-fill-mode: $direction;
+}
+
+
+/*
+  Animation: Pulsate
+*/
+@include keyframes(change_opacity) {
   to {
     opacity: 0.0;
   }
 }
 
-@mixin pulsate($time: 0.2s, $count: 8) {
-  @include animation-name(change_background_color);
+@mixin pulsate($time) {
+  @include animation-name(change_opacity);
   @include animation-duration($time);
-  @include animation-iteration-count($count);
+  @include animation-iteration-count(infinite);
   @include animation-direction(alternate);
   @include animation-timing-function(ease-in-out);
 }
 
 .pulsate {
-  @include pulsate(0.4s, 32);
+  @include pulsate(0.4s);
+}
+
+/*
+  Transform: Rotate
+*/
+@mixin transform-rotate($value) {
+  -webkit-transform: rotate(#{$value}deg);
+     -moz-transform: rotate(#{$value}deg);
+      -ms-transform: rotate(#{$value}deg);
+       -o-transform: rotate(#{$value}deg);
+          transform: rotate(#{$value}deg);
+}
+
+@include keyframes(spin) {
+  0% {
+    @include transform-rotate(0);
+  }
+  100% {
+    @include transform-rotate(10);
+  }
+}
+
+@mixin rotate($time) {
+  @include animation-name(spin);
+  @include animation-duration($time);
+  @include animation-iteration-count(1);
+  @include animation-direction(alternate);
+  @include animation-timing-function(linear);
+  @include animation-fill-mode(forwards);
+}
+
+.rotate {
+  @include rotate(0.5s);
 }

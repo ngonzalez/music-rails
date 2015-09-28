@@ -1,33 +1,36 @@
 
-function observe_btn(options) {
-  function load_file(file_uri) {
-    window["current_file"] = file_uri;
+function observe_btn() {
+  function init_player(file_uri) {
     if (typeof AV != "undefined") {
-      window["player"] = AV.Player.fromURL(file_uri);
-    } else {
-      if ($("audio").length > 0) {
-        if ($("audio").attr("src") != file_uri) {
-          $("audio").attr("src", file_uri);
+      return $.extend(AV.Player.fromURL(file_uri), {
+        is_paused: function() {
+          return !window.player.playing;
         }
+      });
+    } else {
+      if (window.player && window.player.attributes) {
+        $(window.player).attr("src", file_uri);
+        return window.player;
       } else {
         $("body").append(
           $(document.createElement("audio"))
                     .attr("src", file_uri)
                     .addClass("hidden")
         );
-        window["player"] = $.extend($("audio").get(0), {
+        return $.extend($("audio").get(0), {
           stop: function() {
-            $("audio").attr("src", "");
+            $(window.player).attr("src", "");
+          },
+          is_paused: function() {
+            return window.player.paused;
           }
-        })
+        });
       }
     }
   }
   function clear_active() {
-    $.each($(".play-btn.pulsate"), function(i, element) {
-      $(element).removeClass("pulsate");
-    });
     $.each($(".play-btn.active"), function(i, element) {
+      $(element).removeClass("pulsate");
       reset_btn($(element));
     });
   }
@@ -42,17 +45,19 @@ function observe_btn(options) {
     element.addClass("active");
   }
   $.each($('.play-btn'), function(i, element) {
-    if (typeof(window.current_file) != "undefined" && $(element).data("uri") == window.current_file) {
-      enable_btn($(element));
-    }
+    if ($(element).data("uri") == window.current_file) enable_btn($(element));
     $(element).click(function(e) {
       if ($(element).hasClass("active")) {
         $(e.target).toggleClass("pulsate");
-        window.player.paused ? window.player.play() : window.player.pause();
+        window.player.is_paused() ? window.player.play() : window.player.pause();
       } else {
-        clear_active();
+        if (window.player) {
+          window.player.stop();
+          clear_active();
+        }
         enable_btn($(e.target));
-        load_file($(e.target).data("uri"));
+        window.player = init_player($(e.target).data("uri"));
+        window.current_file = $(e.target).data("uri");
         window.player.play();
         setTimeout(function() {
           reset_btn($(e.target));
@@ -60,4 +65,10 @@ function observe_btn(options) {
       }
     });
   });
+  $(window).bind('beforeunload', function() {
+    if (window.player) {
+      window.player.stop();
+      window.player = "undefined";
+    }
+  }); 
 }

@@ -17,7 +17,7 @@
   .row.margin-20
     .polaroid-images.margin-20
       - @images.each do |image|
-        = link_to image.file.url, class: "swipebox" do
+        = link_to image.file.url, class: "swipebox rotate" do
           = image_tag image.file.thumb("300x250>").url
 
 - if @nfo.any?
