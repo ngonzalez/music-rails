@@ -17,7 +17,7 @@
   .row.margin-20
     .polaroid-images.margin-20
       - @images.each do |image|
-        = link_to image.file.url, class: "swipebox rotate" do
+        = link_to image.file.url, class: "swipebox" do
           = image_tag image.file.thumb("300x250>").url
 
 - if @nfo.any?
@@ -50,4 +50,7 @@
   $(document).ready(function(e) {
     observe_btn();
     $('.swipebox').swipebox();
+    $.each($(".polaroid-images a"), function(i, element) {
+      $(element).addClass(["rotate-5", "rotate-10"][parseInt(Math.random() * 10) % 2])
+    });
   });
