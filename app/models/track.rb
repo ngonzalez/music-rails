@@ -14,6 +14,10 @@ class Track < ActiveRecord::Base
     end
   end
 
+  def number
+    name.split("-")[0]
+  end
+
   def file_url
     [ release.path, URI::escape(name) ].join("/")
   end

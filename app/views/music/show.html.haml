@@ -31,6 +31,9 @@
 - @release.each do |infos|
   .row
     %ul
+      %li
+        .col-md-1
+          = infos["number"]
       - infos.slice("artist", "title", "album", "genre", "year", "length").each do |k, v|
         %li
           .col-md-1

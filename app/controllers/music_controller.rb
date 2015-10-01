@@ -61,8 +61,9 @@ class MusicController < ApplicationController
   end
 
   def get_release
-    Release.find(params[:id]).tracks.map do |track|
+    Release.find(params[:id]).tracks.sort{|a, b| a.number <=> b.number }.map do |track|
       track.attributes.merge(
+        "number" => track.number,
         "path" => track.file_url
       )
     end
