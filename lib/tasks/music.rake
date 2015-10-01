@@ -215,7 +215,7 @@ namespace "music" do
   desc "import images"
   task import_images: :environment do
     allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
-    Release.find_each do |release|
+    Release.where(last_verified_at: nil, details: nil).find_each do |release|
       path = [PUBLIC_PATH, release.path].join "/"
       allowed_formats.each do |format|
         Dir["#{path}/*.#{format}"].each do |path|
@@ -237,7 +237,7 @@ namespace "music" do
   task import_nfo: :environment do
     temp_file = "/tmp/#{Time.now.to_i}"
     font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
-    Release.includes(:images).order("id desc").each do |release|
+    Release.where(last_verified_at: nil, details: nil).includes(:images).order("id desc").each do |release|
       begin
         next if release.images.select{|item| item.file_type == "nfo" }.any?
         Dir[PUBLIC_PATH + release.path + "/*.nfo"].each do |file|
