@@ -1,11 +1,9 @@
 Rails.application.routes.draw do
 
-  resources :music, only: [:index, :show], except: :all do
+  resources :music, only: [:index, :show] do
     collection do
       get :search
       get :stats
-      get :upload
-      post :send_file
     end
   end
 

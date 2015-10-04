@@ -1,3 +1,9 @@
 .DS_Store
-log/*.log
+log/*
 solr/development
+public/assets/
+public/data
+public/system/
+public/test/
+solr/
+tmp/cache/
