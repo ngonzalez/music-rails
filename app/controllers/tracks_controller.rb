@@ -1,8 +1,10 @@
 class TracksController < ApplicationController
   def show
     track = Track.find(params[:id]).decorate
-    if ["wav", "aiff", "flac"].include? track.file_extension
-      if track.state == "processing"
+    if track.streamable?
+      response = { url: track.file_url }
+    else
+      if track.processing?
         response = { state: track.state }
       else
         if track.encoded_file
@@ -11,8 +13,6 @@ class TracksController < ApplicationController
           response = { id: LameWorker.perform_async(track.id) }
         end
       end
-    else
-      response = { url: track.file_url }
     end
     respond_to do |format|
       format.json do

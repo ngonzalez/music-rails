@@ -22,4 +22,10 @@ class TrackDecorator < Draper::Decorator
   def file_extension
     name.split(".").last
   end
+  def processing?
+    object.state == "processing"
+  end
+  def streamable?
+    ["wav", "aiff", "flac"].exclude? file_extension
+  end
 end

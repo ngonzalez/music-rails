@@ -32,7 +32,7 @@ function observe_btn() {
     element.removeClass("fa-play-circle");
     element.addClass("active");
   }
-  function enable_player(element) {
+  function enable_player(element, url) {
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
       window.player.paused ? window.player.play() : window.player.pause();
@@ -44,7 +44,7 @@ function observe_btn() {
         window.player = init_player();
       }
       enable_btn(element);
-      window.player.load_file(element.data("uri"));
+      window.player.load_file(url);
       window.player.play();
       setTimeout(function() {
         reset_btn(element);
@@ -57,9 +57,6 @@ function observe_btn() {
       type: "GET",
       success: function(response, textStatus, jqXHR) {
         if (response.url) {
-          clearInterval(intervals[element.data("id")]);
-          // element.data("uri", response.url);
-          // enable_player($(element));
           element.show();
           element.parent().find(".processing").hide();
           callback();
@@ -77,7 +74,7 @@ function observe_btn() {
           var item_id = $(element).data("id");
           if (response.url) {
             $(element).data("uri", response.url);
-            enable_player($(element));
+            enable_player($(element), $(element).data("uri"));
           } else if (!intervals[item_id]) {
             $(element).hide();
             $(element).parent().find(".processing").show();
@@ -85,7 +82,7 @@ function observe_btn() {
               check_for_track($(element), function() {
                 clearInterval(intervals[item_id]);
               });
-            }, 5000);
+            }, 2000);
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -100,5 +97,5 @@ function observe_btn() {
       window.player.stop();
       window.player = "undefined";
     }
-  }); 
+  });
 }

@@ -1,18 +1,8 @@
 require 'dragonfly'
 
-class LameEncoderProcessor
-  def self.call(content)
-    content.shell_update ext: 'mp3', escape: false do |old_path, new_path|
-      "`which lame` -V0 #{Shellwords.escape(old_path)} #{new_path}"  # The command sent to the command line
-    end
-  end
-end
-
 # Configure
 Dragonfly.app.configure do
   plugin :imagemagick
-
-  processor :lame_encoder, LameEncoderProcessor
 
   secret "8b00701357a0f7d45c5a5bedc64ba3a7db423a86a1b6ff2d1d752210f3212941"
 
