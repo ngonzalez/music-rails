@@ -41,8 +41,8 @@
         .col-md-1
           .badge= track.duration
         .col-md-2
-          %small.processing{ style: "display:none" } Processing
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-uri" => asset_path(track.file_url), "data-length" => track.length }
+          %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing{ "style" => "display:none;" }
+          %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-uri" => asset_path(track.file_url), "data-length" => track.length, "data-stream" => track.streamable? || track.encoded_file ? 1 : 0 }
 
 :javascript
   $(document).ready(function(e) {

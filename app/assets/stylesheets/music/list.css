@@ -13,3 +13,6 @@ ul li a :hover {
 ul li.img {
   display: inline;
 }
+i.grey {
+  color: #DDD;
+}

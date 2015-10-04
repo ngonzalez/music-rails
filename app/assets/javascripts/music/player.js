@@ -59,30 +59,39 @@ function observe_btn() {
         if (response.url) {
           element.show();
           element.parent().find(".processing").hide();
+          $(element).removeClass("grey");
+          $(element).data("uri", response.url)
           callback();
         }
       }
     });
   }
   $.each($('.play-btn'), function(i, element) {
-    if ($(element).data("uri") == window.current_file) enable_btn($(element));
+    if ($(element).data("uri") == window.current_file) {
+      enable_btn($(element));
+    }
+    if (parseInt($(element).data("stream")) == 0) {
+      $(element).addClass("grey");
+    }
     $(element).click(function(e) {
       $.ajax({
         url: $(element).data("url"),
         type: "GET",
         success: function(response, textStatus, jqXHR) {
-          var item_id = $(element).data("id");
           if (response.url) {
             $(element).data("uri", response.url);
             enable_player($(element), $(element).data("uri"));
-          } else if (!intervals[item_id]) {
-            $(element).hide();
-            $(element).parent().find(".processing").show();
-            intervals[item_id] = setInterval(function() {
-              check_for_track($(element), function() {
-                clearInterval(intervals[item_id]);
-              });
-            }, 2000);
+          } else {
+            var item_id = $(element).data("id");
+            if (!intervals[item_id]) {
+              $(element).hide();
+              $(element).parent().find(".processing").show();
+              intervals[item_id] = setInterval(function() {
+                check_for_track($(element), function() {
+                  clearInterval(intervals[item_id]);
+                });
+              }, 2000);
+            }
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
