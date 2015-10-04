@@ -29,6 +29,7 @@ source "https://rubygems.org" do
 
   gem 'draper'
 
+  gem 'sinatra', :require => nil
   gem 'sidekiq', github: 'mperham/sidekiq'
 
   group :development, :test do

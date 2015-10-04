@@ -43,7 +43,8 @@
         .col-md-1
           .badge= track.duration
         .col-md-2
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-url" => track_path(track, format: :json), "data-uri" => asset_path(track.file_url), "data-length" => track.length }
+          %small.processing{ style: "display:none" } Processing
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-uri" => asset_path(track.file_url), "data-length" => track.length }
 
 :javascript
   $(document).ready(function(e) {

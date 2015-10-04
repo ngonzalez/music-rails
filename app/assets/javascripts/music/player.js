@@ -1,16 +1,19 @@
 
 function observe_btn() {
-  var interval_id;
+  var intervals = {};
   function init_player() {
+    console.log('init_player');
     $("body").append(
       $(document.createElement("audio"))
                 .addClass("hidden")
     );
     return $.extend($("audio").get(0), {
       stop: function() {
+        console.log('player -> stop');
         window.player.load_file("");
       },
       load_file: function(src) {
+        console.log('player -> load_file: ' + src);
         window.current_file = src;
         $(window.player).attr("src", src);
       }
@@ -51,16 +54,20 @@ function observe_btn() {
       }, Number(element.data("length")) * 1000);
     }
   }
-  function check_for_track(element) {
+  function check_for_track(element, callback) {
+    console.log('check_for_track');
     $.ajax({
       url: element.data("url"),
       type: "GET",
       success: function(response, textStatus, jqXHR) {
         console.log(response);
         if (response.url) {
-          clearInterval(interval_id);
+          clearInterval(intervals[element.data("id")]);
           element.data("uri", response.url);
           enable_player($(element));
+          element.show();
+          element.parent().find(".processing").hide();
+          callback();
         }
       }
     });
@@ -72,13 +79,18 @@ function observe_btn() {
         url: $(element).data("url"),
         type: "GET",
         success: function(response, textStatus, jqXHR) {
+          var item_id = $(element).data("id");
           console.log(response);
           if (response.url) {
             $(element).data("uri", response.url);
             enable_player($(element));
-          } else if (!interval_id) {
-            interval_id = setInterval(function() {
-              check_for_track($(element));
+          } else if (!intervals[item_id]) {
+            $(element).hide();
+            $(element).parent().find(".processing").show();
+            intervals[item_id] = setInterval(function() {
+              check_for_track($(element), function() {
+                clearInterval(intervals[item_id]);
+              });
             }, 5000);
           }
         },
