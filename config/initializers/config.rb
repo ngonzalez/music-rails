@@ -5,4 +5,4 @@ BASE_URL = "/data"
 
 ALLOWED_METRICS = ["format_name", "genre", "year", "bitrate"]
 
-PUBLIC_PATH = "/usr/local/var/www/"
+PUBLIC_PATH = "/usr/local/var/www"

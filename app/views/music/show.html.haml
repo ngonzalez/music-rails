@@ -3,10 +3,6 @@
 
 = stylesheet_link_tag :music
 
-- if @release.all?{|track| track["format_name"] == "FLAC" }
-  = javascript_include_tag "aurora/aurora"
-  = javascript_include_tag "aurora/flac"
-
 .row
   %ul
     %li
@@ -28,26 +24,26 @@
           = link_to nfo.file.url, target: "_blank" do
             %i.fa.fa-sticky-note.fa-4.shadow-light.margin-10
 
-- @release.each do |infos|
+- @release.each do |track|
   .row
     %ul
       %li
         .col-md-1
-          = infos["number"]
-      - infos.slice("artist", "title", "album", "genre", "year", "length").each do |k, v|
-        %li
-          .col-md-1
-            - if ["artist", "year"].include?(k)
-              = link_to highlight(v, search_terms_array),                                            |
-                  search_music_index_path(rows: search_rows, q: v), { "data-transition" => "none" }  |
-            - elsif ["length"].include?(k)
-              .badge= Time.at(v).utc.strftime(v.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
-            - else
-              = highlight(v, search_terms_array)
-
-      %li
+          = track.number
+        .col-md-1
+          = track.link_to_search :artist
+        .col-md-1
+          = track.title
+        .col-md-1
+          = track.album
+        .col-md-1
+          = track.genre
+        .col-md-1
+          = track.link_to_search :year
+        .col-md-1
+          .badge= track.duration
         .col-md-2
-          %i.fa.fa-play-circle.fa-4.play-btn{ "data-uri" => asset_path(infos["path"]), "data-length" => infos["length"] }
+          %i.fa.fa-play-circle.fa-4.play-btn{ "data-url" => track_path(track, format: :json), "data-uri" => asset_path(track.file_url), "data-length" => track.length }
 
 :javascript
   $(document).ready(function(e) {

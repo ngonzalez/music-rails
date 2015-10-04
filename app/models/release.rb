@@ -7,8 +7,4 @@ class Release < ActiveRecord::Base
   searchable do
     text :formatted_name
   end
-
-  def path
-    [BASE_URL, self.folder, self.name].join("/")
-  end
 end

@@ -1,6 +1,10 @@
 class Track < ActiveRecord::Base
   belongs_to :release
 
+  dragonfly_accessor :file
+
+  dragonfly_accessor :encoded_file
+
   searchable do
     text :artist
     text :album
@@ -12,13 +16,5 @@ class Track < ActiveRecord::Base
     integer :year do
       year.to_i
     end
-  end
-
-  def number
-    name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
-  end
-
-  def file_url
-    [ release.path, URI::escape(name) ].join("/")
   end
 end

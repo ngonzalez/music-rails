@@ -7,6 +7,17 @@ GIT
       multi_json (~> 1.0)
       rack (>= 1.3.0)
 
+GIT
+  remote: git://github.com/mperham/sidekiq.git
+  revision: 0b59ed8c2bc74823ae579b99e37295bbdb2b416b
+  specs:
+    sidekiq (3.5.1)
+      celluloid (~> 0.17.2)
+      connection_pool (~> 2.2, >= 2.2.0)
+      json (~> 1.0)
+      redis (~> 3.2, >= 3.2.1)
+      redis-namespace (~> 1.5, >= 1.5.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -54,7 +65,30 @@ GEM
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
     builder (3.2.2)
+    celluloid (0.17.2)
+      celluloid-essentials
+      celluloid-extras
+      celluloid-fsm
+      celluloid-pool
+      celluloid-supervision
+      timers (>= 4.1.1)
+    celluloid-essentials (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-extras (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-fsm (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-pool (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-supervision (0.20.5)
+      timers (>= 4.1.1)
     coderay (1.1.0)
+    connection_pool (2.2.0)
+    draper (2.1.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
     erubis (2.7.0)
     execjs (2.6.0)
     font-awesome-sass (4.4.0)
@@ -70,6 +104,7 @@ GEM
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
     highline (1.7.7)
+    hitimes (1.2.3)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
       haml (~> 4.0.0)
@@ -136,6 +171,10 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
+    redis (3.2.1)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
+    request_store (1.2.0)
     rsolr (1.0.12)
       builder (>= 2.1.2)
     ruby_parser (3.7.1)
@@ -170,6 +209,8 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.1)
+    timers (4.1.1)
+      hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.2)
@@ -182,6 +223,7 @@ PLATFORMS
 DEPENDENCIES
   bootstrap-sass!
   dragonfly!
+  draper
   font-awesome-sass!
   haml-rails!
   jquery-rails!
@@ -194,6 +236,7 @@ DEPENDENCIES
   rack-cors!
   rails (= 4.2.4)!
   sass-rails!
+  sidekiq!
   sunspot_rails!
   sunspot_solr!
   swipebox

@@ -27,6 +27,10 @@ source "https://rubygems.org" do
 
   gem 'swipebox'
 
+  gem 'draper'
+
+  gem 'sidekiq', github: 'mperham/sidekiq'
+
   group :development, :test do
     gem 'pry'
   end

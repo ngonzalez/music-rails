@@ -2,7 +2,7 @@ local_defaults: &local-defaults
   adapter: postgresql
   encoding: utf8
   username: enyo
-  password: postgres
+  password: 
 
 development:
   <<: *local-defaults
@@ -18,10 +18,6 @@ remote_defaults: &remote-defaults
   username: postgres
   password:
 
-staging:
-  <<: *remote-defaults
-  database: staging
-
 production:
-  <<: *remote-defaults
-  database: production
+  <<: *local-defaults
+  database: music
