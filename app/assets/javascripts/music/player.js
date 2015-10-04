@@ -2,18 +2,15 @@
 function observe_btn() {
   var intervals = {};
   function init_player() {
-    console.log('init_player');
     $("body").append(
       $(document.createElement("audio"))
                 .addClass("hidden")
     );
     return $.extend($("audio").get(0), {
       stop: function() {
-        console.log('player -> stop');
         window.player.load_file("");
       },
       load_file: function(src) {
-        console.log('player -> load_file: ' + src);
         window.current_file = src;
         $(window.player).attr("src", src);
       }
@@ -55,16 +52,14 @@ function observe_btn() {
     }
   }
   function check_for_track(element, callback) {
-    console.log('check_for_track');
     $.ajax({
       url: element.data("url"),
       type: "GET",
       success: function(response, textStatus, jqXHR) {
-        console.log(response);
         if (response.url) {
           clearInterval(intervals[element.data("id")]);
-          element.data("uri", response.url);
-          enable_player($(element));
+          // element.data("uri", response.url);
+          // enable_player($(element));
           element.show();
           element.parent().find(".processing").hide();
           callback();
@@ -80,7 +75,6 @@ function observe_btn() {
         type: "GET",
         success: function(response, textStatus, jqXHR) {
           var item_id = $(element).data("id");
-          console.log(response);
           if (response.url) {
             $(element).data("uri", response.url);
             enable_player($(element));

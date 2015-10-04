@@ -2,13 +2,14 @@ class TracksController < ApplicationController
   def show
     track = Track.find(params[:id]).decorate
     if ["wav", "aiff", "flac"].include? track.file_extension
-      case track.state
-        when "processing"
-          response = { state: track.state }
-        when "ready"
-          response = { url: track.encoded_file.url.gsub(track.file_extension, "mp3") }
-        else
+      if track.state == "processing"
+        response = { state: track.state }
+      else
+        if track.encoded_file
+          response = { url: track.encoded_file.url }
+        elsif !track.state
           response = { id: LameWorker.perform_async(track.id) }
+        end
       end
     else
       response = { url: track.file_url }
