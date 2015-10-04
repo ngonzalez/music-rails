@@ -15,7 +15,7 @@ class Track < ActiveRecord::Base
   end
 
   def number
-    name.split("-")[0]
+    name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
   end
 
   def file_url
