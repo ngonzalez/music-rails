@@ -3,7 +3,7 @@ class LameWorker
   include Sidekiq::Worker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
-
+  
   def perform track_id
     track = Track.find track_id
     begin
@@ -13,13 +13,13 @@ class LameWorker
         if track.format_name == "FLAC"
           temp_file_flac = "/tmp/#{track.id}.flac"
           temp_file_wav = "/tmp/#{track.id}.wav"
-          `cp #{Shellwords.escape(file_path)} #{temp_file_flac}`
-          `flac -d -f #{temp_file_flac}`
+          copy_file Shellwords.escape(file_path), temp_file_flac
+          decode_file temp_file_flac
         end
-        destination_file = "/tmp/#{track.id}.mp3"
-        encode temp_file_wav || file_path, destination_file
-        track.update!(state: "ready", encoded_file: File.open(destination_file))
-        FileUtils.rm_f destination_file
+        temp_file_mp3 = "/tmp/#{track.id}.mp3"
+        encode temp_file_wav || file_path, temp_file_mp3
+        track.update!(state: "ready", encoded_file: File.open(temp_file_mp3))
+        FileUtils.rm_f temp_file_mp3
         FileUtils.rm_f temp_file_wav if temp_file_wav
         FileUtils.rm_f temp_file_flac if temp_file_flac
       end
@@ -31,6 +31,14 @@ class LameWorker
 
   def encode source, destination
     `lame -S -V0 #{Shellwords.escape(source)} #{destination}`
+  end
+
+  def copy_file source, destination
+    `cp #{source} #{destination}`
+  end
+
+  def decode_file source
+    `flac -d -f #{source}`
   end
 
 end
