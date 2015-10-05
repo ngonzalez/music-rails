@@ -42,7 +42,7 @@
           .badge= track.duration
         .col-md-2
           %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing{ "style" => "display:none;" }
-          %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-uri" => track.file_url, "data-length" => track.length, "data-stream" => track.streamable?.to_i }
+          %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-length" => track.length, "data-stream" => track.streamable? ? 1 : 0 }
 
 :javascript
   $(document).ready(function(e) {

@@ -179,7 +179,7 @@ namespace "music" do
     res = []
     Release.find(result.rows).each do |release|
       release.tracks.each do |track|
-        next if File.exists?(PUBLIC_PATH + track.file_url)
+        next if File.exists?(PUBLIC_PATH + track.decorate.file_url)
         res << release.id if res.exclude?(release.id)
       end
     end
@@ -193,6 +193,7 @@ namespace "music" do
   task check_releases: :environment do
     cmd = "cfv" # cfv 1.18.3
     Release.where(last_verified_at: nil).order("id desc").each do |release|
+      release = release.decorate
       next if !release.details.empty? && release.details.has_key?("sfv")
       path = [PUBLIC_PATH, release.path].join "/"
       if Dir["#{path}/*.sfv"].empty? # No SFV

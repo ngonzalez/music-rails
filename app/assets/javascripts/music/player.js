@@ -8,10 +8,10 @@ function observe_btn() {
     );
     return $.extend($("audio").get(0), {
       stop: function() {
-        window.player.load_file("");
+        window.player.load_file(null, "");
       },
-      load_file: function(src) {
-        window.current_file = src;
+      load_file: function(id, src) {
+        window.current_file = id;
         $(window.player).attr("src", src);
       }
     });
@@ -32,7 +32,7 @@ function observe_btn() {
     element.removeClass("fa-play");
     element.addClass("active");
   }
-  function enable_player(element, url) {
+  function enable_player(element, id, url) {
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
       window.player.paused ? window.player.play() : window.player.pause();
@@ -44,57 +44,54 @@ function observe_btn() {
         window.player = init_player();
       }
       enable_btn(element);
-      window.player.load_file(url);
+      window.player.load_file(id, url);
       window.player.play();
       setTimeout(function() {
         reset_btn(element);
       }, Number(element.data("length")) * 1000);
     }
   }
-  function check_for_track(element, callback) {
+  function check_for_track(url, callback) {
     $.ajax({
-      url: element.data("url"),
+      url: url,
       type: "GET",
       success: function(response, textStatus, jqXHR) {
-        if (response.url) {
-          element.show();
-          element.parent().find(".processing").hide();
-          $(element).removeClass("grey");
-          callback();
-        }
+        callback(response);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus);
+        console.log(errorThrown);
       }
     });
   }
   $.each($('.play-btn'), function(i, element) {
-    if ($(element).data("uri") == window.current_file) {
+    if ($(element).data("id") == window.current_file) {
       enable_btn($(element));
     }
     if (parseInt($(element).data("stream")) == 0) {
       $(element).addClass("grey");
     }
     $(element).click(function(e) {
-      $.ajax({
-        url: $(element).data("url"),
-        type: "GET",
-        success: function(response, textStatus, jqXHR) {
-          if (response.url) {
-            enable_player($(element), response.url);
-          } else {
-            var item_id = $(element).data("id");
-            if (!intervals[item_id]) {
-              $(element).hide();
-              $(element).parent().find(".processing").show();
-              intervals[item_id] = setInterval(function() {
-                check_for_track($(element), function() {
+      check_for_track($(element).data("url"), function(response) {
+        console.log(response);
+        if (response.url) {
+          enable_player($(element), response.id, response.url);
+        } else {
+          var item_id = $(element).data("id");
+          if (!intervals[item_id]) {
+            $(element).hide();
+            $(element).parent().find(".processing").show();
+            intervals[item_id] = setInterval(function() {
+              check_for_track($(element).data("url"), function(response) {
+                if (response.url) {
+                  $(element).show();
+                  $(element).parent().find(".processing").hide();
+                  $(element).removeClass("grey");
                   clearInterval(intervals[item_id]);
-                });
-              }, 2000);
-            }
+                }
+              });
+            }, 2000);
           }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(textStatus);
-          console.log(errorThrown);
         }
       });
     });
