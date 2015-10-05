@@ -6,12 +6,8 @@ class TracksController < ApplicationController
     else
       if track.processing?
         response = { state: track.state }
-      else
-        if track.encoded_file
-          response = { url: track.encoded_file.url }
-        elsif !track.state
-          response = { id: LameWorker.perform_async(track.id) }
-        end
+      elsif !track.state
+        response = { id: LameWorker.perform_async(track.id) }
       end
     end
     respond_to do |format|

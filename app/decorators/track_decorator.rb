@@ -17,7 +17,8 @@ class TrackDecorator < Draper::Decorator
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
   end
   def file_url
-    [ object.release.decorate.path, object.name ].join("/")
+    return object.encoded_file.url if object.encoded_file
+    h.asset_path [ object.release.decorate.path, object.name ].join("/")
   end
   def file_extension
     name.split(".").last
@@ -26,6 +27,7 @@ class TrackDecorator < Draper::Decorator
     object.state == "processing"
   end
   def streamable?
+    return true if object.encoded_file
     ["wav", "aiff", "flac"].exclude? file_extension
   end
 end

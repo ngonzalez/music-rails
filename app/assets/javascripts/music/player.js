@@ -60,7 +60,6 @@ function observe_btn() {
           element.show();
           element.parent().find(".processing").hide();
           $(element).removeClass("grey");
-          // $(element).data("uri", response.url)
           callback();
         }
       }
@@ -79,8 +78,7 @@ function observe_btn() {
         type: "GET",
         success: function(response, textStatus, jqXHR) {
           if (response.url) {
-            $(element).data("uri", response.url);
-            enable_player($(element), $(element).data("uri"));
+            enable_player($(element), response.url);
           } else {
             var item_id = $(element).data("id");
             if (!intervals[item_id]) {
