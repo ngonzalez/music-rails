@@ -32,6 +32,15 @@ function observe_btn() {
     element.removeClass("fa-play");
     element.addClass("active");
   }
+  function processing_btn(element) {
+    element.hide();
+    element.parent().find(".processing").show();
+  }
+  function processing_complete_btn(element) {
+    element.show();
+    element.parent().find(".processing").hide();
+    element.removeClass("grey");
+  }
   function enable_player(element, id, url) {
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
@@ -51,7 +60,7 @@ function observe_btn() {
       }, Number(element.data("length")) * 1000);
     }
   }
-  function check_for_track(url, callback) {
+  function get_track_infos(url, callback) {
     $.ajax({
       url: url,
       type: "GET",
@@ -72,21 +81,18 @@ function observe_btn() {
       $(element).addClass("grey");
     }
     $(element).click(function(e) {
-      check_for_track($(element).data("url"), function(response) {
+      get_track_infos($(element).data("url"), function(response) {
         console.log(response);
         if (response.url) {
           enable_player($(element), response.id, response.url);
         } else {
           var item_id = $(element).data("id");
           if (!intervals[item_id]) {
-            $(element).hide();
-            $(element).parent().find(".processing").show();
+            processing_btn($(element));
             intervals[item_id] = setInterval(function() {
-              check_for_track($(element).data("url"), function(response) {
+              get_track_infos($(element).data("url"), function(response) {
                 if (response.url) {
-                  $(element).show();
-                  $(element).parent().find(".processing").hide();
-                  $(element).removeClass("grey");
+                  processing_complete_btn($(element));
                   clearInterval(intervals[item_id]);
                 }
               });
