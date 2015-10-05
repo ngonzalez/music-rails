@@ -13,8 +13,8 @@ class LameWorker
         if track.format_name == "FLAC"
           temp_file_flac = "/tmp/#{track.id}.flac"
           temp_file_wav = "/tmp/#{track.id}.wav"
-          `cp #{file_path} #{temp_file_flac}`
-          `flac -d #{temp_file_flac}`
+          `cp #{Shellwords.escape(file_path)} #{temp_file_flac}`
+          `flac -d -f #{temp_file_flac}`
         end
         destination_file = "/tmp/#{track.id}.mp3"
         encode temp_file_wav || file_path, destination_file
