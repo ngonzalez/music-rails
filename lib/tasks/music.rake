@@ -179,7 +179,7 @@ namespace "music" do
     res = []
     Release.find(result.rows).each do |release|
       release.tracks.each do |track|
-        next if File.exists?(PUBLIC_PATH + track.decorate.file_url)
+        next if File.exists?(track.decorate.file_path)
         res << release.id if res.exclude?(release.id)
       end
     end

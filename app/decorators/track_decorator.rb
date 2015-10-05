@@ -13,20 +13,21 @@ class TrackDecorator < Draper::Decorator
       h.highlight object.send(name), h.search_terms_array
     end
   end
+  [:processing, :ready].each do |name|
+    define_method "#{name}?" do
+      object.state == name.to_s
+    end
+  end
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
-  end
-  def file_url
-    h.asset_path [ object.release.decorate.path, object.name ].join("/")
   end
   def file_extension
     name.split(".").last
   end
-  def processing?
-    object.state == "processing"
-  end
   def streamable?
-    return true if object.encoded_file
-    ["wav", "aiff", "flac"].exclude? file_extension
+    ["wav", "aiff", "flac"].exclude?(file_extension) || object.encoded_file
+  end
+  def file_path
+    PUBLIC_PATH + [ object.release.decorate.path, object.name ].join("/")
   end
 end
