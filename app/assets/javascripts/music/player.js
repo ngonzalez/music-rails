@@ -24,12 +24,12 @@ function observe_btn() {
   }
   function reset_btn(element) {
     element.removeClass("fa-pause");
-    element.addClass("fa-play-circle");
+    element.addClass("fa-play");
     element.removeClass("active");
   }
   function enable_btn(element) {
     element.addClass("fa-pause");
-    element.removeClass("fa-play-circle");
+    element.removeClass("fa-play");
     element.addClass("active");
   }
   function enable_player(element, url) {
@@ -60,7 +60,7 @@ function observe_btn() {
           element.show();
           element.parent().find(".processing").hide();
           $(element).removeClass("grey");
-          $(element).data("uri", response.url)
+          // $(element).data("uri", response.url)
           callback();
         }
       }
