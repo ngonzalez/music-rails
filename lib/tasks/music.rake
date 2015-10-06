@@ -137,7 +137,9 @@ namespace "music" do
               end
             end
 
-          rescue
+          rescue Exception => e
+
+            puts e.inspect
 
             puts "FAILED: %s" % [ release_name ]
 
@@ -153,40 +155,6 @@ namespace "music" do
 
     puts "Updated %s records in %s" % [count, (Time.now - t1)]
 
-  end
-
-  desc "remove invalid images"
-  task clean_images: :environment do
-    # Image.find_each do |image|
-    #   image.destroy if !File.exists?(image.file.path)
-    # end
-  end
-
-  desc "remove duplicate releases"
-  task remove_duplicates: :environment do
-    sql_base = <<-SQL
-      SELECT DISTINCT(t1.id)
-      FROM releases t1
-      WHERE (
-        SELECT count(t2.id)
-        FROM releases t2
-        WHERE t1.name = t2.name
-      ) > 1;
-    SQL
-
-    result = ActiveRecord::Base.connection.select_all sql_base
-
-    res = []
-    Release.find(result.rows).each do |release|
-      release.tracks.each do |track|
-        next if File.exists?(track.decorate.file_path)
-        res << release.id if res.exclude?(release.id)
-      end
-    end
-
-    Release.find(res).each do |release|
-      release.destroy
-    end
   end
 
   desc "check releases"
@@ -217,18 +185,13 @@ namespace "music" do
   task import_images: :environment do
     allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
     Release.where(last_verified_at: nil, details: nil).find_each do |release|
-      path = [PUBLIC_PATH, release.path].join "/"
+      path = [PUBLIC_PATH, release.decorate.path].join "/"
       allowed_formats.each do |format|
         Dir["#{path}/*.#{format}"].each do |path|
-          begin
-            file_name = path.split("/").last
-            next if file_name =~ /.log./
-            next if release.images.where(file_name: file_name).any?
-            release.images.create! file: File.open(path)
-          rescue
-            binding.pry
-            raise
-          end
+          file_name = path.split("/").last
+          next if file_name =~ /.log./
+          next if release.images.where(file_name: file_name).any?
+          release.images.create! file: File.open(path)
         end
       end
     end
