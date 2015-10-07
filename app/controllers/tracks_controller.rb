@@ -1,9 +1,11 @@
 class TracksController < ApplicationController
   def show
     track = Track.find(params[:id]).decorate
-    if track.streamable?
-      track.update!(file: File.open(track.file_path)) if !track.file
-      response = { id: track.id, url: track.encoded_file ? track.encoded_file.url : track.file.url }
+    if track.streamable? || track.encoded_file
+      if !track.file
+        track.update! file: File.open(track.file_path)
+      end
+      response = { id: track.id, url: track.url }
     else
       if track.processing?
         response = { state: track.state }

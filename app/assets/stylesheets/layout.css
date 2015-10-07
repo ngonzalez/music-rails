@@ -3,6 +3,13 @@ body {
   font-size: 15px;
   text-shadow: 2px 2px #FFF;
 }
+.ui-page {
+  background: -webkit-linear-gradient(90deg, #ddf2f3 10%, #eef2f3 90%); /* Chrome 10+, Saf5.1+ */
+  background:    -moz-linear-gradient(90deg, #ddf2f3 10%, #eef2f3 90%); /* FF3.6+ */
+  background:     -ms-linear-gradient(90deg, #ddf2f3 10%, #eef2f3 90%); /* IE10 */
+  background:      -o-linear-gradient(90deg, #ddf2f3 10%, #eef2f3 90%); /* Opera 11.10+ */
+  background:         linear-gradient(90deg, #ddf2f3 10%, #eef2f3 90%); /* W3C */
+}
 .clear {
   clear: both;
 }

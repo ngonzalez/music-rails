@@ -25,7 +25,10 @@ class TrackDecorator < Draper::Decorator
     name.split(".").last
   end
   def streamable?
-    ["wav", "aiff", "flac"].exclude?(file_extension) || object.encoded_file
+    ["WAV", "AIFF", "FLAC"].exclude?(format_name)
+  end
+  def url
+    streamable? ? object.file.url : object.encoded_file.url
   end
   def file_path
     PUBLIC_PATH + [ object.release.decorate.path, object.name ].join("/")
