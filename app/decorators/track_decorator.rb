@@ -21,4 +21,7 @@ class TrackDecorator < Draper::Decorator
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
   end
+  def url
+    h.asset_path object.file.url
+  end
 end

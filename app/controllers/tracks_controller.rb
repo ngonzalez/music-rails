@@ -2,7 +2,7 @@ class TracksController < ApplicationController
   def show
     track = Track.find(params[:id]).decorate
     if track.file
-      response = { id: track.id, url: track.file.url }
+      response = { id: track.id, url: track.url }
     else
       if track.processing?
         response = { state: track.state }
