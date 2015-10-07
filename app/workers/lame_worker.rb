@@ -7,26 +7,29 @@ class LameWorker
   def perform track_id
     track = Track.find track_id
     begin
-      if !track.state && !track.encoded_file
-        track.update! state: "processing"
-        file_path = Shellwords.escape track.decorate.file_path
-        if track.format_name == "FLAC"
-          temp_file_flac = "/tmp/#{track.id}.flac"
-          temp_file_wav = "/tmp/#{track.id}.wav"
-          copy_file file_path, temp_file_flac
-          decode_file temp_file_flac
+      if !track.file
+        file_path = Shellwords.escape(PUBLIC_PATH + [ track.release.decorate.path, track.name ].join("/"))
+        if track.format_name == "MP3"
+          track.update! state: "ready", file: File.open(file_path)
+        else
+          if track.format_name == "FLAC"
+            temp_file_flac = "/tmp/#{track.id}.flac"
+            temp_file_wav = "/tmp/#{track.id}.wav"
+            copy_file file_path, temp_file_flac
+            decode_file temp_file_flac
+          end
+          temp_file_mp3 = "/tmp/#{track.id}.mp3"
+          encode temp_file_wav || file_path, temp_file_mp3
+          track.update! state: "ready", file: File.open(temp_file_mp3)
         end
-        temp_file_mp3 = "/tmp/#{track.id}.mp3"
-        encode temp_file_wav || file_path, temp_file_mp3
-        track.update! state: "ready", encoded_file: File.open(temp_file_mp3)
       end
     rescue Exception => e
       puts e.inspect
       track.update! state: nil
     ensure
-      FileUtils.rm_f temp_file_mp3
-      FileUtils.rm_f temp_file_wav if temp_file_wav
-      FileUtils.rm_f temp_file_flac if temp_file_flac
+      FileUtils.rm_f temp_file_mp3 if temp_file_mp3 && File.exists?(temp_file_mp3)
+      FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
+      FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
     end
   end
 

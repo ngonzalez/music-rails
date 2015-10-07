@@ -28,9 +28,8 @@ function observe_btn() {
   function enable_player(element, infos) {
     function stop_player() {
       window.player.src = "";
-      window.player.currentTime = 0;
+      window.player = undefined;
     }
-    console.log(infos);
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
       window.player.paused ? window.player.play() : window.player.pause();
