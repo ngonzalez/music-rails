@@ -12,6 +12,7 @@ class LameWorker
         if track.format_name =~ /MP3/
           track.update! state: "ready", file: File.open(file_path)
         else
+          file_path = Shellwords.escape file_path
           if track.format_name == "FLAC"
             temp_file_flac = "/tmp/#{track.id}.flac"
             temp_file_wav = "/tmp/#{track.id}.wav"
@@ -19,7 +20,6 @@ class LameWorker
             decode_file temp_file_flac
           end
           temp_file_mp3 = "/tmp/#{track.id}.mp3"
-          file_path = Shellwords.escape file_path
           encode temp_file_wav || file_path, temp_file_mp3
           track.update! state: "ready", file: File.open(temp_file_mp3)
         end
