@@ -3,13 +3,13 @@ class LameWorker
   include Sidekiq::Worker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
-  
+
   def perform track_id
     track = Track.find track_id
     begin
       if !track.file
         file_path = PUBLIC_PATH + [ track.release.decorate.path, track.name ].join("/")
-        if track.format_name == "MP3"
+        if track.format_name =~ /MP3/
           track.update! state: "ready", file: File.open(file_path)
         else
           if track.format_name == "FLAC"
