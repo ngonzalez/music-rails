@@ -5,8 +5,19 @@ namespace "music" do
   task update: :environment do
     [ "load_data", "import_images", "import_nfo",
       "check_releases", "clean_images",
-      "set_format_names", "set_formatted_names"].each do |name|
+      "set_format_names", "set_formatted_names
+      set_track_numbers"].each do |name|
       Rake::Task["music:#{name}"].execute
+    end
+  end
+
+  desc "set track numberss"
+  task set_track_numbers: :environment do
+    def format_number name
+      name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
+    end
+    Track.where(number: nil).each do |track|
+      track.update! number: format_number(track.name)
     end
   end
 

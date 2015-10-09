@@ -45,7 +45,7 @@ function init_players(tracks) {
       window.player.addEventListener("ended", function() {
         stop_player();
         reset_btn(element);
-      }, false);
+      });
     }
   }
   function loading(element, data) {
@@ -75,5 +75,7 @@ function init_players(tracks) {
       });
     });
   }
-  observe();
+  $(document).ready(function() {
+    observe();
+  });
 }
