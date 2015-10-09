@@ -25,9 +25,6 @@ function init_players(tracks) {
     element.parent().find(".processing").hide();
     element.removeClass("grey");
   }
-  function get_data(element) {
-    return tracks[parseInt(element.data("id"))];
-  }
   function enable(element, data) {
     function stop_player() {
       window.player.src = "";
@@ -66,6 +63,9 @@ function init_players(tracks) {
     }
   }
   function observe() {
+    function get_data(element) {
+      return tracks[parseInt(element.data("id"))];
+    }
     $.each($(".play-btn"), function(i, element) {
       var data = get_data($(element));
       if (!data.media_url) $(element).addClass("grey");
