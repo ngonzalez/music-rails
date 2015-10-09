@@ -26,9 +26,7 @@ function init_players(tracks) {
     element.removeClass("grey");
   }
   function get_data(element) {
-    var track_id = parseInt(element.data("id")),
-    media_url = tracks[track_id], url = element.data("url");
-    return { id: track_id, media_url: media_url, url: url }
+    return tracks[parseInt(element.data("id"))];
   }
   function enable(element, data) {
     function stop_player() {
@@ -59,7 +57,7 @@ function init_players(tracks) {
       intervals[data.id] = setInterval(function() {
         $.get(data.url, function(response) {
           if (response.url) {
-            tracks[data.id] = response.url;
+            tracks[data.id].media_url = response.url;
             processing_complete_btn(element);
             clearInterval(intervals[data.id]);
           }

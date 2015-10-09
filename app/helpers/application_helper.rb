@@ -10,7 +10,11 @@ module ApplicationHelper
 
   def track_files release
     release.each_with_object({}) do |track, hash|
-      hash[track.id] = track.file.try(:url)
+      hash[track.id] = {
+        id: track.id,
+        media_url: track.file.try(:url),
+        url: track_path(track, format: :json)
+      }
     end
   end
 
