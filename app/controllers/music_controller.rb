@@ -65,9 +65,10 @@ class MusicController < ApplicationController
     }
     hash = {}
     search.hits.each do |hit|
-      track = hit.result.decorate
-      release = hit.result.release.decorate
+      track = hit.result #.decorate
+      release = hit.result.release #.decorate
       begin
+        next if hash.has_key? track.release_id
         hash[track.release_id] = {
           name: release.formatted_name,
           folder: release.folder,

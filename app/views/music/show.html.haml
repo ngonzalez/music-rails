@@ -42,11 +42,11 @@
           .badge= track.duration
         .col-md-2
           %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing{ "style" => "display:none;" }
-          %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json), "data-length" => track.length, "data-stream" => track.file ? 1 : 0 }
+          %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id, "data-url" => track_path(track, format: :json) }
 
 :javascript
   $(document).ready(function(e) {
-    observe_btn();
+    init_players(#{track_files(@release).to_json});
     $('.swipebox').swipebox();
     $.each($(".polaroid-images a"), function(i, element) {
       $(element).addClass(["rotate-5", "rotate-10"][parseInt(Math.random() * 10) % 2])

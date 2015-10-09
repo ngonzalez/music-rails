@@ -1,9 +1,9 @@
 class Track < ActiveRecord::Base
   belongs_to :release
 
-  dragonfly_accessor :file
-
-  dragonfly_accessor :encoded_file
+  dragonfly_accessor :file do
+    storage_options {|a| { path: "tracks/#{id}" } }
+  end
 
   searchable do
     text :artist
