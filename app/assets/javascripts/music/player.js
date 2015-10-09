@@ -25,37 +25,43 @@ function init_players(tracks) {
     element.parent().find(".processing").hide();
     element.removeClass("grey");
   }
-  function enable(element, infos) {
+  function get_data(element) {
+    var track_id = parseInt(element.data("id")),
+    media_url = tracks[track_id], url = element.data("url");
+    return { id: track_id, media_url: media_url, url: url }
+  }
+  function enable(element, data) {
+    function stop_player() {
+      window.player.src = "";
+      window.player = undefined;
+    }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
       window.player.paused ? window.player.play() : window.player.pause();
     } else {
       if (window.player) {
-        window.player.src = "";
-        window.player = undefined;
+        stop_player();
         clear_active();
       }
       enable_btn(element);
-      window.current_file = infos.id;
-      window.player = new Audio(infos.url);
+      window.current_file = data.id;
+      window.player = new Audio(data.media_url);
       window.player.play();
       window.player.addEventListener("ended", function() {
-        window.player.src = "";
-        window.player = undefined;
+        stop_player();
         reset_btn(element);
       }, false);
     }
   }
-  function loading(element) {
-    var item_id = parseInt($(element).data("id"));
-    if (!intervals[item_id]) {
+  function loading(element, data) {
+    if (!intervals[data.id]) {
       processing_btn(element);
-      intervals[item_id] = setInterval(function() {
-        $.get(element.data("url"), function(response) {
+      intervals[data.id] = setInterval(function() {
+        $.get(data.url, function(response) {
           if (response.url) {
-            tracks[item_id] = response.url;
+            tracks[data.id] = response.url;
             processing_complete_btn(element);
-            clearInterval(intervals[item_id]);
+            clearInterval(intervals[data.id]);
           }
         });
       }, 2500);
@@ -63,15 +69,11 @@ function init_players(tracks) {
   }
   function observe() {
     $.each($(".play-btn"), function(i, element) {
-      var track_id = $(element).data("id");
-      if (!tracks[track_id]) $(element).addClass("grey");
-      if (parseInt($(element).data("id")) == window.current_file) enable_btn($(element));
+      var data = get_data($(element));
+      if (!data.media_url) $(element).addClass("grey");
+      if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
-        if (tracks[track_id]) {
-          enable($(element), { id: track_id, url: tracks[track_id] });
-        } else {
-          loading($(element));
-        }
+        data.media_url ? enable($(element), data) : loading($(element), data);
       });
     });
   }
