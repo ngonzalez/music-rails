@@ -48,9 +48,9 @@
   $(document).ready(function(e) {
     init_players(#{track_files(@release).to_json});
     $('.swipebox').swipebox();
-    $.each($(".polaroid-images a img"), function(i, element) {
-      $(element).load(function() {
-        $(element).parent("a").addClass(["rotate-5", "rotate-10"][parseInt(Math.random() * 10) % 2])
+    $.each($(".polaroid-images a"), function(i, element) {
+      $(element).find("img").load(function() {
+        $(element).addClass(["rotate-5", "rotate-10"][parseInt(Math.random() * 10) % 2])
       });
     });
   });
