@@ -158,5 +158,28 @@
 }
 
 .rotate-2 {
-  @include rotate_2(0.5s);
+  @include rotate_2(0.2s);
+}
+
+
+@include keyframes(spin_m2) {
+  0% {
+    @include transform-rotate(0);
+  }
+  100% {
+    @include transform-rotate(-2);
+  }
+}
+
+@mixin rotate_m2($time) {
+  @include animation-name(spin_m2);
+  @include animation-duration($time);
+  @include animation-iteration-count(1);
+  @include animation-direction(alternate);
+  @include animation-timing-function(linear);
+  @include animation-fill-mode(forwards);
+}
+
+.rotate-m2 {
+  @include rotate_m2(0.2s);
 }

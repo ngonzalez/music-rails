@@ -3,7 +3,6 @@ class MusicController < ApplicationController
   def index
     @releases = get_releases
     respond_to do |format|
-      # format.html
       format.json do
         render json: @releases.to_json
       end
@@ -11,13 +10,13 @@ class MusicController < ApplicationController
   end
 
   def show
-    @release = get_release
+    @tracks = get_release
     @images = get_images
     @nfo = get_nfo
     respond_to do |format|
       format.html
       format.json do
-        render json: @release.to_json
+        render json: @tracks.to_json
       end
     end
   end
@@ -50,7 +49,7 @@ class MusicController < ApplicationController
   end
 
   def get_images
-    Image.where(release_id: params[:id]).reject{|image| image.file_type == "nfo"  || image.file.name =~ /log.jpg/ }
+    Image.where(release_id: params[:id]).reject{|image| image.file_type == "nfo" }
   end
 
   def get_nfo
@@ -65,8 +64,8 @@ class MusicController < ApplicationController
     }
     hash = {}
     search.hits.each do |hit|
-      track = hit.result #.decorate
-      release = hit.result.release #.decorate
+      track = hit.result
+      release = hit.result.release
       begin
         next if hash.has_key? track.release_id
         hash[track.release_id] = {

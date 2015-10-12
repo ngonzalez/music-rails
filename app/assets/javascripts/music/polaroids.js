@@ -5,7 +5,7 @@ function getRandomInt(min, max) {
 function observe_polaroids() {
   $.each($(".polaroid-images a"), function(i, element) {
     setTimeout(function() {
-      $(element).addClass(["rotate-5", "rotate-m5", "rotate-2", "rotate-2", "rotate-5"][getRandomInt(0,4)]);
+      $(element).addClass(["rotate-2", "rotate-m2", "rotate-5", "rotate-m5", "rotate-2"][getRandomInt(0,4)]);
     }, 500);
   });
 }

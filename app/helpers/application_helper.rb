@@ -17,7 +17,7 @@ module ApplicationHelper
   end
 
   def track_files
-    @release.each_with_object({}) do |track, hash|
+    @tracks.each_with_object({}) do |track, hash|
       hash[track.id] = {
         id: track.id,
         media_url: track.file.try(:url),
@@ -29,6 +29,7 @@ module ApplicationHelper
   def thumbs_scss
     @images.each_with_object("") do |image, string|
       thumb = image.file.thumb("300x250>") ; thumb_high = image.file.thumb("600x500>")
+      # https://github.com/ngonzalez/music-rails/blob/master/app/assets/stylesheets/mixins/_image_set.scss
       string << "#img-#{image.id} { @include image-set('%s', '%s') { width: %spx; height: %spx; } }" % [
         thumb.url, thumb_high.url, thumb.width, thumb.height
       ]
