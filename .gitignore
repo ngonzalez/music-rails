@@ -7,3 +7,4 @@ public/system/
 public/test/
 solr/
 tmp/cache/
+.sass-cache

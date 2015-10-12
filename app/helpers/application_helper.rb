@@ -1,5 +1,13 @@
 module ApplicationHelper
 
+  def default_transition
+    { "data-transition" => "none" }
+  end
+
+  def default_params
+    params.slice("format", "q", "rows")
+  end
+
   def search_terms_array
     params[:q].split(/ and | or /)
   end

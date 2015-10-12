@@ -6,7 +6,7 @@
 .row
   %ul
     %li
-      = link_to search_music_index_path(params.slice("q", "rows")), { "data-transition" => "none" } do
+      = link_to search_music_index_path(default_params), default_transition do
         %i.fa.fa-list.fa-4
 
 :scss
@@ -21,17 +21,9 @@
           %div{ id: "img-#{image.id}" }
 
 :javascript
-  function getRandomInt(min, max) {
-    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Math/random
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
   $(document).ready(function(e) {
+    observe_polaroids();
     $('.swipebox').swipebox();
-    $.each($(".polaroid-images a"), function(i, element) {
-      setTimeout(function() {
-        $(element).addClass(["rotate-5", "rotate-m5", "rotate-2"][getRandomInt(0,2)]);
-      }, 500);
-    });
   });
 
 - if @nfo.any?
@@ -59,7 +51,7 @@
         .col-md-1
           .badge= track.duration
         .col-md-2
-          %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing{ "style" => "display:none;" }
+          %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing.hidden
           %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id }
 
 :javascript

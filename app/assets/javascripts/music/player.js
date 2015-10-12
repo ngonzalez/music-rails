@@ -18,11 +18,11 @@ function init_players(tracks) {
   }
   function processing_btn(element) {
     element.hide();
-    element.parent().find(".processing").show();
+    element.parent().find(".processing").removeClass("hidden");
   }
   function processing_complete_btn(element) {
     element.show();
-    element.parent().find(".processing").hide();
+    element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
   function enable(element, data) {

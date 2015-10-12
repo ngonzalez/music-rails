@@ -2,7 +2,7 @@
   = javascript_include_tag :music
 
 .container
-  = form_tag search_music_index_path, { method: :get, "data-transition" => "none" } do
+  = form_tag search_music_index_path, default_transition.merge({ method: :get }) do
     = hidden_field_tag :rows, search_rows
     .form-group
       .col-md-5
@@ -20,6 +20,6 @@
       %li
         %span.label.label-info= infos[:folder].upcase
         %span.badge= infos[:format_name]
-        %strong= link_to highlight(infos[:name], search_terms_array),                  |
-                         music_path(release_id, params.slice("format", "q", "rows")),  |
-                         { "data-transition" => "none" }                               |
+        %strong= link_to highlight(infos[:name], search_terms_array),  |
+                         music_path(release_id, default_params),       |
+                         default_transition                            |
