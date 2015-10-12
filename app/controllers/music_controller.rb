@@ -49,7 +49,7 @@ class MusicController < ApplicationController
   end
 
   def get_images
-    Image.where(release_id: params[:id]).reject{|image| image.file_type == "nfo" }
+    Image.where(release_id: params[:id]).decorate.reject{|image| image.file_type == "nfo" }
   end
 
   def get_nfo
