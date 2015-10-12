@@ -68,7 +68,8 @@ CREATE TABLE images (
     file_name character varying NOT NULL,
     file_type character varying,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    deleted_at timestamp without time zone
 );
 
 
@@ -103,7 +104,8 @@ CREATE TABLE releases (
     details text,
     formatted_name character varying,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    deleted_at timestamp without time zone
 );
 
 
@@ -159,7 +161,8 @@ CREATE TABLE tracks (
     file_uid character varying,
     file_name character varying,
     process_id character varying,
-    number character varying
+    number character varying,
+    deleted_at timestamp without time zone
 );
 
 
@@ -191,7 +194,8 @@ CREATE TABLE uploads (
     file_uid character varying NOT NULL,
     file_name character varying NOT NULL,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    deleted_at timestamp without time zone
 );
 
 
@@ -212,6 +216,41 @@ CREATE SEQUENCE uploads_id_seq
 --
 
 ALTER SEQUENCE uploads_id_seq OWNED BY uploads.id;
+
+
+--
+-- Name: versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE versions (
+    id integer NOT NULL,
+    item_type character varying NOT NULL,
+    item_id integer NOT NULL,
+    event character varying NOT NULL,
+    whodunnit character varying,
+    object text,
+    created_at timestamp without time zone,
+    object_changes text
+);
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
 
 
 --
@@ -240,6 +279,13 @@ ALTER TABLE ONLY tracks ALTER COLUMN id SET DEFAULT nextval('tracks_id_seq'::reg
 --
 
 ALTER TABLE ONLY uploads ALTER COLUMN id SET DEFAULT nextval('uploads_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
 
 
 --
@@ -275,10 +321,25 @@ ALTER TABLE ONLY uploads
 
 
 --
+-- Name: versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY versions
+    ADD CONSTRAINT versions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_tracks_on_format_name ON tracks USING btree (format_name);
+
+
+--
+-- Name: index_versions_on_item_type_and_item_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_versions_on_item_type_and_item_id ON versions USING btree (item_type, item_id);
 
 
 --
@@ -335,4 +396,8 @@ INSERT INTO schema_migrations (version) VALUES ('20151009015928');
 INSERT INTO schema_migrations (version) VALUES ('20151010153614');
 
 INSERT INTO schema_migrations (version) VALUES ('20151012032252');
+
+INSERT INTO schema_migrations (version) VALUES ('20151012034225');
+
+INSERT INTO schema_migrations (version) VALUES ('20151012034723');
 

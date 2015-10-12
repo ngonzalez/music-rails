@@ -34,6 +34,10 @@ source "https://rubygems.org" do
 
   gem 'uuid'
 
+  gem 'paranoia'
+
+  gem 'paper_trail'
+
   group :development, :test do
     gem 'pry'
   end

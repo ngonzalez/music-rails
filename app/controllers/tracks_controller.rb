@@ -1,11 +1,11 @@
 class TracksController < ApplicationController
   def show
     track = Track.find(params[:id]).decorate
+    response = { id: track.id }
     if track.file
-      response = { id: track.id, url: track.url }
-    else
-      track.update! process_id: LameWorker.perform_async(track.id) if !track.process_id
-      response = { id: track.id }
+      response.merge! url: track.url
+    elsif !track.process_id
+      track.update! process_id: LameWorker.perform_async(track.id)
     end
     respond_to do |format|
       format.json do
