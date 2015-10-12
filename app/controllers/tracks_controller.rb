@@ -4,12 +4,8 @@ class TracksController < ApplicationController
     if track.file
       response = { id: track.id, url: track.url }
     else
-      if track.processing?
-        response = { state: track.state }
-      elsif !track.state
-        track.update! state: "processing"
-        response = { id: LameWorker.perform_async(track.id) }
-      end
+      track.update! process_id: LameWorker.perform_async(track.id) if !track.process_id
+      response = { id: track.id }
     end
     respond_to do |format|
       format.json do

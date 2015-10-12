@@ -158,7 +158,7 @@ CREATE TABLE tracks (
     updated_at timestamp without time zone,
     file_uid character varying,
     file_name character varying,
-    state character varying,
+    process_id character varying,
     number character varying
 );
 
@@ -333,4 +333,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151004172324');
 INSERT INTO schema_migrations (version) VALUES ('20151009015928');
 
 INSERT INTO schema_migrations (version) VALUES ('20151010153614');
+
+INSERT INTO schema_migrations (version) VALUES ('20151012032252');
 

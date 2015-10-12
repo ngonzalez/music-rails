@@ -10,7 +10,7 @@ class LameWorker
       if !track.file
         file_path = PUBLIC_PATH + [ track.release.decorate.path, track.name ].join("/")
         if track.format_name =~ /MP3/
-          track.update! state: "ready", file: File.open(file_path)
+          track.update! process_id: nil, file: File.open(file_path)
         else
           file_path = Shellwords.escape file_path
           if track.format_name == "FLAC"
@@ -21,12 +21,12 @@ class LameWorker
           end
           temp_file_mp3 = "/tmp/#{track.id}.mp3"
           encode temp_file_wav || file_path, temp_file_mp3
-          track.update! state: "ready", file: File.open(temp_file_mp3)
+          track.update! process_id: nil, file: File.open(temp_file_mp3)
         end
       end
     rescue Exception => e
       puts e.inspect
-      track.update! state: nil
+      track.update! process_id: nil
     ensure
       FileUtils.rm_f temp_file_mp3 if temp_file_mp3 && File.exists?(temp_file_mp3)
       FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)

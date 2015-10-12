@@ -85,7 +85,7 @@ namespace "music" do
     t1 = Time.now ; count = 0
 
     main_folders = ["dnb","hc","other"]
-    allowed_formats = ["mp3","mp4","m4a","flac","wav", "aiff"]
+    allowed_formats = ["mp3","mp4","m4a","flac","wav","aiff"]
 
     main_folders.each do |folder|
 
@@ -213,8 +213,8 @@ namespace "music" do
     font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
     Release.where(last_verified_at: nil, details: nil).includes(:images).order("id desc").each do |release|
       begin
-        next if release.images.select{|item| item.file_type == "nfo" }.any?
-        Dir[PUBLIC_PATH + release.decorate.path + "/*.nfo"].each do |file|
+        next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
+        Dir[PUBLIC_PATH + release.decorate.path + "/*.#{NFO_TYPE}"].each do |file|
           File.open(temp_file, 'w:UTF-8') do |f|
             File.open(file).each_line do |line|
               # Remove ^M when copy files from Windows
@@ -223,7 +223,7 @@ namespace "music" do
             end
           end
           content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-          release.images.create! file: content, file_type: 'nfo'
+          release.images.create! file: content, file_type: NFO_TYPE
         end
       rescue
         next
