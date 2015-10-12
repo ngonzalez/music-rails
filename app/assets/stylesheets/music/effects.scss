@@ -95,34 +95,12 @@
           transform: rotate(#{$value}deg);
 }
 
-@include keyframes(spin_10) {
-  0% {
-    @include transform-rotate(0);
-  }
-  100% {
-    @include transform-rotate(10);
-  }
-}
-
-@mixin rotate_10($time) {
-  @include animation-name(spin_10);
-  @include animation-duration($time);
-  @include animation-iteration-count(1);
-  @include animation-direction(alternate);
-  @include animation-timing-function(linear);
-  @include animation-fill-mode(forwards);
-}
-
-.rotate-10 {
-  @include rotate_10(0.5s);
-}
-
 @include keyframes(spin_5) {
   0% {
     @include transform-rotate(0);
   }
   100% {
-    @include transform-rotate(-5);
+    @include transform-rotate(5);
   }
 }
 
@@ -137,4 +115,48 @@
 
 .rotate-5 {
   @include rotate_5(0.5s);
+}
+
+@include keyframes(spin_m5) {
+  0% {
+    @include transform-rotate(0);
+  }
+  100% {
+    @include transform-rotate(-5);
+  }
+}
+
+@mixin rotate_m5($time) {
+  @include animation-name(spin_m5);
+  @include animation-duration($time);
+  @include animation-iteration-count(1);
+  @include animation-direction(alternate);
+  @include animation-timing-function(linear);
+  @include animation-fill-mode(forwards);
+}
+
+.rotate-m5 {
+  @include rotate_m5(0.5s);
+}
+
+@include keyframes(spin_2) {
+  0% {
+    @include transform-rotate(0);
+  }
+  100% {
+    @include transform-rotate(2);
+  }
+}
+
+@mixin rotate_2($time) {
+  @include animation-name(spin_2);
+  @include animation-duration($time);
+  @include animation-iteration-count(1);
+  @include animation-direction(alternate);
+  @include animation-timing-function(linear);
+  @include animation-fill-mode(forwards);
+}
+
+.rotate-2 {
+  @include rotate_2(0.5s);
 }

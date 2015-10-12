@@ -2,7 +2,7 @@ class Track < ActiveRecord::Base
   belongs_to :release
 
   dragonfly_accessor :file do
-    storage_options {|a| { path: "tracks/#{id}" } }
+    storage_options {|a| { path: "tracks/%s" % [ UUID.new.generate ] } }
   end
 
   searchable do

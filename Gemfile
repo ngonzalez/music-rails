@@ -32,6 +32,8 @@ source "https://rubygems.org" do
   gem 'sinatra', :require => nil
   gem 'sidekiq', github: 'mperham/sidekiq'
 
+  gem 'uuid'
+
   group :development, :test do
     gem 'pry'
   end

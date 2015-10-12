@@ -4,9 +4,8 @@ namespace "music" do
   desc "update data"
   task update: :environment do
     [ "load_data", "import_images", "import_nfo",
-      "check_releases", "clean_images",
-      "set_format_names", "set_formatted_names
-      set_track_numbers"].each do |name|
+      "check_releases", "set_format_names",
+      "set_formatted_names", "set_track_numbers"].each do |name|
       Rake::Task["music:#{name}"].execute
     end
   end
@@ -29,7 +28,7 @@ namespace "music" do
         next if array.include? year
         str = string.gsub("_", " ")
         next if str.blank?
-        next if ["WEB", "VA"].include?(str)
+        next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str)
         array << str
       }.join " "
     end
@@ -195,7 +194,7 @@ namespace "music" do
   desc "import images"
   task import_images: :environment do
     allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
-    Release.where(last_verified_at: nil, details: nil).find_each do |release|
+    Release.where(last_verified_at: nil, details: nil).each do |release|
       path = [PUBLIC_PATH, release.decorate.path].join "/"
       allowed_formats.each do |format|
         Dir["#{path}/*.#{format}"].each do |path|
@@ -215,7 +214,7 @@ namespace "music" do
     Release.where(last_verified_at: nil, details: nil).includes(:images).order("id desc").each do |release|
       begin
         next if release.images.select{|item| item.file_type == "nfo" }.any?
-        Dir[PUBLIC_PATH + release.path + "/*.nfo"].each do |file|
+        Dir[PUBLIC_PATH + release.decorate.path + "/*.nfo"].each do |file|
           File.open(temp_file, 'w:UTF-8') do |f|
             File.open(file).each_line do |line|
               # Remove ^M when copy files from Windows

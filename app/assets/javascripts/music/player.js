@@ -40,9 +40,11 @@ function init_players(tracks) {
       }
       enable_btn(element);
       window.current_file = data.id;
+      console.log("new Audio: " + data.media_url);
       window.player = new Audio(data.media_url);
       window.player.play();
       window.player.addEventListener("ended", function() {
+        console.log("audio ended: " + data.id + " / " + window.current_file);
         stop_player();
         reset_btn(element);
       });
@@ -68,6 +70,7 @@ function init_players(tracks) {
     }
     $.each($(".play-btn"), function(i, element) {
       var data = get_data($(element));
+      if (!data) return;
       if (!data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {

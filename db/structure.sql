@@ -155,7 +155,11 @@ CREATE TABLE tracks (
     sample_rate integer,
     format_name character varying,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    file_uid character varying,
+    file_name character varying,
+    state character varying,
+    number character varying
 );
 
 
@@ -319,4 +323,14 @@ INSERT INTO schema_migrations (version) VALUES ('20150920123243');
 INSERT INTO schema_migrations (version) VALUES ('20150924012943');
 
 INSERT INTO schema_migrations (version) VALUES ('20150926131407');
+
+INSERT INTO schema_migrations (version) VALUES ('20151004150048');
+
+INSERT INTO schema_migrations (version) VALUES ('20151004160152');
+
+INSERT INTO schema_migrations (version) VALUES ('20151004172324');
+
+INSERT INTO schema_migrations (version) VALUES ('20151009015928');
+
+INSERT INTO schema_migrations (version) VALUES ('20151010153614');
 

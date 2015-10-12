@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151009015928) do
+ActiveRecord::Schema.define(version: 20151010153614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,9 +37,9 @@ ActiveRecord::Schema.define(version: 20151009015928) do
   end
 
   create_table "tracks", force: :cascade do |t|
-    t.integer  "release_id",        null: false
-    t.string   "name",              null: false
-    t.string   "format",            null: false
+    t.integer  "release_id",  null: false
+    t.string   "name",        null: false
+    t.string   "format",      null: false
     t.string   "artist"
     t.string   "title"
     t.string   "album"
@@ -54,8 +54,6 @@ ActiveRecord::Schema.define(version: 20151009015928) do
     t.datetime "updated_at"
     t.string   "file_uid"
     t.string   "file_name"
-    t.string   "encoded_file_uid"
-    t.string   "encoded_file_name"
     t.string   "state"
     t.string   "number"
   end

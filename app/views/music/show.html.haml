@@ -9,12 +9,30 @@
       = link_to search_music_index_path(params.slice("q", "rows")), { "data-transition" => "none" } do
         %i.fa.fa-list.fa-4
 
+:scss
+  @import "mixins/_image_set.scss";
+  #{thumbs_scss}
+
 - if @images.any?
   .row.margin-20
     .polaroid-images.margin-20
       - @images.each do |image|
-        = link_to image.file.url, class: "swipebox" do
-          = image_tag image.file.thumb("300x250>").url
+        = link_to image.file.url, class: :swipebox do
+          %div{ id: "img-#{image.id}" }
+
+:javascript
+  function getRandomInt(min, max) {
+    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Math/random
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  $(document).ready(function(e) {
+    $('.swipebox').swipebox();
+    $.each($(".polaroid-images a"), function(i, element) {
+      setTimeout(function() {
+        $(element).addClass(["rotate-5", "rotate-m5", "rotate-2"][getRandomInt(0,2)]);
+      }, 500);
+    });
+  });
 
 - if @nfo.any?
   .row
@@ -46,11 +64,5 @@
 
 :javascript
   $(document).ready(function(e) {
-    init_players(#{track_files(@release).to_json});
-    $('.swipebox').swipebox();
-    $.each($(".polaroid-images a"), function(i, element) {
-      $(element).find("img").load(function() {
-        $(element).addClass(["rotate-5", "rotate-10"][parseInt(Math.random() * 10) % 2])
-      });
-    });
+    init_players(#{track_files.to_json});
   });

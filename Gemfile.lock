@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/mperham/sidekiq.git
-  revision: 0b59ed8c2bc74823ae579b99e37295bbdb2b416b
+  revision: f277cae8bc6dbd6fac2227e70f5b4d55d92498d3
   specs:
     sidekiq (3.5.1)
       celluloid (~> 0.17.2)
@@ -103,7 +103,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    highline (1.7.7)
+    highline (1.7.8)
     hitimes (1.2.3)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
@@ -120,6 +120,8 @@ GEM
     json (1.8.3)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
+    macaddr (1.7.1)
+      systemu (~> 2.6.2)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
@@ -141,7 +143,7 @@ GEM
       slop (~> 3.4)
     puma (2.14.0)
     rack (1.6.4)
-    rack-cache (1.2)
+    rack-cache (1.5.0)
       rack (>= 0.4)
     rack-cors (0.4.0)
     rack-protection (1.5.3)
@@ -181,7 +183,7 @@ GEM
       builder (>= 2.1.2)
     ruby_parser (3.7.1)
       sexp_processor (~> 4.1)
-    sass (3.4.18)
+    sass (3.4.19)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -194,7 +196,7 @@ GEM
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
     slop (3.6.0)
-    sprockets (3.3.5)
+    sprockets (3.4.0)
       rack (> 1, < 3)
     sprockets-rails (2.3.3)
       actionpack (>= 3.0)
@@ -211,6 +213,7 @@ GEM
     swipebox (1.4.1)
       rails (>= 3.1, < 5.0)
       sass-rails (>= 3.1, < 6.0)
+    systemu (2.6.5)
     taglib-ruby (0.7.0)
     thor (0.19.1)
     thread_safe (0.3.5)
@@ -222,6 +225,8 @@ GEM
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    uuid (2.3.8)
+      macaddr (~> 1.0)
 
 PLATFORMS
   ruby
@@ -249,3 +254,4 @@ DEPENDENCIES
   swipebox
   taglib-ruby!
   uglifier!
+  uuid
