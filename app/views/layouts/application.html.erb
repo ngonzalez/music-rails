@@ -11,6 +11,7 @@
   </head>
   <body>
     <%= yield %>
+    <a href="#0" class="cd-top">Top</a>
     <script type="text/javascript">
       $(document).bind("mobileinit", function() {
         $.extend($.mobile, <%= default_transition.to_json.html_safe %>);

@@ -71,6 +71,7 @@ function init_players(tracks) {
       complete();
       enable_btn(element);
       init_player();
+      window.current_file = data.id;
       window.player.preload = false;
       window.player.load(data.media_url);
       window.player.play();
@@ -96,9 +97,7 @@ function init_players(tracks) {
       var data = tracks[parseInt($(element).data("id"))]
       if (!data) return;
       if (!data.media_url) $(element).addClass("grey");
-      if (window.player && data.media_url) {
-        if (window.player.src == data.media_url) enable_btn($(element));
-      }
+      if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
         data.media_url ? enable($(element), data) : loading($(element), data);
       });
