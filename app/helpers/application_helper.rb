@@ -21,7 +21,6 @@ module ApplicationHelper
   def thumbs_scss
     @images.each_with_object("") do |image, string|
       thumb = image.file.thumb("300x250>") ; thumb_high = image.file.thumb("600x500>")
-      # https://github.com/ngonzalez/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/mixins/_image_set.scss
       string << "#img-#{image.id} { @include image-set('%s', '%s') { width: %spx; height: %spx; } }" % [
         thumb.url, thumb_high.url, thumb.width, thumb.height
       ]
