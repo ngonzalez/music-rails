@@ -38,20 +38,20 @@
   .row
     %ul
       %li
-        .col-md-1
+        .col-md-2
           = track.link_to_search :artist
-        .col-md-1
+        .col-md-2
           = track.title
         .col-md-1
           = track.album
-        .col-md-1
+        .col-md-2
           = track.genre
         .col-md-1
           = track.link_to_search :year
         .col-md-1
           .badge= track.duration
         .col-md-2
-          %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing.hidden
+          %i.fa.fa-circle-o-notch.fa-4.fa-spin.processing.hidden.grey-dark
           %i.fa.fa-play.fa-4.play-btn{ "data-id" => track.id }
 
 :javascript

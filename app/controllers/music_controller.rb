@@ -72,13 +72,14 @@ class MusicController < ApplicationController
           name: release.formatted_name,
           folder: release.folder,
           format_name: track.format_name,
-          url: music_url(release, format: params.slice("format"))
+          url: music_url(release, format: params.slice("format")),
+          year: track.year.to_i
         }
       rescue
         next
       end
     end
-    return hash.sort_by{|k, v| v[:name] }
+    return hash.sort_by{|k, v| v[:year] || 0 }.reverse
   end
 
 end

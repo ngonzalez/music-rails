@@ -3,7 +3,7 @@ class TracksController < ApplicationController
     track = Track.find(params[:id]).decorate
     response = { id: track.id }
     if track.file
-      response.merge! url: track.url
+      response.merge! media_url: track.media_url
     elsif !track.process_id
       track.update! process_id: LameWorker.perform_async(track.id)
     end

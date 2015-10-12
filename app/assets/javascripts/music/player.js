@@ -25,29 +25,56 @@ function init_players(tracks) {
     element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
+  function init_player() {
+    function is_safari() {
+      return window.navigator.userAgent.match("Safari").length > 0;
+    }
+    function audio_tag() {
+      if (is_safari()) {
+        if ($("audio").length == 0) {
+          $("head").append(
+            $(document.createElement("audio")).addClass("hidden")
+          );
+        }
+        return document.getElementsByTagName("audio")[0];
+      } else {
+        return new Audio();
+      }
+    }
+    window.player = $.extend(audio_tag(), {
+      stop: function() {
+        window.player.src = "";
+        window.player = null;
+      },
+      load: function(url) {
+        if (is_safari()) {
+          window.player.src = url;
+        } else {
+          $(window.player).append(
+            $(document.createElement("source"))
+              .attr("src", url)
+              .attr("type", "audio/mpeg")
+          );
+        }
+      }
+    });
+  }
   function enable(element, data) {
-    function stop_player() {
-      window.player.src = "";
-      window.player = undefined;
+    function complete() {
+      if (window.player) window.player.stop();
+      clear_active();
     }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
       window.player.paused ? window.player.play() : window.player.pause();
     } else {
-      if (window.player) {
-        stop_player();
-        clear_active();
-      }
+      complete();
       enable_btn(element);
-      window.current_file = data.id;
-      console.log("new Audio: " + data.media_url);
-      window.player = new Audio(data.media_url);
+      init_player();
+      window.player.preload = false;
+      window.player.load(data.media_url);
       window.player.play();
-      window.player.addEventListener("ended", function() {
-        console.log("audio ended: " + data.id + " / " + window.current_file);
-        stop_player();
-        reset_btn(element);
-      });
+      window.player.addEventListener("ended", complete);
     }
   }
   function loading(element, data) {
@@ -55,8 +82,8 @@ function init_players(tracks) {
       processing_btn(element);
       intervals[data.id] = setInterval(function() {
         $.get(data.url, function(response) {
-          if (response.url) {
-            tracks[data.id].media_url = response.url;
+          if (response.media_url) {
+            tracks[data.id].media_url = response.media_url;
             processing_complete_btn(element);
             clearInterval(intervals[data.id]);
           }
@@ -65,14 +92,13 @@ function init_players(tracks) {
     }
   }
   function observe() {
-    function get_data(element) {
-      return tracks[parseInt(element.data("id"))];
-    }
     $.each($(".play-btn"), function(i, element) {
-      var data = get_data($(element));
+      var data = tracks[parseInt($(element).data("id"))]
       if (!data) return;
       if (!data.media_url) $(element).addClass("grey");
-      if (window.current_file == data.id) enable_btn($(element));
+      if (window.player && data.media_url) {
+        if (window.player.src == data.media_url) enable_btn($(element));
+      }
       $(element).click(function(e) {
         data.media_url ? enable($(element), data) : loading($(element), data);
       });

@@ -2,8 +2,9 @@
 <html>
   <head>
     <title>Music</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-    <%= stylesheet_link_tag :application, media: 'all' %>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+    <%= stylesheet_link_tag :application, media: :all %>
     <%= javascript_include_tag :application %>
     <%= csrf_meta_tags %>
     <%= yield(:head) if defined?(:head) %>
@@ -12,9 +13,7 @@
     <%= yield %>
     <script type="text/javascript">
       $(document).bind("mobileinit", function() {
-        $.extend($.mobile, {
-          defaultPageTransition: "none"
-        });
+        $.extend($.mobile, <%= default_transition.to_json.html_safe %>);
       });
     </script>
   </body>

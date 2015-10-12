@@ -13,7 +13,7 @@ class TrackDecorator < Draper::Decorator
       h.highlight object.send(name), h.search_terms_array
     end
   end
-  def url
+  def media_url
     h.asset_path object.file.url
   end
 end

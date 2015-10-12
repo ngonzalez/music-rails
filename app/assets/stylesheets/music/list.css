@@ -5,25 +5,21 @@
   margin: 10px;
 }
 .shadow-light {
-  text-shadow: 2px 2px 1px rgba(150, 150, 150, 0.4);
 }
 ul li a :hover {
   text-decoration: none;
 }
-ul li.img {
-  display: inline;
-}
 i.grey {
   color: #DDD;
 }
-/**
- * Polaroid Images
- */
+i.grey-dark {
+  opacity: 0.95;
+}
 .polaroid-images a {
 	background: white;
 	display: inline;
 	float: left;
 	margin: 0 15px 30px;
 	padding: 10px 10px 25px;
-	box-shadow: 0 4px 6px rgba(0,0,0, 0.3);
+	box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
 }
