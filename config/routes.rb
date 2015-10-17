@@ -5,7 +5,7 @@ Rails.application.routes.draw do
       get :search
     end
   end
-  
+
   resources :stats, only: [:index]
 
   resources :tracks, only: [:show]

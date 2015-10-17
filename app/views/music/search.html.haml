@@ -2,7 +2,7 @@
   = javascript_include_tag :music
 
 .container
-  = form_tag search_music_index_path, default_transition.merge({ method: :get }) do
+  = form_tag search_music_index_path, default_transition.merge(method: :get) do
     = hidden_field_tag :rows, search_rows
     .form-group
       .col-md-5
@@ -11,9 +11,6 @@
         %button.btn.btn-default{ type: "submit" } Search
 
   .clear
-
-  %small.margin-20
-    = "%s results" % [ @tracks.length ]
 
   %ol
     - @tracks.each do |release_id, infos|

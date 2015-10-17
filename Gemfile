@@ -14,6 +14,7 @@ source "https://rubygems.org" do
   gem 'uglifier'
   gem 'bootstrap-sass'
   gem 'sass-rails'
+  gem 'tilt', require: 'tilt/sass'
   gem 'haml-rails'
   gem 'font-awesome-sass'
   gem 'jquery-rails'

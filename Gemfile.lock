@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: git://github.com/mperham/sidekiq.git
-  revision: 0fd04ba0ea86fb44c3b8e34e98aea8a877f1b2ed
+  revision: 19501b27ef222dca0627aa6888b800805bd1f6aa
   specs:
     sidekiq (3.5.1)
       celluloid (~> 0.17.2)
@@ -261,5 +261,6 @@ DEPENDENCIES
   sunspot_solr!
   swipebox
   taglib-ruby!
+  tilt!
   uglifier!
   uuid

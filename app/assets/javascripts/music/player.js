@@ -26,42 +26,24 @@ function init_players(tracks) {
     element.removeClass("grey");
   }
   function init_player() {
-    function is_safari() {
-      return window.navigator.userAgent.match("Safari").length > 0;
-    }
-    function audio_tag() {
-      if (is_safari()) {
-        if ($("audio").length == 0) {
-          $("head").append(
-            $(document.createElement("audio")).addClass("hidden")
-          );
-        }
-        return document.getElementsByTagName("audio")[0];
-      } else {
-        return new Audio();
-      }
-    }
-    window.player = $.extend(audio_tag(), {
+    window.player = $.extend(new Audio(), {
       stop: function() {
         window.player.src = "";
         window.player = null;
       },
       load: function(url) {
-        if (is_safari()) {
-          window.player.src = url;
-        } else {
-          $(window.player).append(
-            $(document.createElement("source"))
-              .attr("src", url)
-              .attr("type", "audio/mpeg")
-          );
-        }
+        $(window.player).append(
+          $(document.createElement("source"))
+            .attr("src", url)
+            .attr("type", "audio/mpeg")
+        );
       }
     });
   }
   function enable(element, data) {
     function complete() {
       if (window.player) window.player.stop();
+      window.current_file = null;
       clear_active();
     }
     if (element.hasClass("active")) {
