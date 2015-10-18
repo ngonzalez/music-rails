@@ -25,22 +25,23 @@ function init_players(tracks) {
     element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
-  function init_player() {
-    window.player = $.extend(new Audio(), {
-      stop: function() {
-        window.player.src = "";
-        window.player = null;
-      },
-      load: function(url) {
-        $(window.player).append(
-          $(document.createElement("source"))
-            .attr("src", url)
-            .attr("type", "audio/mpeg")
-        );
-      }
-    });
-  }
   function enable(element, data) {
+    function init_player(url, callback) {
+      window.player = $.extend(new Audio(url), {
+        stop: function() {
+          window.player.src = "";
+          window.player = null;
+        },
+        toggle: function() {
+          if (window.player.paused) {
+            window.player.play();
+          } else {
+            window.player.pause();
+          }
+        }
+      });
+      window.player.addEventListener("ended", callback);
+    }
     function complete() {
       if (window.player) window.player.stop();
       window.current_file = null;
@@ -48,16 +49,13 @@ function init_players(tracks) {
     }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
-      window.player.paused ? window.player.play() : window.player.pause();
+      window.player.toggle();
     } else {
       complete();
       enable_btn(element);
-      init_player();
       window.current_file = data.id;
-      window.player.preload = false;
-      window.player.load(data.media_url);
+      init_player(data.media_url, complete);
       window.player.play();
-      window.player.addEventListener("ended", complete);
     }
   }
   function loading(element, data) {
@@ -77,7 +75,6 @@ function init_players(tracks) {
   function observe() {
     $.each($(".play-btn"), function(i, element) {
       var data = tracks[parseInt($(element).data("id"))]
-      if (!data) return;
       if (!data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
@@ -85,6 +82,7 @@ function init_players(tracks) {
       });
     });
   }
+  if (!tracks) return;
   $(document).ready(function() {
     observe();
   });
