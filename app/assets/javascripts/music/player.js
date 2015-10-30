@@ -40,7 +40,10 @@ function init_players(tracks) {
           }
         }
       });
+      // window.player.addEventListener("canplay", window.player.play);
       window.player.addEventListener("ended", callback);
+      window.player.load();
+      window.player.play();
     }
     function complete() {
       if (window.player) window.player.stop();
@@ -55,7 +58,6 @@ function init_players(tracks) {
       enable_btn(element);
       window.current_file = data.id;
       init_player(data.media_url, complete);
-      window.player.play();
     }
   }
   function loading(element, data) {

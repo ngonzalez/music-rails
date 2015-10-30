@@ -8,3 +8,5 @@ ALLOWED_METRICS = ["format_name", "genre", "year", "bitrate"]
 PUBLIC_PATH = "/usr/local/var/www"
 
 NFO_TYPE = "nfo"
+
+HOST_NAME = "192.168.2.11"
