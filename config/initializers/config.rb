@@ -10,3 +10,5 @@ PUBLIC_PATH = "/usr/local/var/www"
 NFO_TYPE = "nfo"
 
 HOST_NAME = "192.168.2.11"
+
+DEFAULT_ENCODING = "mp3"

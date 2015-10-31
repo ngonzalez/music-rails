@@ -54,7 +54,7 @@ function init_players(tracks) {
       element.toggleClass("pulsate");
       window.player.toggle();
     } else {
-      complete();
+      if (window.player) complete();
       enable_btn(element);
       window.current_file = data.id;
       init_player(data.media_url, complete);
@@ -75,6 +75,7 @@ function init_players(tracks) {
     }
   }
   function observe() {
+    if (!tracks) return;
     $.each($(".play-btn"), function(i, element) {
       var data = tracks[parseInt($(element).data("id"))]
       if (!data.media_url) $(element).addClass("grey");
@@ -84,7 +85,6 @@ function init_players(tracks) {
       });
     });
   }
-  if (!tracks) return;
   $(document).ready(function() {
     observe();
   });
