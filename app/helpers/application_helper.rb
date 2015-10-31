@@ -12,10 +12,6 @@ module ApplicationHelper
     params[:q].split(/ and | or /)
   end
 
-  def search_params_for_label name
-    default_params.merge "q" => "label:%s" % [ name ]
-  end
-
   def search_rows
     100_000
   end

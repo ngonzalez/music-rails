@@ -59,9 +59,8 @@ class MusicController < ApplicationController
   def search_releases
     return [] if params[:q].blank?
     hash = {}
-    if params[:q] =~ /label:/
-      search_terms = params[:q].gsub("label:", "").downcase
-      Release.where("LOWER(UNACCENT(#{Release.table_name}.label_name)) = ?", search_terms).decorate.each{|release|
+    if params[:label]
+      Release.where(label_name: params[:label]).decorate.each{|release|
         hash[release.id] = release.search_infos
       }
     else

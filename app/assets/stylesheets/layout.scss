@@ -36,3 +36,13 @@ ul {
 i.fa-4 {
   font-size: 50px !important;
 }
+.label-as-badge {
+  border-radius: 1em;
+  margin-right: 5px;
+}
+.label-as-badge a,
+.label-as-badge a:hover,
+.label-as-badge a:visited {
+  color: #FFF;
+  text-decoration: none;
+}

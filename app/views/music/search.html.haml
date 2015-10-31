@@ -19,7 +19,7 @@
           .badge= infos[:format_name]
           - if infos[:label_name]
             %span.label.label-success.label-as-badge
-              = link_to highlight(infos[:label_name], search_terms_array), search_music_index_path(search_params_for_label(infos[:label_name])), default_transition
+              = link_to highlight(infos[:label_name], search_terms_array), search_music_index_path(default_params.merge(label: infos[:label_name])), default_transition
           %strong
             = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
 
