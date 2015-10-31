@@ -105,7 +105,10 @@ CREATE TABLE releases (
     formatted_name character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    label_name character varying,
+    year character varying,
+    format_name character varying
 );
 
 
@@ -400,4 +403,8 @@ INSERT INTO schema_migrations (version) VALUES ('20151012032252');
 INSERT INTO schema_migrations (version) VALUES ('20151012034225');
 
 INSERT INTO schema_migrations (version) VALUES ('20151012034723');
+
+INSERT INTO schema_migrations (version) VALUES ('20151031162241');
+
+INSERT INTO schema_migrations (version) VALUES ('20151031171634');
 

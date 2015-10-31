@@ -12,11 +12,16 @@ module ApplicationHelper
     params[:q].split(/ and | or /)
   end
 
+  def search_params_for_label name
+    default_params.merge "q" => "label:%s" % [ name ]
+  end
+
   def search_rows
     100_000
   end
 
   def asset_url asset
+    # [request.protocol, request.host_with_port, asset_path(asset)].join ""
     [request.protocol, HOST_NAME, asset_path(asset)].join ""
   end
 

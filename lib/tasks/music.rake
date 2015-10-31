@@ -4,10 +4,28 @@ namespace "music" do
   desc "update data"
   task update: :environment do
     [ "load_data", "import_images", "import_nfo",
-      "check_releases", "set_format_names",
+      "check_releases", "set_format_names_and_year",
       "set_formatted_names", "set_track_numbers"].each do |name|
       Rake::Task["music:#{name}"].execute
     end
+  end
+
+  desc "clear tracks"
+  task clear_tags: :environment do
+    Track.update_all file_uid: nil, file_name: nil, process_id: nil
+    FileUtils.rm_rf Rails.root + "public/system/dragonfly/tracks"
+    FileUtils.rm_rf "/tmp/dragonfly"
+    Rails.cache.clear
+  end
+
+  desc "set tags"
+  task set_tags: :environment do
+    Dir["/Users/enyo/Desktop/dnb/**"].each{|file|
+      name = file.split("/").last.split(".")[0].split("_").join(" ").titleize
+      File.read(file).split("\n").each{|line|
+        Release.find_by(name: line).update! label_namme: name
+      }
+    }
   end
 
   desc "set track numberss"
@@ -37,8 +55,8 @@ namespace "music" do
     end
   end
 
-  desc "set encoding format names"
-  task set_format_names: :environment do
+  desc "set encoding format names and year"
+  task set_format_names_and_year: :environment do
     def format_track_format track
       case track.format
         when /FLAC/ then "FLAC"
@@ -66,11 +84,12 @@ namespace "music" do
         when /\-WAV\-/ then "WAV"
       end
     end
-    Release.find_each do |release|
+    Release.joins(:tracks).includes(:tracks).each do |release|
       format_name = get_format_from_release_name release
+      format_name = format_track_format(release.tracks[0]) if !format_name
+      release.update! format_name: format_name, year: release.tracks[0].year.to_i
       release.tracks.where(format_name: nil).each do |track|
-        format_name = format_track_format(track) if !format_name
-        track.update format_name: format_name
+        track.update! format_name: format_track_format(track)
       end
     end
   end

@@ -9,18 +9,19 @@
         = text_field_tag :q, params[:q], class: "form-control"
       .col-md-5
         %button.btn.btn-default{ type: "submit" } Search
-
   .clear
 
   %ol
-    - @tracks.each do |release_id, infos|
+    - @releases.each do |release_id, infos|
       %li
         %h4
           .label.label-info= infos[:folder].upcase
           .badge= infos[:format_name]
-          %strong= link_to highlight(infos[:name], search_terms_array),  |
-                           music_path(release_id, default_params),       |
-                           default_transition                            |
+          - if infos[:label_name]
+            %span.label.label-success.label-as-badge
+              = link_to highlight(infos[:label_name], search_terms_array), search_music_index_path(search_params_for_label(infos[:label_name])), default_transition
+          %strong
+            = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
 
   %small.margin-20
     = "Page rendered in %s seconds - %s" % [ Time.now - @t1, Time.now ]
