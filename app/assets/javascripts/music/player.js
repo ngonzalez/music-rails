@@ -57,7 +57,8 @@ function init_players(tracks) {
       if (window.player) complete();
       enable_btn(element);
       window.current_file = data.id;
-      init_player(data.media_url, complete);
+      var url = document.location.protocol + "//" + document.location.host + data.media_url;
+      init_player(url, complete);
     }
   }
   function loading(element, data) {

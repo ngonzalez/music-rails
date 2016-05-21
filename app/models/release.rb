@@ -10,5 +10,6 @@ class Release < ActiveRecord::Base
 
   searchable do
     text :formatted_name
+    text :label_name
   end
 end

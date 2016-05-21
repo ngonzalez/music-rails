@@ -15,6 +15,8 @@ class TrackDecorator < Draper::Decorator
   end
   def media_url
     return if !track.file_uid
+    # raise h.request.inspect
+    # raise h.asset_url(track.file.url).inspect
     return h.asset_url track.file.url
   end
 end

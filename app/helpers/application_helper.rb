@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def search_terms_array
-    params[:q].split(/ and | or /)
+    params[:label] || params[:q].split(/ and | or /)
   end
 
   def search_rows
@@ -17,8 +17,8 @@ module ApplicationHelper
   end
 
   def asset_url asset
+    return asset_path(asset)
     # [request.protocol, request.host_with_port, asset_path(asset)].join ""
-    [request.protocol, HOST_NAME, asset_path(asset)].join ""
   end
 
   def track_files
