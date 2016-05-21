@@ -60,9 +60,11 @@ class MusicController < ApplicationController
     return [] if params[:q].blank?
     hash = {}
     if params[:label]
-      Release.where(label_name: params[:label]).decorate.each{|release|
+      label_name = params[:label] if Release.pluck(:label_name).uniq.include? params[:label]
+      Release.where(label_name: label_name).decorate.each{|release|
         hash[release.id] = release.search_infos
       }
+      order = :year
     else
       search = Track.search(include: [:release]) {
         fulltext params[:q]
@@ -76,8 +78,9 @@ class MusicController < ApplicationController
           next
         end
       }
+      order = params[:q].scan(/\b\d{4}\b/) ? :id : :year
     end
-    return hash.sort_by{|k, v| v[:year] || 0 }.reverse
+    return hash.sort_by{|k, v| v[order] || 0 }.reverse
   end
 
 end

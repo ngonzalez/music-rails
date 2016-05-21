@@ -10,24 +10,6 @@ namespace "music" do
     end
   end
 
-  desc "clear tracks"
-  task clear_tags: :environment do
-    Track.update_all file_uid: nil, file_name: nil, process_id: nil
-    FileUtils.rm_rf Rails.root + "public/system/dragonfly/tracks"
-    FileUtils.rm_rf "/tmp/dragonfly"
-    Rails.cache.clear
-  end
-
-  desc "set tags"
-  task set_tags: :environment do
-    Dir["/Users/enyo/Desktop/dnb/**"].each{|file|
-      name = file.split("/").last.split(".")[0].split("_").join(" ").titleize
-      File.read(file).split("\n").each{|line|
-        Release.find_by(name: line).update! label_namme: name
-      }
-    }
-  end
-
   desc "set track numberss"
   task set_track_numbers: :environment do
     def format_number name
@@ -82,6 +64,7 @@ namespace "music" do
         when /\-FLAC\-/ then "FLAC"
         when /\-ALAC\-/ then "ALAC"
         when /\-WAV\-/ then "WAV"
+        when /\-AIFF\-/ then "AIFF"
       end
     end
     Release.joins(:tracks).includes(:tracks).each do |release|
@@ -101,126 +84,150 @@ namespace "music" do
 
     require 'taglib'
 
-    t1 = Time.now ; count = 0
+    def import_release folder, path, source, label_name
 
-    main_folders = ["dnb","hc","other"]
-    allowed_formats = ["mp3","mp4","m4a","flac","wav","aiff"]
+      release_name = path.split("/").last
 
-    main_folders.each do |folder|
+      allowed_formats = ["mp3","mp4","m4a","flac","wav","aiff"]
 
-      @directories = Dir["#{BASE_PATH}/#{folder}/**"]
+      return if Release.where(name: release_name, folder: folder).any?
 
-      puts "Update folder: #{BASE_PATH}/#{folder}/"
+      ActiveRecord::Base.transaction do
 
-      bar = ProgressBar.new @directories.count
+        begin
 
-      @directories.each do |path|
+          release = Release.find_by(name: release_name, folder: folder, source: source)
 
-        bar.increment!
+          release = Release.create!(name: release_name, folder: folder, source: source, label_name: label_name) if !release
 
-        release_name = path.split("/").last
+          allowed_formats.each do |format|
+            Dir["#{path}/*.#{format}"].each do |file|
 
-        next if Release.where(name: release_name, folder: folder).any?
+              track_name = file.split("/").last
 
-        ActiveRecord::Base.transaction do
+              track = release.tracks.find_by name: track_name
 
-          begin
+              if !track
 
-            release = Release.find_by(name: release_name, folder: folder)
+                track = release.tracks.new(name: track_name)
 
-            release = Release.create!(name: release_name, folder: folder) if !release
+                track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
 
-            allowed_formats.each do |format|
-              Dir["#{path}/*.#{format}"].each do |file|
+                TagLib::FileRef.open(file) do |infos|
 
-                track_name = file.split("/").last
-
-                track = release.tracks.find_by name: track_name
-
-                if !track
-
-                  track = release.tracks.new(name: track_name)
-
-                  track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
-
-                  TagLib::FileRef.open(file) do |infos|
-
-                    tag = infos.tag
-                    ["artist", "title", "album", "genre", "year"].each do |name|
-                      track.send("#{name}=", tag.send(name))
-                    end
-
-                    audio_properties = infos.audio_properties
-                    ["bitrate", "channels", "length", "sample_rate"].each do |name|
-                      track.send("#{name}=", audio_properties.send(name))
-                    end
-
+                  tag = infos.tag
+                  ["artist", "title", "album", "genre", "year"].each do |name|
+                    track.send("#{name}=", tag.send(name))
                   end
 
-                  track.save!
-
-                  count += 1
+                  audio_properties = infos.audio_properties
+                  ["bitrate", "channels", "length", "sample_rate"].each do |name|
+                    track.send("#{name}=", audio_properties.send(name))
+                  end
 
                 end
 
+                track.save!
+
               end
+
             end
-
-          rescue Exception => e
-
-            puts e.inspect
-
-            puts "FAILED: %s" % [ release_name ]
-
-            raise ActiveRecord::Rollback
-
           end
+
+        rescue Exception => e
+
+          puts e.inspect
+          puts "FAILED: %s" % [ release_name ]
+          raise ActiveRecord::Rollback
 
         end
 
       end
-
     end
 
-    puts "Updated %s records in %s" % [count, (Time.now - t1)]
+    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
+
+    ["dnb","hc","other"].each do |folder|
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
+          import_release folder, path, source, "--"
+        end
+      end
+    end
+
+    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
+      label_name = label_path.split("/").last
+      formatted_label_name = label_name.gsub("_"," ")
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
+          import_release "backup", path, source, formatted_label_name
+        end
+      end
+    end
+
+    # puts "Updated %s records in %s" % [count, (Time.now - t1)]
 
   end
 
   desc "check releases"
   task check_releases: :environment do
-    cmd = "cfv" # cfv 1.18.3
-    Release.where(last_verified_at: nil).order("id desc").each do |release|
-      release = release.decorate
-      next if !release.details.empty? && release.details.has_key?("sfv")
-      path = [PUBLIC_PATH, release.path].join "/"
-      if Dir["#{path}/*.sfv"].empty? # No SFV
-        release.update details: { "sfv" => "not found" }
-        next
-      end
-      details = case Dir.chdir(path) { %x[#{cmd}] }
-        when /badcrc/ then "badcrc"
-        when /chksum file errors/ then "chksum file errors"
-        when /not found/ then "missing files"
-      end
-      if details
-        release.update! details: { "sfv" => details }
-      else
-        release.update! last_verified_at: Time.now
-      end
-    end
+    # cmd = "cfv" # cfv 1.18.3
+    # Release.where(last_verified_at: nil).order("id desc").each do |release|
+    #   release = release.decorate
+    #   next if !release.details.empty? && release.details.has_key?("sfv")
+    #   path = [PUBLIC_PATH, release.path].join "/"
+    #   if Dir["#{path}/*.sfv"].empty? # No SFV
+    #     release.update details: { "sfv" => "not found" }
+    #     next
+    #   end
+    #   details = case Dir.chdir(path) { %x[#{cmd}] }
+    #     when /badcrc/ then "badcrc"
+    #     when /chksum file errors/ then "chksum file errors"
+    #     when /not found/ then "missing files"
+    #   end
+    #   if details
+    #     release.update! details: { "sfv" => details }
+    #   else
+    #     release.update! last_verified_at: Time.now
+    #   end
+    # end
   end
 
   desc "import images"
   task import_images: :environment do
     allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
-    Release.where(last_verified_at: nil, details: nil).each do |release|
-      path = [PUBLIC_PATH, release.decorate.path].join "/"
-      allowed_formats.each do |format|
-        Dir["#{path}/*.#{format}"].each do |path|
-          file_name = path.split("/").last
-          next if file_name =~ /.log./
-          next if release.images.where(file_name: file_name).any?
-          release.images.create! file: File.open(path)
+    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
+
+    ["dnb","hc","other"].each do |folder|
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
+          release = Release.find_by name: path.split("/").last
+          allowed_formats.each do |format|
+            Dir["#{path}/*.#{format}"].each do |path|
+              file_name = path.split("/").last
+              next if file_name =~ /.log./
+              next if release.images.where(file_name: file_name).any?
+              release.images.create! file: File.open(path)
+            end
+          end
+        end
+      end
+    end
+
+    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
+      label_name = label_path.split("/").last
+      formatted_label_name = label_name.gsub("_"," ")
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
+          release = Release.find_by name: path.split("/").last
+          allowed_formats.each do |format|
+            Dir["#{path}/*.#{format}"].each do |path|
+              file_name = path.split("/").last
+              next if file_name =~ /.log./
+              next if release.images.where(file_name: file_name).any?
+              release.images.create! file: File.open(path)
+            end
+          end
         end
       end
     end
@@ -230,24 +237,66 @@ namespace "music" do
   task import_nfo: :environment do
     temp_file = "/tmp/#{Time.now.to_i}"
     font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
-    Release.where(last_verified_at: nil, details: nil).includes(:images).order("id desc").each do |release|
-      begin
-        next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
-        Dir[PUBLIC_PATH + release.decorate.path + "/*.#{NFO_TYPE}"].each do |file|
-          File.open(temp_file, 'w:UTF-8') do |f|
-            File.open(file).each_line do |line|
-              # Remove ^M when copy files from Windows
-              # https://en.wikipedia.org/wiki/Code_page_437
-              f.write line.gsub("\C-M", "").force_encoding("CP437")
+
+    allowed_formats = ["nfo"]
+    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
+
+    ["dnb","hc","other"].each do |folder|
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
+          release = Release.find_by name: path.split("/").last
+          next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
+          allowed_formats.each do |format|
+            Dir["#{path}/*.#{format}"].each do |path|
+              file_name = path.split("/").last
+              begin
+                File.open(temp_file, 'w:UTF-8') do |f|
+                  File.open(path).each_line do |line|
+                    # Remove ^M when copy files from Windows
+                    # https://en.wikipedia.org/wiki/Code_page_437
+                    f.write line.gsub("\C-M", "").force_encoding("CP437")
+                  end
+                end
+                content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
+                release.images.create! file: content, file_type: NFO_TYPE
+              rescue
+                next
+              end
             end
           end
-          content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-          release.images.create! file: content, file_type: NFO_TYPE
         end
-      rescue
-        next
       end
     end
+
+    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
+      label_name = label_path.split("/").last
+      formatted_label_name = label_name.gsub("_"," ")
+      allowed_sources.each do |source|
+        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
+          release = Release.find_by name: path.split("/").last
+          next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
+          allowed_formats.each do |format|
+            Dir["#{path}/*.#{format}"].each do |path|
+              file_name = path.split("/").last
+              begin
+                File.open(temp_file, 'w:UTF-8') do |f|
+                  File.open(path).each_line do |line|
+                    # Remove ^M when copy files from Windows
+                    # https://en.wikipedia.org/wiki/Code_page_437
+                    f.write line.gsub("\C-M", "").force_encoding("CP437")
+                  end
+                end
+                content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
+                release.images.create! file: content, file_type: NFO_TYPE
+              rescue
+                next
+              end
+            end
+          end
+        end
+      end
+    end
+
     FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
 
