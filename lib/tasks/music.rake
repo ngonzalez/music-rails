@@ -76,7 +76,7 @@ namespace "music" do
 
     def import_release folder, path, source, label_name
       release_name = path.split("/").last
-      release = Release.find_by name: release_name, folder: folder, source: source
+      release = Release.find_by name: release_name
       return if release
 
       formatted_label_name = label_name.gsub("_"," ")
@@ -85,7 +85,7 @@ namespace "music" do
 
         begin
 
-          release = Release.create!(name: release_name, folder: folder, source: source, label_name: label_name)
+          release = Release.create!(name: path.split("/").last, folder: folder, source: source, label_name: label_name)
 
           ALLOWED_AUDIO_FORMATS.each do |format|
             Dir["#{path}/*.#{format}"].each do |file|
