@@ -3,23 +3,16 @@ namespace "music" do
 
   desc "update data"
   task update: :environment do
-    ["load_data", "set_format_names_and_year", "set_formatted_names", "set_track_numbers"].each do |name|
+    ["load_data", "set_details"].each do |name|
       Rake::Task["music:#{name}"].execute
     end
   end
 
-  desc "set track numberss"
-  task set_track_numbers: :environment do
+  desc "set details"
+  task set_details: :environment do
     def format_number name
       name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
     end
-    Track.where(number: nil).each do |track|
-      track.update! number: format_number(track.name)
-    end
-  end
-
-  desc "set formatted releases names"
-  task set_formatted_names: :environment do
     def format_name name
       year = name.match(/-(\d+)-/).to_s.gsub("-", "")
       name.gsub("_-_", "-").split("-").each_with_object([]){|string, array|
@@ -30,13 +23,6 @@ namespace "music" do
         array << str
       }.join " "
     end
-    Release.where(formatted_name: nil).each do |release|
-      release.update! formatted_name: format_name(release.name)
-    end
-  end
-
-  desc "set encoding format names and year"
-  task set_format_names_and_year: :environment do
     def format_track_format track
       case track.format
         when /FLAC/ then "FLAC"
@@ -65,6 +51,15 @@ namespace "music" do
         when /\-AIFF\-/ then "AIFF"
       end
     end
+    # Set Track Numbers
+    Track.where(number: nil).each do |track|
+      track.update! number: format_number(track.name)
+    end
+    # Set Release Formatted Name
+    Release.where(formatted_name: nil).each do |release|
+      release.update! formatted_name: format_name(release.name)
+    end
+    # Set Release Audio Format Name
     Release.joins(:tracks).includes(:tracks).each do |release|
       format_name = get_format_from_release_name release
       format_name = format_track_format(release.tracks[0]) if !format_name
@@ -77,7 +72,6 @@ namespace "music" do
 
   desc "load data"
   task load_data: :environment do
-
     require 'taglib'
 
     def import_release folder, path, source, label_name
@@ -137,7 +131,6 @@ namespace "music" do
 
       end
     end
-
     def import_images path
       release_name = path.split("/").last
       release = Release.find_by name: release_name
@@ -150,7 +143,6 @@ namespace "music" do
         end
       end
     end
-
     def import_nfo path
       release_name = path.split("/").last
       release = Release.find_by name: release_name
@@ -177,7 +169,6 @@ namespace "music" do
       end
       FileUtils.rm(temp_file) if File.exists?(temp_file)
     end
-
     def check_sfv path
       release_name = path.split("/").last
       release = Release.find_by name: release_name
