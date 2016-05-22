@@ -8,7 +8,7 @@ class LameWorker
     track = Track.find track_id
     begin
       if !track.file
-        file_path = PUBLIC_PATH + [ track.release.decorate.path, track.name ].join("/")
+        file_path = [BASE_PATH, track.release.decorate.path, track.name].join("/")
         if track.format_name =~ /MP3/
           track.update! file: File.open(file_path)
         else

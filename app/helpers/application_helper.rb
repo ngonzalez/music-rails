@@ -5,7 +5,7 @@ module ApplicationHelper
   end
 
   def default_params
-    params.slice("format", "q", "rows")
+    params.slice("format", "q", "rows", "label")
   end
 
   def search_terms_array
@@ -18,7 +18,6 @@ module ApplicationHelper
 
   def asset_url asset
     return asset_path(asset)
-    # [request.protocol, request.host_with_port, asset_path(asset)].join ""
   end
 
   def track_files

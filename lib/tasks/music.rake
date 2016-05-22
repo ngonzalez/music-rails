@@ -3,9 +3,7 @@ namespace "music" do
 
   desc "update data"
   task update: :environment do
-    [ "load_data", "import_images", "import_nfo",
-      "check_releases", "set_format_names_and_year",
-      "set_formatted_names", "set_track_numbers"].each do |name|
+    ["load_data", "set_format_names_and_year", "set_formatted_names", "set_track_numbers"].each do |name|
       Rake::Task["music:#{name}"].execute
     end
   end
@@ -80,27 +78,22 @@ namespace "music" do
   desc "load data"
   task load_data: :environment do
 
-    require 'progress_bar'
-
     require 'taglib'
 
     def import_release folder, path, source, label_name
-
       release_name = path.split("/").last
+      release = Release.find_by name: release_name, folder: folder, source: source
+      return if release
 
-      allowed_formats = ["mp3","mp4","m4a","flac","wav","aiff"]
-
-      return if Release.where(name: release_name, folder: folder).any?
+      formatted_label_name = label_name.gsub("_"," ")
 
       ActiveRecord::Base.transaction do
 
         begin
 
-          release = Release.find_by(name: release_name, folder: folder, source: source)
+          release = Release.create!(name: release_name, folder: folder, source: source, label_name: label_name)
 
-          release = Release.create!(name: release_name, folder: folder, source: source, label_name: label_name) if !release
-
-          allowed_formats.each do |format|
+          ALLOWED_AUDIO_FORMATS.each do |format|
             Dir["#{path}/*.#{format}"].each do |file|
 
               track_name = file.split("/").last
@@ -145,159 +138,87 @@ namespace "music" do
       end
     end
 
-    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
+    def import_images path
+      release_name = path.split("/").last
+      release = Release.find_by name: release_name
+      ALLOWED_IMAGE_FORMATS.each do |format|
+        Dir["#{path}/*.#{format}"].each do |image_path|
+          file_name = image_path.split("/").last
+          next if file_name =~ /.log./
+          next if release.images.where(file_name: file_name).any?
+          release.images.create! file: File.open(image_path)
+        end
+      end
+    end
+
+    def import_nfo path
+      release_name = path.split("/").last
+      release = Release.find_by name: release_name
+      return if release.images.select{|item| item.file_type == NFO_TYPE }.any?
+      temp_file = "/tmp/#{Time.now.to_i}"
+      font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
+      [NFO_TYPE].each do |format|
+        Dir["#{path}/*.#{format}"].each do |nfo_path|
+          file_name = nfo_path.split("/").last
+          begin
+            File.open(temp_file, 'w:UTF-8') do |f|
+              File.open(nfo_path).each_line do |line|
+                # Remove ^M when copy files from Windows
+                # https://en.wikipedia.org/wiki/Code_page_437
+                f.write line.gsub("\C-M", "").force_encoding("CP437")
+              end
+            end
+            content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
+            release.images.create! file: content, file_type: NFO_TYPE
+          rescue
+            next
+          end
+        end
+      end
+      FileUtils.rm(temp_file) if File.exists?(temp_file)
+    end
+
+    def check_sfv path
+      release_name = path.split("/").last
+      release = Release.find_by name: release_name
+      return if release.last_verified_at
+      return if !release.details.empty? && release.details.has_key?("sfv")
+      cmd = "cfv" # cfv 1.18.3
+      if Dir["#{path}/*.sfv"].empty? # No SFV
+        release.update! details: { "sfv" => "not found" }
+        return
+      end
+      details = case Dir.chdir(path) { %x[#{cmd}] }
+        when /badcrc/ then "badcrc"
+        when /chksum file errors/ then "chksum file errors"
+        when /not found/ then "missing files"
+      end
+      release.update! details: { "sfv" => details } if details && release.details['sfv'] != details
+      release.update! last_verified_at: Time.now
+    end
 
     ["dnb","hc","other"].each do |folder|
-      allowed_sources.each do |source|
+      ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
           import_release folder, path, source, "--"
+          import_images path
+          import_nfo path
+          check_sfv path
         end
       end
     end
 
     Dir["#{BASE_PATH}/backup/**"].each do |label_path|
       label_name = label_path.split("/").last
-      formatted_label_name = label_name.gsub("_"," ")
-      allowed_sources.each do |source|
+      ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          import_release "backup", path, source, formatted_label_name
+          import_release "backup", path, source, label_name
+          import_images path
+          import_nfo path
+          check_sfv path
         end
       end
     end
-
-    # puts "Updated %s records in %s" % [count, (Time.now - t1)]
-
-  end
-
-  desc "check releases"
-  task check_releases: :environment do
-    # cmd = "cfv" # cfv 1.18.3
-    # Release.where(last_verified_at: nil).order("id desc").each do |release|
-    #   release = release.decorate
-    #   next if !release.details.empty? && release.details.has_key?("sfv")
-    #   path = [PUBLIC_PATH, release.path].join "/"
-    #   if Dir["#{path}/*.sfv"].empty? # No SFV
-    #     release.update details: { "sfv" => "not found" }
-    #     next
-    #   end
-    #   details = case Dir.chdir(path) { %x[#{cmd}] }
-    #     when /badcrc/ then "badcrc"
-    #     when /chksum file errors/ then "chksum file errors"
-    #     when /not found/ then "missing files"
-    #   end
-    #   if details
-    #     release.update! details: { "sfv" => details }
-    #   else
-    #     release.update! last_verified_at: Time.now
-    #   end
-    # end
-  end
-
-  desc "import images"
-  task import_images: :environment do
-    allowed_formats = ["jpg", "jpeg", "gif", "png", "tiff", "bmp"]
-    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
-
-    ["dnb","hc","other"].each do |folder|
-      allowed_sources.each do |source|
-        Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          release = Release.find_by name: path.split("/").last
-          allowed_formats.each do |format|
-            Dir["#{path}/*.#{format}"].each do |path|
-              file_name = path.split("/").last
-              next if file_name =~ /.log./
-              next if release.images.where(file_name: file_name).any?
-              release.images.create! file: File.open(path)
-            end
-          end
-        end
-      end
-    end
-
-    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
-      label_name = label_path.split("/").last
-      formatted_label_name = label_name.gsub("_"," ")
-      allowed_sources.each do |source|
-        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          release = Release.find_by name: path.split("/").last
-          allowed_formats.each do |format|
-            Dir["#{path}/*.#{format}"].each do |path|
-              file_name = path.split("/").last
-              next if file_name =~ /.log./
-              next if release.images.where(file_name: file_name).any?
-              release.images.create! file: File.open(path)
-            end
-          end
-        end
-      end
-    end
-  end
-
-  desc "import NFO"
-  task import_nfo: :environment do
-    temp_file = "/tmp/#{Time.now.to_i}"
-    font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
-
-    allowed_formats = ["nfo"]
-    allowed_sources = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
-
-    ["dnb","hc","other"].each do |folder|
-      allowed_sources.each do |source|
-        Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          release = Release.find_by name: path.split("/").last
-          next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
-          allowed_formats.each do |format|
-            Dir["#{path}/*.#{format}"].each do |path|
-              file_name = path.split("/").last
-              begin
-                File.open(temp_file, 'w:UTF-8') do |f|
-                  File.open(path).each_line do |line|
-                    # Remove ^M when copy files from Windows
-                    # https://en.wikipedia.org/wiki/Code_page_437
-                    f.write line.gsub("\C-M", "").force_encoding("CP437")
-                  end
-                end
-                content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-                release.images.create! file: content, file_type: NFO_TYPE
-              rescue
-                next
-              end
-            end
-          end
-        end
-      end
-    end
-
-    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
-      label_name = label_path.split("/").last
-      formatted_label_name = label_name.gsub("_"," ")
-      allowed_sources.each do |source|
-        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          release = Release.find_by name: path.split("/").last
-          next if release.images.select{|item| item.file_type == NFO_TYPE }.any?
-          allowed_formats.each do |format|
-            Dir["#{path}/*.#{format}"].each do |path|
-              file_name = path.split("/").last
-              begin
-                File.open(temp_file, 'w:UTF-8') do |f|
-                  File.open(path).each_line do |line|
-                    # Remove ^M when copy files from Windows
-                    # https://en.wikipedia.org/wiki/Code_page_437
-                    f.write line.gsub("\C-M", "").force_encoding("CP437")
-                  end
-                end
-                content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-                release.images.create! file: content, file_type: NFO_TYPE
-              rescue
-                next
-              end
-            end
-          end
-        end
-      end
-    end
-
-    FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
 
 end
