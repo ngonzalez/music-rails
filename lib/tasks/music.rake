@@ -74,18 +74,18 @@ namespace "music" do
   task load_data: :environment do
     require 'taglib'
 
-    def import_release folder, path, source, label_name
+    def import_release folder, path, source, label_name=nil
       release_name = path.split("/").last
       release = Release.find_by name: release_name
       return if release
 
-      formatted_label_name = label_name.gsub("_"," ")
+      formatted_label_name = label_name.gsub("_"," ") if label_name
 
       ActiveRecord::Base.transaction do
 
         begin
 
-          release = Release.create!(name: path.split("/").last, folder: folder, source: source, label_name: label_name)
+          release = Release.create!(name: path.split("/").last, folder: folder, source: source, label_name: formatted_label_name)
 
           ALLOWED_AUDIO_FORMATS.each do |format|
             Dir["#{path}/*.#{format}"].each do |file|
@@ -191,10 +191,10 @@ namespace "music" do
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          import_release folder, path, source, "--"
+          import_release folder, path, source
           import_images path
           import_nfo path
-          check_sfv path
+          # check_sfv path
         end
       end
     end
@@ -206,7 +206,7 @@ namespace "music" do
           import_release "backup", path, source, label_name
           import_images path
           import_nfo path
-          check_sfv path
+          # check_sfv path
         end
       end
     end
