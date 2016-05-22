@@ -23,14 +23,15 @@ namespace "music" do
         array << str
       }.join " "
     end
-    def format_track_format track
-      case track.format
+    def format_track_format tracks
+      return if tracks.empty?
+      case tracks[0].format
         when /FLAC/ then "FLAC"
         when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
         when /MPEG ADTS, layer III, v1, 256 kbps/ then "MP3-256CBR"
         when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
         when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
-          case track.release.tracks.map(&:bitrate).sum.to_f / track.release.tracks.length
+          case tracks.map(&:bitrate).sum.to_f / tracks.length
             when 192.0 then "MP3-192CBR"
             when 256.0 then "MP3-256CBR"
             when 320.0 then "MP3-320CBR"
@@ -59,14 +60,16 @@ namespace "music" do
     Release.where(formatted_name: nil).each do |release|
       release.update! formatted_name: format_name(release.name)
     end
-    # Set Release Audio Format Name
-    Release.joins(:tracks).includes(:tracks).each do |release|
-      format_name = get_format_from_release_name release
-      format_name = format_track_format(release.tracks[0]) if !format_name
-      release.update! format_name: format_name, year: release.tracks[0].year.to_i
-      release.tracks.where(format_name: nil).each do |track|
-        track.update! format_name: format_track_format(track)
-      end
+    # Set Release Year, Audio Format Name
+    Release.where(year: nil).each do |release|
+      next if release.tracks.empty?
+      release.update! year: release.tracks[0].year.to_i
+    end
+    Release.where(format_name: nil).each do |release|
+      release.update! format_name: get_format_from_release_name(release) || format_track_format(release.tracks)
+    end
+    Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
+      release.tracks.update_all format_name: format_track_format(release.tracks)
     end
   end
 
@@ -74,9 +77,11 @@ namespace "music" do
   task load_data: :environment do
     require 'taglib'
 
+    @releases = Release.includes(:images).load
+
     def import_release folder, path, source, label_name=nil
       release_name = path.split("/").last
-      release = Release.find_by name: release_name
+      release = @releases.detect{|release| release.name == release_name }
       return if release
 
       formatted_label_name = label_name.gsub("_"," ") if label_name
@@ -133,19 +138,19 @@ namespace "music" do
     end
     def import_images path
       release_name = path.split("/").last
-      release = Release.find_by name: release_name
+      release = @releases.detect{|release| release.name == release_name }
       ALLOWED_IMAGE_FORMATS.each do |format|
         Dir["#{path}/*.#{format}"].each do |image_path|
           file_name = image_path.split("/").last
           next if file_name =~ /.log./
-          next if release.images.where(file_name: file_name).any?
+          next if release.images.detect{|image| image.file_name == file_name }
           release.images.create! file: File.open(image_path)
         end
       end
     end
     def import_nfo path
       release_name = path.split("/").last
-      release = Release.find_by name: release_name
+      release = @releases.detect{|release| release.name == release_name }
       return if release.images.select{|item| item.file_type == NFO_TYPE }.any?
       temp_file = "/tmp/#{Time.now.to_i}"
       font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
@@ -171,7 +176,7 @@ namespace "music" do
     end
     def check_sfv path
       release_name = path.split("/").last
-      release = Release.find_by name: release_name
+      release = @releases.detect{|release| release.name == release_name }
       return if release.last_verified_at
       return if !release.details.empty? && release.details.has_key?("sfv")
       cmd = "cfv" # cfv 1.18.3
@@ -184,8 +189,11 @@ namespace "music" do
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
       end
-      release.update! details: { "sfv" => details } if details && release.details['sfv'] != details
-      release.update! last_verified_at: Time.now
+      if details
+        release.update! details: { "sfv" => details } if release.details['sfv'] != details
+      else
+        release.update! last_verified_at: Time.now
+      end
     end
 
     ["dnb","hc","other"].each do |folder|
