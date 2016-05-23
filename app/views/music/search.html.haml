@@ -21,7 +21,7 @@
             %span.label.label-success.label-as-badge
               = link_to highlight(infos[:label_name], search_terms_array), search_music_index_path(default_params.merge(label: infos[:label_name])), default_transition
           %strong
-            = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
+            = link_to highlight("%s %s" % [infos[:formatted_name], infos[:year]], search_terms_array), music_path(release_id, default_params), default_transition
 
   %small.margin-20
     = "Page rendered in %s seconds - %s" % [ Time.now - @t1, Time.now ]

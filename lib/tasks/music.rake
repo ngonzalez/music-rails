@@ -14,14 +14,14 @@ namespace "music" do
       name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
     end
     def format_name name
-      year = name.match(/-(\d+)-/).to_s.gsub("-", "")
+      year = name.match(/-(\d{4})/).to_s.gsub("-", "")
       name.gsub("_-_", "-").split("-").each_with_object([]){|string, array|
         next if array.include? year
         str = string.gsub("_", " ")
         next if str.blank?
-        next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str)
+        next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str) || ALLOWED_SOURCES.include?(str)
         array << str
-      }.join " "
+      }.reject{|item| item == year }.join(" ")
     end
     def format_track_format tracks
       return if tracks.empty?
@@ -151,7 +151,7 @@ namespace "music" do
     def import_nfo path
       release_name = path.split("/").last
       release = @releases.detect{|release| release.name == release_name }
-      return if release.images.select{|item| item.file_type == NFO_TYPE }.any?
+      return if release.images.detect{|item| item.file_type == NFO_TYPE }
       temp_file = "/tmp/#{Time.now.to_i}"
       font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
       [NFO_TYPE].each do |format|
