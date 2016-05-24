@@ -79,66 +79,39 @@ namespace "music" do
 
     @releases = Release.includes(:images).load
 
-    def import_release folder, path, source, label_name=nil
-      release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
-      return if release
-
-      formatted_label_name = label_name.gsub("_"," ") if label_name
-
+    def import_release release, folder, path, source, label_name=nil
       ActiveRecord::Base.transaction do
-
         begin
-
-          release = Release.create!(name: path.split("/").last, folder: folder, source: source, label_name: formatted_label_name)
-
+          release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: formatted_label_name
           ALLOWED_AUDIO_FORMATS.each do |format|
             Dir["#{path}/*.#{format}"].each do |file|
-
               track_name = file.split("/").last
-
-              track = release.tracks.find_by name: track_name
-
+              track = release.tracks.detect{|track| track.name == track_name }
               if !track
-
-                track = release.tracks.new(name: track_name)
-
+                track = release.tracks.new name: track_name
                 track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
-
                 TagLib::FileRef.open(file) do |infos|
-
                   tag = infos.tag
                   ["artist", "title", "album", "genre", "year"].each do |name|
-                    track.send("#{name}=", tag.send(name))
+                    track.send "#{name}=", tag.send(name)
                   end
-
                   audio_properties = infos.audio_properties
                   ["bitrate", "channels", "length", "sample_rate"].each do |name|
-                    track.send("#{name}=", audio_properties.send(name))
+                    track.send "#{name}=", audio_properties.send(name)
                   end
-
                 end
-
                 track.save!
-
               end
-
             end
           end
-
         rescue Exception => e
-
           puts e.inspect
           puts "FAILED: %s" % [ release_name ]
           raise ActiveRecord::Rollback
-
         end
-
       end
     end
-    def import_images path
-      release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
+    def import_images release, path
       ALLOWED_IMAGE_FORMATS.each do |format|
         Dir["#{path}/*.#{format}"].each do |image_path|
           file_name = image_path.split("/").last
@@ -148,15 +121,13 @@ namespace "music" do
         end
       end
     end
-    def import_nfo path
-      release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
-      return if release.images.detect{|item| item.file_type == NFO_TYPE }
+    def import_nfo release, path
       temp_file = "/tmp/#{Time.now.to_i}"
       font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
       [NFO_TYPE].each do |format|
         Dir["#{path}/*.#{format}"].each do |nfo_path|
           file_name = nfo_path.split("/").last
+          next if release.images.detect{|image| image.file_name == file_name }
           begin
             File.open(temp_file, 'w:UTF-8') do |f|
               File.open(nfo_path).each_line do |line|
@@ -166,7 +137,7 @@ namespace "music" do
               end
             end
             content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-            release.images.create! file: content, file_type: NFO_TYPE
+            release.images.create! file: content, file_type: NFO_TYPE, file_name: file_name
           rescue
             next
           end
@@ -174,9 +145,7 @@ namespace "music" do
       end
       FileUtils.rm(temp_file) if File.exists?(temp_file)
     end
-    def check_sfv path
-      release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
+    def check_sfv release, path
       return if release.last_verified_at
       return if !release.details.empty? && release.details.has_key?("sfv")
       cmd = "cfv" # cfv 1.18.3
@@ -195,14 +164,20 @@ namespace "music" do
         release.update! last_verified_at: Time.now
       end
     end
+    def process_release path, label_name=nil
+      release_name = path.split("/").last
+      release = @releases.detect{|release| release.name == release_name }
+      formatted_label_name = label_name.gsub("_"," ") if label_name
+      import_release release, "backup", path, source, formatted_label_name if !release
+      import_images release, path
+      import_nfo release, path
+      check_sfv release, path
+    end
 
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          import_release folder, path, source
-          import_images path
-          import_nfo path
-          # check_sfv path
+          process_release path
         end
       end
     end
@@ -211,10 +186,7 @@ namespace "music" do
       label_name = label_path.split("/").last
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          import_release "backup", path, source, label_name
-          import_images path
-          import_nfo path
-          # check_sfv path
+          process_release path, label_name
         end
       end
     end
