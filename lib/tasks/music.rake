@@ -82,7 +82,7 @@ namespace "music" do
     def import_release release, folder, path, source, label_name=nil
       ActiveRecord::Base.transaction do
         begin
-          release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: formatted_label_name
+          release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: label_name
           ALLOWED_AUDIO_FORMATS.each do |format|
             Dir["#{path}/*.#{format}"].each do |file|
               track_name = file.split("/").last
@@ -168,10 +168,10 @@ namespace "music" do
       release_name = path.split("/").last
       release = @releases.detect{|release| release.name == release_name }
       formatted_label_name = label_name.gsub("_"," ") if label_name
-      import_release release, "backup", path, source, formatted_label_name if !release
-      import_images release, path
+      # import_release release, "backup", path, source, formatted_label_name if !release
+      # import_images release, path
       import_nfo release, path
-      check_sfv release, path
+      # check_sfv release, path
     end
 
     ["dnb","hc","other"].each do |folder|
