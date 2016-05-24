@@ -76,38 +76,27 @@ namespace "music" do
   desc "load data"
   task load_data: :environment do
     require 'taglib'
-
-    @releases = Release.includes(:images).load
-
-    def import_release release, folder, path, source, label_name=nil
-      ActiveRecord::Base.transaction do
-        begin
-          release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: label_name
-          ALLOWED_AUDIO_FORMATS.each do |format|
-            Dir["#{path}/*.#{format}"].each do |file|
-              track_name = file.split("/").last
-              track = release.tracks.detect{|track| track.name == track_name }
-              if !track
-                track = release.tracks.new name: track_name
-                track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
-                TagLib::FileRef.open(file) do |infos|
-                  tag = infos.tag
-                  ["artist", "title", "album", "genre", "year"].each do |name|
-                    track.send "#{name}=", tag.send(name)
-                  end
-                  audio_properties = infos.audio_properties
-                  ["bitrate", "channels", "length", "sample_rate"].each do |name|
-                    track.send "#{name}=", audio_properties.send(name)
-                  end
-                end
-                track.save!
+    def import_release folder, path, source, label_name=nil
+      release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: label_name
+      ALLOWED_AUDIO_FORMATS.each do |format|
+        Dir["#{path}/*.#{format}"].each do |file|
+          track_name = file.split("/").last
+          track = release.tracks.detect{|track| track.name == track_name }
+          if !track
+            track = release.tracks.new name: track_name
+            track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
+            TagLib::FileRef.open(file) do |infos|
+              tag = infos.tag
+              ["artist", "title", "album", "genre", "year"].each do |name|
+                track.send "#{name}=", tag.send(name)
+              end
+              audio_properties = infos.audio_properties
+              ["bitrate", "channels", "length", "sample_rate"].each do |name|
+                track.send "#{name}=", audio_properties.send(name)
               end
             end
+            track.save!
           end
-        rescue Exception => e
-          puts e.inspect
-          puts "FAILED: %s" % [ release_name ]
-          raise ActiveRecord::Rollback
         end
       end
     end
@@ -146,8 +135,6 @@ namespace "music" do
       FileUtils.rm(temp_file) if File.exists?(temp_file)
     end
     def check_sfv release, path
-      return if release.last_verified_at
-      return if !release.details.empty? && release.details.has_key?("sfv")
       cmd = "cfv" # cfv 1.18.3
       if Dir["#{path}/*.sfv"].empty? # No SFV
         release.update! details: { "sfv" => "not found" }
@@ -165,14 +152,26 @@ namespace "music" do
       end
     end
     def process_release path, label_name=nil
-      release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
-      formatted_label_name = label_name.gsub("_"," ") if label_name
-      # import_release release, "backup", path, source, formatted_label_name if !release
-      # import_images release, path
-      import_nfo release, path
-      # check_sfv release, path
+      ActiveRecord::Base.transaction do
+        begin
+          release_name = path.split("/").last
+          release = @releases.detect{|release| release.name == release_name }
+          formatted_label_name = label_name.gsub("_"," ") if label_name
+          import_release "backup", path, source, formatted_label_name if !release
+          return if release.last_verified_at
+          return if !release.details.empty? && release.details.has_key?("sfv")
+          import_images release, path
+          import_nfo release, path
+          check_sfv release, path
+        rescue Exception => e
+          puts e.inspect
+          puts "FAILED: %s" % [ path ]
+          raise ActiveRecord::Rollback
+        end
+      end
     end
+
+    @releases = Release.includes(:images).load
 
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
