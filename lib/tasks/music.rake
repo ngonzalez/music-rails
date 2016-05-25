@@ -152,14 +152,13 @@ namespace "music" do
       end
     end
     def process_release path, label_name=nil
+      release_name = path.split("/").last
+      formatted_label_name = label_name.gsub("_"," ") if label_name
+      release = @releases.detect{|release| release.name == release_name }
+      return if release && (release.last_verified_at || !release.details.empty? && release.details.has_key?("sfv"))
       ActiveRecord::Base.transaction do
         begin
-          release_name = path.split("/").last
-          release = @releases.detect{|release| release.name == release_name }
-          formatted_label_name = label_name.gsub("_"," ") if label_name
           import_release "backup", path, source, formatted_label_name if !release
-          return if release.last_verified_at
-          return if !release.details.empty? && release.details.has_key?("sfv")
           import_images release, path
           import_nfo release, path
           check_sfv release, path
