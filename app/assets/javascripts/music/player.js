@@ -79,10 +79,10 @@ function init_players(tracks) {
     if (!tracks) return;
     $.each($(".play-btn"), function(i, element) {
       var data = tracks[parseInt($(element).data("id"))]
-      if (!data.media_url) $(element).addClass("grey");
+      if (data && !data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
-        data.media_url ? enable($(element), data) : loading($(element), data);
+        data && data.media_url ? enable($(element), data) : loading($(element), data);
       });
     });
   }
