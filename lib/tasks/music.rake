@@ -19,7 +19,8 @@ namespace "music" do
         next if array.include? year
         str = string.gsub("_", " ")
         next if str.blank?
-        next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str) || ALLOWED_SOURCES.include?(str)
+        next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str)
+        next if ALLOWED_SOURCES.map(&:upcase).include?(str.upcase)
         array << str
       }.reject{|item| item == year }.join(" ")
     end
@@ -154,11 +155,11 @@ namespace "music" do
     def process_release folder, path, source, label_name=nil
       release_name = path.split("/").last
       release = @releases.detect{|release| release.name == release_name }
-      formatted_label_name = label_name.gsub("_"," ") if label_name
+      label_name.gsub!("_", " ") if label_name
       return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
-          import_release folder, path, source, formatted_label_name if !release
+          import_release folder, path, source, label_name if !release
           import_images release, path
           import_nfo release, path
           check_sfv release, path
