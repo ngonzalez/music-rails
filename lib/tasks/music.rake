@@ -151,7 +151,7 @@ namespace "music" do
         release.update! last_verified_at: Time.now
       end
     end
-    def process_release folder, path, label_name=nil
+    def process_release folder, path, source, label_name=nil
       ActiveRecord::Base.transaction do
         begin
           release_name = path.split("/").last
@@ -176,7 +176,7 @@ namespace "music" do
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          process_release folder, path
+          process_release folder, path, source
         end
       end
     end
@@ -185,7 +185,7 @@ namespace "music" do
       label_name = label_path.split("/").last
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          process_release "backup", path, label_name
+          process_release "backup", path, source, label_name
         end
       end
     end
