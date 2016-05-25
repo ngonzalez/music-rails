@@ -151,14 +151,14 @@ namespace "music" do
         release.update! last_verified_at: Time.now
       end
     end
-    def process_release path, label_name=nil
+    def process_release folder, path, source, label_name=nil
       release_name = path.split("/").last
-      formatted_label_name = label_name.gsub("_"," ") if label_name
       release = @releases.detect{|release| release.name == release_name }
-      return if release && (release.last_verified_at || !release.details.empty? && release.details.has_key?("sfv"))
+      formatted_label_name = label_name.gsub("_"," ") if label_name
+      return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
-          import_release "backup", path, source, formatted_label_name if !release
+          import_release folder, path, source, formatted_label_name if !release
           import_images release, path
           import_nfo release, path
           check_sfv release, path
@@ -175,7 +175,7 @@ namespace "music" do
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          process_release path
+          process_release folder, path, source
         end
       end
     end
@@ -184,7 +184,7 @@ namespace "music" do
       label_name = label_path.split("/").last
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          process_release path, label_name
+          process_release "backup", path, source, label_name
         end
       end
     end
