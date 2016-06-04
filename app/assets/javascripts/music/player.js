@@ -79,10 +79,11 @@ function init_players(tracks) {
     if (!tracks) return;
     $.each($(".play-btn"), function(i, element) {
       var data = tracks[parseInt($(element).data("id"))]
-      if (data && !data.media_url) $(element).addClass("grey");
+      if (!data) return;
+      if (!data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
-        data && data.media_url ? enable($(element), data) : loading($(element), data);
+        data.media_url ? enable($(element), data) : loading($(element), data);
       });
     });
   }
