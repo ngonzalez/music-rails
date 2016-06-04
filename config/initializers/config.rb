@@ -8,6 +8,6 @@ ALLOWED_SOURCES = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line"]
 
 NFO_TYPE = "nfo"
 
-HOST_NAME = "192.168.2.11"
+HOST_NAME = "192.168.1.11"
 
 DEFAULT_ENCODING = "mp3"
