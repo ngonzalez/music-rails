@@ -77,8 +77,7 @@ namespace "music" do
   desc "load data"
   task load_data: :environment do
     require 'taglib'
-    def import_release folder, path, source, label_name=nil
-      release = Release.create! name: path.split("/").last, folder: folder, source: source, label_name: label_name
+    def import_tracks release, path
       ALLOWED_AUDIO_FORMATS.each do |format|
         Dir["#{path}/*.#{format}"].each do |file|
           track_name = file.split("/").last
@@ -100,7 +99,6 @@ namespace "music" do
           end
         end
       end
-      return release
     end
     def import_images release, path
       ALLOWED_IMAGE_FORMATS.each do |format|
@@ -160,7 +158,10 @@ namespace "music" do
       return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
-          release = import_release folder, path, source, label_name if !release
+          if !release
+            release = Release.create! name: release_name, folder: folder, source: source, label_name: label_name
+          end
+          import_tracks release, path
           import_images release, path
           import_nfo release, path
           check_sfv release, path
