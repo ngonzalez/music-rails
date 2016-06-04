@@ -78,7 +78,7 @@ class MusicController < ApplicationController
           next
         end
       }
-      order = params[:q].scan(/\b\d{4}\b/) ? :id : :year
+      order = :year
     end
     return hash.sort_by{|k, v| v[order] || 0 }.reverse
   end

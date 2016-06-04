@@ -100,6 +100,7 @@ namespace "music" do
           end
         end
       end
+      return release
     end
     def import_images release, path
       ALLOWED_IMAGE_FORMATS.each do |format|
@@ -159,13 +160,13 @@ namespace "music" do
       return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
-          import_release folder, path, source, label_name if !release
+          release = import_release folder, path, source, label_name if !release
           import_images release, path
           import_nfo release, path
           check_sfv release, path
         rescue Exception => e
           puts e.inspect
-          puts "FAILED: %s" % [ path ]
+          puts "\sFAILED: %s" % [ path ]
           raise ActiveRecord::Rollback
         end
       end
