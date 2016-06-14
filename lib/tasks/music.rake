@@ -193,7 +193,7 @@ namespace "music" do
       end
     end
 
-    @releases = Release.includes(:images).load
+    @releases = Release.all
 
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
@@ -211,6 +211,7 @@ namespace "music" do
         end
       end
     end
+
   end
 
 end
