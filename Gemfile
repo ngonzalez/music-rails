@@ -1,6 +1,6 @@
 source "https://rubygems.org" do
 
-  gem 'rails', '4.2.4'
+  gem 'rails', '4.2.6'
   gem 'pg'
 
   gem 'taglib-ruby'
@@ -24,14 +24,14 @@ source "https://rubygems.org" do
 
   gem 'rack-cache', require: 'rack/cache'
 
-  gem 'dragonfly', github: 'markevans/dragonfly'
+  gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
 
   gem 'swipebox'
 
   gem 'draper'
 
   gem 'sinatra', :require => nil
-  gem 'sidekiq', github: 'mperham/sidekiq'
+  gem 'sidekiq'
 
   gem 'uuid'
 

@@ -58,14 +58,38 @@ class MusicController < ApplicationController
 
   def search_releases
     return [] if params[:q].blank?
+    label_name = LABELS.detect{|name| name.downcase == params[:q].downcase } if LABELS.map(&:downcase).include? params[:q].downcase
+    year = params[:q].scan(/\b\d{4}\b/)[0].to_i
     hash = {}
-    if params[:label]
-      label_name = params[:label] if Release.pluck(:label_name).uniq.include? params[:label]
-      Release.where(label_name: label_name).decorate.each{|release|
-        hash[release.id] = release.search_infos
+    if label_name
+      search = Release.search {
+        paginate :page => params[:page], :per_page => params[:rows]
+        with(:label_name, label_name)
+      }
+      search.hits.each{|hit|
+        begin
+          next if hash.has_key? hit.result.id
+          hash[hit.result.id] = hit.result.decorate.search_infos
+        rescue
+          next
+        end
       }
       order = :year
-    else
+    elsif year > 0
+      search = Release.search {
+        paginate :page => params[:page], :per_page => params[:rows]
+        with(:year, year)
+      }
+      search.hits.each{|hit|
+        begin
+          next if hash.has_key? hit.result.id
+          hash[hit.result.id] = hit.result.decorate.search_infos
+        rescue
+          next
+        end
+      }
+      order = :name
+    elsif !params[:q].blank?
       search = Track.search(include: [:release]) {
         fulltext params[:q]
         paginate :page => params[:page], :per_page => params[:rows]

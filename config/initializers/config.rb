@@ -11,3 +11,5 @@ NFO_TYPE = "nfo"
 HOST_NAME = "192.168.1.11"
 
 DEFAULT_ENCODING = "mp3"
+
+LABELS = []

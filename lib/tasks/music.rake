@@ -3,8 +3,17 @@ namespace "music" do
 
   desc "update data"
   task update: :environment do
-    ["load_data", "set_details"].each do |name|
+    ["clear_data", "load_data", "set_details"].each do |name|
       Rake::Task["music:#{name}"].execute
+    end
+  end
+
+  desc "clear data"
+  task clear_data: :environment do
+    Release.find_each do |release|
+      if !File.directory? [BASE_PATH, release.decorate.path].join("/")
+        release.destroy
+      end
     end
   end
 
@@ -14,8 +23,8 @@ namespace "music" do
       name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
     end
     def format_name name
-      year = name.match(/-(\d{4})/).to_s.gsub("-", "")
-      name.gsub("_-_", "-").split("-").each_with_object([]){|string, array|
+      year = name.split("-").select{|item| item.match(/(\d{4})/) }.last
+      name.gsub("_-_", "-").gsub("(", "").gsub(")", "").split("-").each_with_object([]){|string, array|
         next if array.include? year
         str = string.gsub("_", " ")
         next if str.blank?
@@ -65,6 +74,11 @@ namespace "music" do
     Release.where(year: nil).each do |release|
       next if release.tracks.empty?
       release.update! year: release.tracks[0].year.to_i
+    end
+    Release.where(year: "0").find_each do |release|
+      year = release.name.scan(/\b\d{4}\b/)[0].to_i
+      release.tracks.update_all year: year
+      release.update! year: year
     end
     Release.where(format_name: nil).each do |release|
       release.update! format_name: get_format_from_release_name(release) || format_track_format(release.tracks)
@@ -125,9 +139,15 @@ namespace "music" do
                 f.write line.gsub("\C-M", "").force_encoding("CP437")
               end
             end
+            # vi /usr/local/etc/ImageMagick-6/policy.xml
+            # Remove following line:
+            # <policy domain="path" rights="none" pattern="@*" />
+            # http://www.imagemagick.org/discourse-server/viewtopic.php?t=29594
+            # http://git.imagemagick.org/repos/VisualMagick/commit/d40df0bb10af73d946edd8e415d5e593420fc17e
             content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
             release.images.create! file: content, file_type: NFO_TYPE, file_name: file_name
           rescue
+            puts "NFO: Failed to import: #{file_name}"
             next
           end
         end
@@ -153,8 +173,8 @@ namespace "music" do
     end
     def process_release folder, path, source, label_name=nil
       release_name = path.split("/").last
-      release = @releases.detect{|release| release.name == release_name }
       label_name.gsub!("_", " ") if label_name
+      release = @releases.detect{|release| release.name == release_name }
       return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
