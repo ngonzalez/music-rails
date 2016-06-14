@@ -2,12 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.3
+-- Dumped by pg_dump version 9.5.3
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -39,26 +43,12 @@ COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 SET search_path = public, pg_catalog;
 
---
--- Name: search_cfg_en; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
---
-
-CREATE TEXT SEARCH CONFIGURATION search_cfg_en (
-    PARSER = pg_catalog."default" );
-
-ALTER TEXT SEARCH CONFIGURATION search_cfg_en
-    ADD MAPPING FOR asciiword WITH english_stem;
-
-ALTER TEXT SEARCH CONFIGURATION search_cfg_en
-    ADD MAPPING FOR version WITH simple;
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: images; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: images; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE images (
@@ -93,7 +83,7 @@ ALTER SEQUENCE images_id_seq OWNED BY images.id;
 
 
 --
--- Name: releases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: releases; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE releases (
@@ -108,7 +98,8 @@ CREATE TABLE releases (
     deleted_at timestamp without time zone,
     label_name character varying,
     year character varying,
-    format_name character varying
+    format_name character varying,
+    source character varying
 );
 
 
@@ -132,7 +123,7 @@ ALTER SEQUENCE releases_id_seq OWNED BY releases.id;
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE schema_migrations (
@@ -141,7 +132,7 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: tracks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: tracks; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE tracks (
@@ -189,7 +180,7 @@ ALTER SEQUENCE tracks_id_seq OWNED BY tracks.id;
 
 
 --
--- Name: uploads; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: uploads; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE uploads (
@@ -222,7 +213,7 @@ ALTER SEQUENCE uploads_id_seq OWNED BY uploads.id;
 
 
 --
--- Name: versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: versions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE versions (
@@ -292,7 +283,7 @@ ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq':
 
 
 --
--- Name: images_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY images
@@ -300,7 +291,7 @@ ALTER TABLE ONLY images
 
 
 --
--- Name: releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY releases
@@ -308,7 +299,7 @@ ALTER TABLE ONLY releases
 
 
 --
--- Name: tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY tracks
@@ -316,7 +307,7 @@ ALTER TABLE ONLY tracks
 
 
 --
--- Name: uploads_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: uploads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploads
@@ -324,7 +315,7 @@ ALTER TABLE ONLY uploads
 
 
 --
--- Name: versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY versions
@@ -332,21 +323,21 @@ ALTER TABLE ONLY versions
 
 
 --
--- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_tracks_on_format_name ON tracks USING btree (format_name);
 
 
 --
--- Name: index_versions_on_item_type_and_item_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_versions_on_item_type_and_item_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_versions_on_item_type_and_item_id ON versions USING btree (item_type, item_id);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
@@ -356,19 +347,9 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (version) VALUES ('20150326232536');
-
-INSERT INTO schema_migrations (version) VALUES ('20150327010840');
-
-INSERT INTO schema_migrations (version) VALUES ('20150327024244');
-
-INSERT INTO schema_migrations (version) VALUES ('20150327024513');
-
-INSERT INTO schema_migrations (version) VALUES ('20150327025444');
-
-INSERT INTO schema_migrations (version) VALUES ('20150516193607');
 
 INSERT INTO schema_migrations (version) VALUES ('20150516233141');
 
@@ -407,4 +388,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151012034723');
 INSERT INTO schema_migrations (version) VALUES ('20151031162241');
 
 INSERT INTO schema_migrations (version) VALUES ('20151031171634');
+
+INSERT INTO schema_migrations (version) VALUES ('20160521153356');
 
