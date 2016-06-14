@@ -8,7 +8,6 @@ source "https://rubygems.org" do
   gem 'sunspot_solr'
   gem 'sunspot_rails'
 
-  gem 'progress_bar'
   gem 'puma'
 
   gem 'uglifier'
@@ -39,8 +38,6 @@ source "https://rubygems.org" do
 
   gem 'paper_trail'
 
-  group :development, :test do
-    gem 'pry'
-  end
+  gem 'pry'
 
 end
