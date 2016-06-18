@@ -173,13 +173,17 @@ namespace "music" do
     end
     def process_release folder, path, source, label_name=nil
       release_name = path.split("/").last
-      label_name.gsub!("_", " ") if label_name
       release = @releases.detect{|release| release.name == release_name }
       return if release && (release.last_verified_at || (!release.details.empty? && release.details.has_key?("sfv")))
       ActiveRecord::Base.transaction do
         begin
           if !release
-            release = Release.create! name: release_name, folder: folder, source: source, label_name: label_name
+            release = Release.create!(
+              name: release_name,
+              folder: folder,
+              source: source,
+              label_name: label_name.gsub("_", " ")
+            )
           end
           import_tracks release, path
           import_images release, path
