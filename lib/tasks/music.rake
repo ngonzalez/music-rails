@@ -195,12 +195,17 @@ namespace "music" do
       end
     end
 
+    require 'progress_bar'
+
     @releases = Release.includes(:images).load
+
+    bar = ProgressBar.new @releases.length
 
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
           process_release folder, path, source
+          bar.increment!
         end
       end
     end
@@ -210,6 +215,7 @@ namespace "music" do
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
           process_release "backup", path, source, label_name
+          bar.increment!
         end
       end
     end
