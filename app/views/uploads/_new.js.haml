@@ -7,23 +7,41 @@
                     url: "http://#{HOST_NAME}/uploads",
                     type: "POST",
                     complete: function() {
-                        console.log('complete');
+                        if (options.complete) options.complete()
                     },
                     error: function(textStatus, errorThrown) {
                         console.log(textStatus + ": " + errorThrown);
                     },
-                    progress: function(options) {
-                        console.log(options.counter + '/' + options.total_files)
-                        console.log(options.response);
+                    progress: function(item) {
+                        if (options.callback) options.callback(item);
                     }
                 }, options));
+            }
+
+            function set_progress(value) {
+                $('#progress-bar').attr('aria-valuenow', value);
+                $('#progress-bar').css('width', value + '%');
             }
 
             $(document).ready(function() {
                 $("#Filedata").change(function(e) {
                     upload_files({
                         input_id: $(e.target).attr("id"),
-                        name: $(e.target).attr("id")
+                        name: 'upload',
+                        complete: function() {
+                            set_progress(0);
+                        },
+                        callback: function(item) {
+                            set_progress(parseInt(item.counter / item.total_files * 100))
+                            $('body').append($('<hr />'));
+                            $('body').append(item.response.created_at);
+                            $('body').append(
+                                $('<a />')
+                                    .attr('target', 'blank')
+                                    .attr('href', item.response.media)
+                                    .html(item.response.file_name)
+                            );
+                        }
                     });
                 });
             })
