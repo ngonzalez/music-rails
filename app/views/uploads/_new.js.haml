@@ -2,45 +2,35 @@
 
     (function($) {
         $(function() {
-            function upload_files(options) {
-                send_files($.extend({
-                    url: "http://#{HOST_NAME}/uploads",
-                    type: "POST",
-                    complete: function() {
-                        if (options.complete) options.complete()
-                    },
-                    error: function(textStatus, errorThrown) {
-                        console.log(textStatus + ": " + errorThrown);
-                    },
-                    progress: function(item) {
-                        if (options.callback) options.callback(item);
-                    }
-                }, options));
-            }
-
             function set_progress(value) {
                 $('#progress-bar').attr('aria-valuenow', value);
                 $('#progress-bar').css('width', value + '%');
             }
 
+            function display_file(item) {
+                $('body').append($('<hr />'));
+                $('body').append(item.response.created_at);
+                $('body').append(
+                    $('<a />')
+                        .attr('target', 'blank')
+                        .attr('href', item.response.media)
+                        .html(item.response.file_name)
+                );
+            }
+
             $(document).ready(function() {
                 $("#Filedata").change(function(e) {
-                    upload_files({
-                        input_id: $(e.target).attr("id"),
-                        name: 'upload',
+                    send_file({
+                        input_id: "Filedata",
+                        name: "upload",
+                        url: "http://#{HOST_NAME}/uploads",
+                        type: "POST",
                         complete: function() {
-                            set_progress(0);
+                            setTimeout(function() { set_progress(0) }, 500)
                         },
-                        callback: function(item) {
+                        progress: function(item) {
                             set_progress(parseInt(item.counter / item.total_files * 100))
-                            $('body').append($('<hr />'));
-                            $('body').append(item.response.created_at);
-                            $('body').append(
-                                $('<a />')
-                                    .attr('target', 'blank')
-                                    .attr('href', item.response.media)
-                                    .html(item.response.file_name)
-                            );
+                            display_file(item);
                         }
                     });
                 });

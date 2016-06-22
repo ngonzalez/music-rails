@@ -1,7 +1,7 @@
 (function($) {
     $(function() {
 
-        window[ 'send_files' ] = function(options) {
+        window[ 'send_file' ] = function(options) {
           
             var control = $("#" + options.input_id);
 
@@ -57,7 +57,7 @@
                                             response: response
                                         });
                                     }
-                                    send_files(options);
+                                    send_file(options);
                                 });
                             } else if (options.complete) {
                                 options.complete();
