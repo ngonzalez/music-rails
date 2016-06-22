@@ -33,15 +33,15 @@ namespace "music" do
         array << str
       }.reject{|item| item == year }.join(" ")
     end
-    def format_track_format tracks
-      return if tracks.empty?
-      case tracks[0].format
+    def format_track_format release
+      return if release.tracks.empty?
+      case release.tracks[0].format
         when /FLAC/ then "FLAC"
         when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
         when /MPEG ADTS, layer III, v1, 256 kbps/ then "MP3-256CBR"
         when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
         when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
-          case tracks.map(&:bitrate).sum.to_f / tracks.length
+          case release.tracks.map(&:bitrate).sum.to_f / release.tracks.length
             when 192.0 then "MP3-192CBR"
             when 256.0 then "MP3-256CBR"
             when 320.0 then "MP3-320CBR"
@@ -51,7 +51,7 @@ namespace "music" do
         when /WAVE audio/ then "WAV"
         when /iTunes AAC/ then "iTunes AAC"
         when /MPEG v4/ then "MPEG4"
-        when /clip art|BINARY|data/ then "DATA"
+        when /clip art|BINARY|data/ then get_format_from_release_name(release) || "DATA"
       end
     end
     def get_format_from_release_name release
@@ -81,7 +81,7 @@ namespace "music" do
       release.update! year: year
     end
     Release.where(format_name: nil).each do |release|
-      release.update! format_name: get_format_from_release_name(release) || format_track_format(release.tracks)
+      release.update! format_name: get_format_from_release_name(release) || format_track_format(release)
     end
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
       release.tracks.update_all format_name: format_track_format(release.tracks)
