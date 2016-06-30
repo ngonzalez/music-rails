@@ -29,7 +29,7 @@ class LameWorker
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
           encode temp_file_wav, temp_file
           track.update! file: File.open(temp_file)
-        elsif ["WAV", "DATA", "FLAC"].include? track.format_name
+        elsif ["WAV", "AIFF"].include? track.format_name
           file_path = Shellwords.escape file_path
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
           encode file_path, temp_file

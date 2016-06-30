@@ -96,7 +96,7 @@ namespace "music" do
     ["dnb","hc","other"].each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          ImportWorker.perform_async folder: folder, path: path, source: source
+          ImportWorker.new.perform folder: folder, path: path, source: source
           bar.increment!
         end
       end
@@ -106,7 +106,7 @@ namespace "music" do
       label_name = label_path.split("/").last
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          ImportWorker.perform_async folder: "backup", path: path, source: source, label_name: label_name
+          ImportWorker.new.perform folder: "backup", path: path, source: source, label_name: label_name
           bar.increment!
         end
       end
