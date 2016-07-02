@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160521153356) do
+ActiveRecord::Schema.define(version: 20160702131009) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20160521153356) do
   end
 
   create_table "releases", force: :cascade do |t|
-    t.string   "name",             null: false
+    t.string   "name",                   null: false
     t.string   "folder"
     t.datetime "last_verified_at"
     t.text     "details"
@@ -40,6 +40,11 @@ ActiveRecord::Schema.define(version: 20160521153356) do
     t.string   "year"
     t.string   "format_name"
     t.string   "source"
+    t.string   "srrdb_sfv_uid"
+    t.string   "srrdb_sfv_name"
+    t.string   "sfv_uid"
+    t.string   "sfv_name"
+    t.datetime "srrdb_last_verified_at"
   end
 
   create_table "tracks", force: :cascade do |t|

@@ -127,9 +127,9 @@ namespace "music" do
       end
     end
   end
-
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
+    require 'pry'
     Release.find_each do |release|
       next if !release.name
       year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last
@@ -150,34 +150,74 @@ namespace "music" do
         puts url.join("/")
         response = Typhoeus.get url.join("/")
         next if response.code != 200 || response.body.blank?
-        f = Tempfile.new ; f.write(response.body) ; f.rewind
-        release.update! srrdb_sfv: f
+        begin
+          content = response.body.force_encoding('Windows-1252').encode('UTF-8')
+          raise if content == "You've reached the daily limit."
+          f = Tempfile.new ; f.write(content) ; f.rewind
+          release.update! srrdb_sfv: f
+        rescue
+          binding.pry
+          raise
+        end
         puts "------------------------------------"
         puts File.read(release.srrdb_sfv.path).inspect
         puts "------------------------------------"
+        f.unlink
         sleep 5
       end
     end
   end
-
   desc "check sfv"
   task check_sfv: :environment do
+    require 'progress_bar'
+    bar = ProgressBar.new Release.count
     Release.find_each do |release|
-      path = [BASE_PATH, release.decorate.path].join("/")
-      cmd = "cfv" # cfv 1.18.3
-      if Dir["#{path}/*.#{SFV_TYPE}"].empty? # No SFV
-        release.update! details: { "sfv" => "not found" }
-        return
+      bar.increment!
+      if release.last_verified_at
+        next
+      elsif release.details && release.details["sfv"]
+        next
+      elsif !release.sfv
+        next
       end
-      details = case Dir.chdir(path) { %x[#{cmd}] }
+      cmd = "cfv" # cfv 1.18.3
+      path = [BASE_PATH, release.decorate.path].join("/")
+      details = case Dir.chdir(path) { %x[#{cmd} -f #{release.sfv.path}] }
         when /badcrc/ then "badcrc"
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
       end
       if details
-        release.update! details: { "sfv" => details } if release.details['sfv'] != details
+        release.update! details: { "sfv" => details }
       else
         release.update! last_verified_at: Time.now
+      end
+    end
+  end
+  desc "check srrdb sfv"
+  task check_srrdb_sfv: :environment do
+    require 'progress_bar'
+    bar = ProgressBar.new Release.count
+    Release.find_each do |release|
+      bar.increment!
+      if release.srrdb_last_verified_at
+        next
+      elsif release.details && release.details["srrdb_sfv"]
+        next
+      elsif !release.srrdb_sfv
+        next
+      end
+      cmd = "cfv" # cfv 1.18.3
+      path = [BASE_PATH, release.decorate.path].join("/")
+      details = case Dir.chdir(path) { %x[#{cmd} -f #{release.srrdb_sfv.path}] }
+        when /badcrc/ then "badcrc"
+        when /chksum file errors/ then "chksum file errors"
+        when /not found/ then "missing files"
+      end
+      if details
+        release.update! details: { "srrdb_sfv" => details }
+      else
+        release.update! srrdb_last_verified_at: Time.now
       end
     end
   end
