@@ -219,7 +219,7 @@ namespace "music" do
   task check_nfo: :environment do
     Release.find_each do |release|
       next if release.details[:no_nfo]
-      if !release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
+      if !release.images.detect{|image| image.file_type == NFO_TYPE }
         release.details[:no_nfo] = true
         release.save!
       end

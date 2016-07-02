@@ -90,7 +90,7 @@ class ImportWorker
     release_name = options[:path].split("/").last
     release = Release.find_by name: release_name
     return if release && release.last_verified_at
-    return if release && !release.details.empty? && release.details.has_key?("sfv")
+    return if release && release.details[:sfv]
     ActiveRecord::Base.transaction do
       begin
         if !release
