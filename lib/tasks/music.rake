@@ -111,7 +111,6 @@ namespace "music" do
         end
       end
     end
-
   end
 
   desc "import sfv"
@@ -149,7 +148,11 @@ namespace "music" do
         url << nfo_file.file.name.gsub(".#{NFO_TYPE}", ".sfv")
         puts url.join("/")
         response = Typhoeus.get url.join("/")
-        next if response.code != 200 || response.body.blank?
+        if response.code != 200 || response.body.blank?
+          next if release.details.try :srrdb_sfv_error
+          release.update! details: { "srrdb_sfv_error": true }
+          next
+        end
         begin
           content = response.body.force_encoding('Windows-1252').encode('UTF-8')
           raise if content == "You've reached the daily limit."
@@ -169,10 +172,7 @@ namespace "music" do
   end
   desc "check sfv"
   task check_sfv: :environment do
-    require 'progress_bar'
-    bar = ProgressBar.new Release.count
     Release.find_each do |release|
-      bar.increment!
       if release.last_verified_at
         next
       elsif release.details && release.details["sfv"]
@@ -196,10 +196,7 @@ namespace "music" do
   end
   desc "check srrdb sfv"
   task check_srrdb_sfv: :environment do
-    require 'progress_bar'
-    bar = ProgressBar.new Release.count
     Release.find_each do |release|
-      bar.increment!
       if release.srrdb_last_verified_at
         next
       elsif release.details && release.details["srrdb_sfv"]
