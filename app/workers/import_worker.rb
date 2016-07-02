@@ -101,7 +101,6 @@ class ImportWorker
         import_tracks release, options[:path]
         import_images release, options[:path]
         import_nfo release, options[:path]
-        check_sfv release, options[:path]
       rescue Exception => e
         Rails.logger.info options.inspect
         raise ActiveRecord::Rollback
