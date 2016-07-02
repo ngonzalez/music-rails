@@ -24,7 +24,7 @@ namespace "music" do
     end
     def format_name name
       year = name.split("-").select{|item| item.match(/(\d{4})/) }.last
-      name.gsub("_-_", "-").gsub("(", "").gsub(")", "").split("-").each_with_object([]){|string, array|
+      name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-").each_with_object([]){|string, array|
         next if array.include? year
         str = string.gsub("_", " ")
         next if str.blank?
