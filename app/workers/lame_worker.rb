@@ -17,11 +17,10 @@ class LameWorker
     end
     begin
       if !track.file
-        file_path = [BASE_PATH, track.release.decorate.path, track.name].join("/")
         if ["iTunes AAC"].include?(track.format_name) || track.format_name =~ /MP3/
-          track.update! file: File.open(file_path)
+          track.update! file: File.open(track.decorate.public_path)
         elsif ["FLAC"].include? track.format_name
-          file_path = Shellwords.escape file_path
+          file_path = Shellwords.escape track.decorate.public_path
           temp_file_flac = "/tmp/#{track.id}.flac"
           temp_file_wav = "/tmp/#{track.id}.wav"
           copy_file file_path, temp_file_flac
@@ -30,7 +29,7 @@ class LameWorker
           encode temp_file_wav, temp_file
           track.update! file: File.open(temp_file)
         elsif ["WAV", "AIFF"].include? track.format_name
-          file_path = Shellwords.escape file_path
+          file_path = Shellwords.escape track.decorate.public_path
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
           encode file_path, temp_file
           track.update! file: File.open(temp_file)

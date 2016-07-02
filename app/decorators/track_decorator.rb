@@ -1,5 +1,8 @@
 class TrackDecorator < Draper::Decorator
   delegate_all
+  def public_path
+    [BASE_PATH, release.decorate.path, name].join("/")
+  end
   def link_to_search name
     h.link_to h.search_music_index_path(rows: h.search_rows, q: object.send(name)), h.default_transition do
       h.highlight object.send(name), h.search_terms_array

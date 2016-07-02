@@ -11,7 +11,7 @@ namespace "music" do
   desc "clear data"
   task clear_data: :environment do
     Release.find_each do |release|
-      if !File.directory? [BASE_PATH, release.decorate.path].join("/")
+      if !File.directory? release.decorate.public_path
         release.destroy
       end
     end
@@ -117,7 +117,7 @@ namespace "music" do
   task import_sfv: :environment do
     Release.find_each do |release|
       next if release.sfv
-      Dir[[BASE_PATH, release.decorate.path].join("/") + "/*.#{SFV_TYPE}"].each do |sfv_path|
+      Dir[release.decorate.public_path + "/*.#{SFV_TYPE}"].each do |sfv_path|
         release.update! sfv: File.read(sfv_path), sfv_name: sfv_path.split("/").last
         sleep 0.01
       end
@@ -172,8 +172,7 @@ namespace "music" do
         next
       end
       cmd = "cfv" # cfv 1.18.3
-      path = [BASE_PATH, release.decorate.path].join("/")
-      details = case Dir.chdir(path) { %x[#{cmd} -f #{release.sfv.path}] }
+      details = case Dir.chdir(release.decorate.public_path) { %x[#{cmd} -f #{release.sfv.path}] }
         when /badcrc/ then "badcrc"
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
@@ -199,8 +198,7 @@ namespace "music" do
         next
       end
       cmd = "cfv" # cfv 1.18.3
-      path = [BASE_PATH, release.decorate.path].join("/")
-      details = case Dir.chdir(path) { %x[#{cmd} -f #{release.srrdb_sfv.path}] }
+      details = case Dir.chdir(release.decorate.public_path) { %x[#{cmd} -f #{release.srrdb_sfv.path}] }
         when /badcrc/ then "badcrc"
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
