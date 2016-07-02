@@ -142,19 +142,22 @@ namespace "music" do
           release.update! details: { "no_nfo": true }
           next
         end
-        url = ["http://www.srrdb.com/download/file/"]
+        url = ["http://www.srrdb.com/download/file"]
         url << release.name
         url << nfo_file.file.name.gsub(".#{NFO_TYPE}", ".sfv")
         puts url.join("/")
         response = Typhoeus.get url.join("/")
-        next if response.code != 200
+        next if response.code != 200 || response.body.blank?
         f = Tempfile.new ; f.write(response.body) ; f.rewind
         release.update! srrdb_sfv: f
+        puts "------------------------------------"
         puts File.read(release.srrdb_sfv.path).inspect
-        sleep 10
+        puts "------------------------------------"
+        sleep 5
       end
     end
   end
+
   desc "check sfv"
   task check_sfv: :environment do
     Release.find_each do |release|
