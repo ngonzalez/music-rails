@@ -42,4 +42,6 @@ source "https://rubygems.org" do
 
   gem 'progress_bar'
 
+  gem 'typhoeus'
+
 end

@@ -13,4 +13,13 @@ class Release < ActiveRecord::Base
     string :label_name
     integer :year
   end
+
+  dragonfly_accessor :sfv do
+    storage_options {|a| { path: "sfv/%s" % [ UUID.new.generate ] } }
+  end
+
+  dragonfly_accessor :srrdb_sfv do
+    storage_options {|a| { path: "srrdb_sfv/%s" % [ UUID.new.generate ] } }
+  end
+
 end

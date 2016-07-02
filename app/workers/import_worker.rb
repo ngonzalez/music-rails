@@ -86,23 +86,6 @@ class ImportWorker
     end
     FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
-  def check_sfv release, path
-    cmd = "cfv" # cfv 1.18.3
-    if Dir["#{path}/*.sfv"].empty? # No SFV
-      release.update! details: { "sfv" => "not found" }
-      return
-    end
-    details = case Dir.chdir(path) { %x[#{cmd}] }
-      when /badcrc/ then "badcrc"
-      when /chksum file errors/ then "chksum file errors"
-      when /not found/ then "missing files"
-    end
-    if details
-      release.update! details: { "sfv" => details } if release.details['sfv'] != details
-    else
-      release.update! last_verified_at: Time.now
-    end
-  end
   def process_release options
     release_name = options[:path].split("/").last
     release = Release.find_by name: release_name

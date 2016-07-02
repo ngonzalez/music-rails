@@ -3,7 +3,7 @@ namespace "music" do
 
   desc "update data"
   task update: :environment do
-    ["clear_data", "load_data", "set_details"].each do |name|
+    ["clear_data", "load_data"].each do |name|
       Rake::Task["music:#{name}"].execute
     end
   end
@@ -112,6 +112,69 @@ namespace "music" do
       end
     end
 
+  end
+
+  desc "import sfv"
+  task import_sfv: :environment do
+    require 'progress_bar'
+    bar = ProgressBar.new Release.count
+    Release.find_each do |release|
+      next if release.sfv
+      Dir[[BASE_PATH, release.decorate.path].join("/") + "/*.#{SFV_TYPE}"].each do |sfv_path|
+        release.update! sfv: File.read(sfv_path)
+        bar.increment!
+        sleep 0.01
+      end
+    end
+  end
+
+  desc "import srrdb sfv"
+  task import_srrdb_sfv: :environment do
+    Release.find_each do |release|
+      year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last
+      if release.name.ends_with? year
+        next if release.details.try :non_scener
+        release.update! details: { "non_scener": true }
+      elsif !release.srrdb_sfv
+        nfo_file = release.images.detect{|image| image.file_name =~ /.#{NFO_TYPE}/ }
+        if !nfo_file
+          next if release.details.try :no_nfo
+          release.update! details: { "no_nfo": true }
+          next
+        end
+        url = ["http://www.srrdb.com/download/file/"]
+        url << release.name
+        url << nfo_file.file.name.gsub(".#{NFO_TYPE}", ".sfv")
+        puts url.join("/")
+        response = Typhoeus.get url.join("/")
+        next if response.code != 200
+        f = Tempfile.new ; f.write(response.body) ; f.rewind
+        release.update! srrdb_sfv: f
+        puts File.read(release.srrdb_sfv.path).inspect
+        sleep 10
+      end
+    end
+  end
+  desc "check sfv"
+  task check_sfv: :environment do
+    Release.find_each do |release|
+      path = [BASE_PATH, release.decorate.path].join("/")
+      cmd = "cfv" # cfv 1.18.3
+      if Dir["#{path}/*.#{SFV_TYPE}"].empty? # No SFV
+        release.update! details: { "sfv" => "not found" }
+        return
+      end
+      details = case Dir.chdir(path) { %x[#{cmd}] }
+        when /badcrc/ then "badcrc"
+        when /chksum file errors/ then "chksum file errors"
+        when /not found/ then "missing files"
+      end
+      if details
+        release.update! details: { "sfv" => details } if release.details['sfv'] != details
+      else
+        release.update! last_verified_at: Time.now
+      end
+    end
   end
 
 end
