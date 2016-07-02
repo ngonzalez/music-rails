@@ -133,7 +133,8 @@ namespace "music" do
       next if !year
       if release.name.ends_with? year
         next if release.details.has_key? :non_scener
-        release.update! details: { "non_scener": true }
+        release.details["non_scener"] = true
+        release.save!
       elsif release.sfv && !release.srrdb_sfv
         next if release.details.has_key? :srrdb_sfv_error
         url = ["http://www.srrdb.com/download/file"]
@@ -142,7 +143,8 @@ namespace "music" do
         puts url.join("/")
         response = Typhoeus.get url.join("/")
         if response.code != 200 || response.body.blank?
-          release.update! details: { "srrdb_sfv_error": true }
+          release.details["srrdb_sfv_error"] = true
+          release.save!
           next
         end
         begin
@@ -165,6 +167,7 @@ namespace "music" do
 
   desc "check sfv"
   task check_sfv: :environment do
+    require 'pry'
     Release.find_each do |release|
       if release.last_verified_at
         next
@@ -182,7 +185,8 @@ namespace "music" do
         when /No such file/ then "file not found"
       end
       if details
-        release.update! details: { "sfv" => details }
+        release.details["sfv"] = details
+        release.save!
       else
         release.update! last_verified_at: Time.now
       end
@@ -191,6 +195,7 @@ namespace "music" do
 
   desc "check srrdb sfv"
   task check_srrdb_sfv: :environment do
+    require 'pry'
     Release.find_each do |release|
       if release.srrdb_last_verified_at
         next
@@ -208,7 +213,8 @@ namespace "music" do
         when /No such file/ then "file not found"
       end
       if details
-        release.update! details: { "srrdb_sfv" => details }
+        release.details["srrdb_sfv"] = details
+        release.save!
       else
         release.update! srrdb_last_verified_at: Time.now
       end
@@ -219,8 +225,10 @@ namespace "music" do
   task check_nfo: :environment do
     Release.find_each do |release|
       next if release.details.has_key? :no_nfo
-      nfo_file = release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
-      release.update! details: { "no_nfo": true } if !nfo_file
+      if !release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
+        release.details["no_nfo"] = true
+        release.save!
+      end
     end
   end
 
