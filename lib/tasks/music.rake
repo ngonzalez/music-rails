@@ -131,12 +131,14 @@ namespace "music" do
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
     Release.find_each do |release|
+      next if !release.name
       year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last
+      next if !year
       if release.name.ends_with? year
         next if release.details.try :non_scener
         release.update! details: { "non_scener": true }
       elsif !release.srrdb_sfv
-        nfo_file = release.images.detect{|image| image.file_name =~ /.#{NFO_TYPE}/ }
+        nfo_file = release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
         if !nfo_file
           next if release.details.try :no_nfo
           release.update! details: { "no_nfo": true }
