@@ -115,17 +115,15 @@ namespace "music" do
 
   desc "import sfv"
   task import_sfv: :environment do
-    require 'progress_bar'
-    bar = ProgressBar.new Release.count
     Release.find_each do |release|
       next if release.sfv
       Dir[[BASE_PATH, release.decorate.path].join("/") + "/*.#{SFV_TYPE}"].each do |sfv_path|
         release.update! sfv: File.read(sfv_path), sfv_name: sfv_path.split("/").last
-        bar.increment!
         sleep 0.01
       end
     end
   end
+
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
     require 'pry'
@@ -134,16 +132,16 @@ namespace "music" do
       year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last
       next if !year
       if release.name.ends_with? year
-        next if release.details.try :non_scener
+        next if release.details.has_key? :non_scener
         release.update! details: { "non_scener": true }
       elsif release.sfv && !release.srrdb_sfv
+        next if release.details.has_key? :srrdb_sfv_error
         url = ["http://www.srrdb.com/download/file"]
         url << release.name
         url << release.sfv_name
         puts url.join("/")
         response = Typhoeus.get url.join("/")
         if response.code != 200 || response.body.blank?
-          next if release.details.try :srrdb_sfv_error
           release.update! details: { "srrdb_sfv_error": true }
           next
         end
@@ -164,6 +162,7 @@ namespace "music" do
       end
     end
   end
+
   desc "check sfv"
   task check_sfv: :environment do
     Release.find_each do |release|
@@ -180,6 +179,7 @@ namespace "music" do
         when /badcrc/ then "badcrc"
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
+        when /No such file/ then "file not found"
       end
       if details
         release.update! details: { "sfv" => details }
@@ -188,6 +188,7 @@ namespace "music" do
       end
     end
   end
+
   desc "check srrdb sfv"
   task check_srrdb_sfv: :environment do
     Release.find_each do |release|
@@ -204,6 +205,7 @@ namespace "music" do
         when /badcrc/ then "badcrc"
         when /chksum file errors/ then "chksum file errors"
         when /not found/ then "missing files"
+        when /No such file/ then "file not found"
       end
       if details
         release.update! details: { "srrdb_sfv" => details }
@@ -216,7 +218,7 @@ namespace "music" do
   desc "check nfo"
   task check_nfo: :environment do
     Release.find_each do |release|
-      next if release.details.try :no_nfo
+      next if release.details.has_key? :no_nfo
       nfo_file = release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
       release.update! details: { "no_nfo": true } if !nfo_file
     end
