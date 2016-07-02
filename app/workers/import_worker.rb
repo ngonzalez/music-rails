@@ -4,6 +4,12 @@ class ImportWorker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
+  attr_accessor :release
+
+  def initialize options={}
+    @release = options[:release] if options[:release]
+  end
+
   def perform options
     ensure_db_connection
     process_release options.symbolize_keys
@@ -23,9 +29,9 @@ class ImportWorker
   end
 
   require 'taglib'
-  def import_tracks release, path
+  def import_tracks
     ALLOWED_AUDIO_FORMATS.each do |format|
-      Dir["#{path}/*.#{format}"].each do |file|
+      Dir["#{release.decorate.public_path}/*.#{format}"].each do |file|
         track_name = file.split("/").last
         track = release.tracks.detect{|track| track.name == track_name }
         if !track
@@ -46,9 +52,9 @@ class ImportWorker
       end
     end
   end
-  def import_images release, path
+  def import_images
     ALLOWED_IMAGE_FORMATS.each do |format|
-      Dir["#{path}/*.#{format}"].each do |image_path|
+      Dir["#{release.decorate.public_path}/*.#{format}"].each do |image_path|
         file_name = image_path.split("/").last
         next if file_name =~ /.log./
         next if release.images.detect{|image| image.file_name == file_name }
@@ -56,11 +62,11 @@ class ImportWorker
       end
     end
   end
-  def import_nfo release, path
+  def import_nfo
     temp_file = "/tmp/#{Time.now.to_i}"
     font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
     [NFO_TYPE].each do |format|
-      Dir["#{path}/*.#{format}"].each do |nfo_path|
+      Dir["#{release.decorate.public_path}/*.#{format}"].each do |nfo_path|
         file_name = nfo_path.split("/").last
         next if release.images.detect{|image| image.file_name == file_name }
         begin
@@ -86,21 +92,22 @@ class ImportWorker
     end
     FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
+  def set_release options
+    return if release
+    @release = Release.new name: options[:path].split("/").last, folder: options[:folder], source: options[:source]
+    release.label_name = options[:label_name].gsub("_", " ") if options[:label_name]
+    release.save!
+  end
   def process_release options
-    release_name = options[:path].split("/").last
-    release = Release.find_by name: release_name
+    @release = Release.find_by name: options[:path].split("/").last
     return if release && release.last_verified_at
     return if release && release.details[:sfv]
     ActiveRecord::Base.transaction do
       begin
-        if !release
-          release = Release.new name: release_name, folder: options[:folder], source: options[:source]
-          release.label_name = options[:label_name].gsub("_", " ") if options[:label_name]
-          release.save!
-        end
-        import_tracks release, options[:path]
-        import_images release, options[:path]
-        import_nfo release, options[:path]
+        set_release options
+        import_tracks
+        import_images
+        import_nfo
       rescue Exception => e
         Rails.logger.info options.inspect
         raise ActiveRecord::Rollback
