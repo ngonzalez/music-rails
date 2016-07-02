@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160702131009) do
+ActiveRecord::Schema.define(version: 20160702141851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(version: 20160702131009) do
     t.string   "format_name"
     t.string   "source"
     t.string   "srrdb_sfv_uid"
-    t.string   "srrdb_sfv_name"
     t.string   "sfv_uid"
     t.string   "sfv_name"
     t.datetime "srrdb_last_verified_at"

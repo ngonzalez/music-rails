@@ -76,7 +76,7 @@ namespace "music" do
       release.update! year: release.tracks[0].year.to_i
     end
     Release.where(year: "0").find_each do |release|
-      year = release.name.scan(/\b\d{4}\b/)[0].to_i
+      year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last.to_i
       release.tracks.update_all year: year
       release.update! year: year
     end
@@ -120,7 +120,7 @@ namespace "music" do
     Release.find_each do |release|
       next if release.sfv
       Dir[[BASE_PATH, release.decorate.path].join("/") + "/*.#{SFV_TYPE}"].each do |sfv_path|
-        release.update! sfv: File.read(sfv_path)
+        release.update! sfv: File.read(sfv_path), sfv_name: sfv_path.split("/").last
         bar.increment!
         sleep 0.01
       end
@@ -136,16 +136,10 @@ namespace "music" do
       if release.name.ends_with? year
         next if release.details.try :non_scener
         release.update! details: { "non_scener": true }
-      elsif !release.srrdb_sfv
-        nfo_file = release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
-        if !nfo_file
-          next if release.details.try :no_nfo
-          release.update! details: { "no_nfo": true }
-          next
-        end
+      elsif release.sfv && !release.srrdb_sfv
         url = ["http://www.srrdb.com/download/file"]
         url << release.name
-        url << nfo_file.file.name.gsub(".#{NFO_TYPE}", ".sfv")
+        url << release.sfv_name
         puts url.join("/")
         response = Typhoeus.get url.join("/")
         if response.code != 200 || response.body.blank?
@@ -216,6 +210,15 @@ namespace "music" do
       else
         release.update! srrdb_last_verified_at: Time.now
       end
+    end
+  end
+
+  desc "check nfo"
+  task check_nfo: :environment do
+    Release.find_each do |release|
+      next if release.details.try :no_nfo
+      nfo_file = release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
+      release.update! details: { "no_nfo": true } if !nfo_file
     end
   end
 

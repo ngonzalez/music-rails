@@ -99,7 +99,11 @@ CREATE TABLE releases (
     label_name character varying,
     year character varying,
     format_name character varying,
-    source character varying
+    source character varying,
+    srrdb_sfv_uid character varying,
+    sfv_uid character varying,
+    sfv_name character varying,
+    srrdb_last_verified_at timestamp without time zone
 );
 
 
@@ -390,4 +394,12 @@ INSERT INTO schema_migrations (version) VALUES ('20151031162241');
 INSERT INTO schema_migrations (version) VALUES ('20151031171634');
 
 INSERT INTO schema_migrations (version) VALUES ('20160521153356');
+
+INSERT INTO schema_migrations (version) VALUES ('20160702110906');
+
+INSERT INTO schema_migrations (version) VALUES ('20160702112654');
+
+INSERT INTO schema_migrations (version) VALUES ('20160702131009');
+
+INSERT INTO schema_migrations (version) VALUES ('20160702141851');
 
