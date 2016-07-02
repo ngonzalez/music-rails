@@ -131,19 +131,16 @@ namespace "music" do
       next if !release.name
       year = release.name.split("-").select{|item| item.match(/(\d{4})/) }.last
       next if !year
-      if release.name.ends_with? year
-        next if release.details.has_key? :non_scener
-        release.details["non_scener"] = true
-        release.save!
-      elsif release.sfv && !release.srrdb_sfv
-        next if release.details.has_key? :srrdb_sfv_error
+      next if release.name.ends_with? year
+      if release.sfv && !release.srrdb_sfv
+        next if release.details && release.details[:srrdb_sfv_error]
         url = ["http://www.srrdb.com/download/file"]
         url << release.name
         url << release.sfv_name
         puts url.join("/")
         response = Typhoeus.get url.join("/")
         if response.code != 200 || response.body.blank?
-          release.details["srrdb_sfv_error"] = true
+          release.details[:srrdb_sfv_error] = true
           release.save!
           next
         end
@@ -171,7 +168,7 @@ namespace "music" do
     Release.find_each do |release|
       if release.last_verified_at
         next
-      elsif release.details && release.details["sfv"]
+      elsif release.details && release.details[:sfv]
         next
       elsif !release.sfv
         next
@@ -185,7 +182,7 @@ namespace "music" do
         when /No such file/ then "file not found"
       end
       if details
-        release.details["sfv"] = details
+        release.details[:sfv] = details
         release.save!
       else
         release.update! last_verified_at: Time.now
@@ -199,7 +196,7 @@ namespace "music" do
     Release.find_each do |release|
       if release.srrdb_last_verified_at
         next
-      elsif release.details && release.details["srrdb_sfv"]
+      elsif release.details && release.details[:srrdb_sfv]
         next
       elsif !release.srrdb_sfv
         next
@@ -213,7 +210,7 @@ namespace "music" do
         when /No such file/ then "file not found"
       end
       if details
-        release.details["srrdb_sfv"] = details
+        release.details[:srrdb_sfv] = details
         release.save!
       else
         release.update! srrdb_last_verified_at: Time.now
@@ -224,9 +221,9 @@ namespace "music" do
   desc "check nfo"
   task check_nfo: :environment do
     Release.find_each do |release|
-      next if release.details.has_key? :no_nfo
+      next if release.details && release.details[:no_nfo]
       if !release.images.detect{|image| image.file_name.ends_with?(".#{NFO_TYPE}") }
-        release.details["no_nfo"] = true
+        release.details[:no_nfo] = true
         release.save!
       end
     end
