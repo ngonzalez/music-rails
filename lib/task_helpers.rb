@@ -36,6 +36,10 @@ module TaskHelpers
     end
   end
 
+  def year_from_name name
+    name.split("-").select{|item| item.match(/(\d{4})/) }.last
+  end
+
   def format_number name
     name.split("-").length > 2 ? name.split("-")[0] : name.split("_")[0]
   end

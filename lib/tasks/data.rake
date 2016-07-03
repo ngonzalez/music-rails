@@ -73,7 +73,7 @@ namespace "data" do
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
     Release.where("sfv_uid IS NOT NULL AND srrdb_sfv_uid IS NULL").each do |release|
-      next if release.name.ends_with? release.decorate.year_from_name
+      next if release.name.ends_with? year_from_name(release.name)
       begin
         import_srrdb_sfv release
         sleep 5
@@ -122,7 +122,7 @@ namespace "data" do
       release.update! year: release.tracks[0].year.to_i
     end
     Release.where(year: "0").find_each do |release|
-      year = release.decorate.year_from_name
+      year = year_from_name release.name
       release.tracks.each{|track| track.update! year: year }
       release.update! year: year
     end
