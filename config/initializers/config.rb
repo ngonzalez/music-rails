@@ -6,6 +6,7 @@ ALLOWED_IMAGE_FORMATS = ["jpg", "JPG", "jpeg", "JPEG", "gif", "png", "tiff", "bm
 ALLOWED_SOURCES = ["WEB", "Vinyl", "CD", "SAT-CABLE", "Line", "Live"]
 NFO_TYPE = "nfo"
 SFV_TYPE = "sfv"
+SFV_CHECK_APP = "cfv"
 DEFAULT_ENCODING = "mp3"
 LABELS = []
 HOST_NAME = "example.net"
