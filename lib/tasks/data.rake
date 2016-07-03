@@ -109,6 +109,23 @@ namespace "data" do
     end
   end
 
+  desc "process images"
+  task process_images: :environment do
+    require 'progress_bar'
+    images = Image.where("thumb_uid IS NULL OR thumb_high_uid IS NULL")
+    images = images.select{|image| [NFO_TYPE].exclude? image.file_type }
+    bar = ProgressBar.new images.count
+    images.each do |image|
+      begin
+        image.update! thumb: image.file.thumb("300x250>") if !image.thumb
+        image.update! thumb_high: image.file.thumb("600x500>") if !image.thumb_high
+        bar.increment!
+      rescue
+        next
+      end
+    end
+  end
+
   desc "set details"
   task set_details: :environment do
     Track.where(number: nil).each do |track|

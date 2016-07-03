@@ -9,7 +9,7 @@ class TrackDecorator < Draper::Decorator
     end
   end
   def duration
-    Time.at(object.length).utc.strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
+    Time.at(object.length).strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
   end
   [:title, :album, :genre].each do |name|
     define_method name do

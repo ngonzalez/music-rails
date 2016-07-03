@@ -22,7 +22,6 @@ module TaskHelpers
 
   def check_sfv release, field_name, key
     return if release.send(field_name) || release.details[key] || !release.send(key)
-    Rails.logger.info "\scheck_sfv -> #{release.id}"
     details = case Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
       when /badcrc/ then :bad_crc
       when /chksum file errors/ then :chksum_file_errors

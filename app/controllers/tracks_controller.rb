@@ -1,9 +1,9 @@
 class TracksController < ApplicationController
   def show
-    track = Track.find(params[:id]).decorate
+    track = Track.find params[:id]
     response = { id: track.id }
     if track.file
-      response.merge! media_url: track.media_url
+      response.merge! media_url: track.decorate.media_url
     elsif !track.process_id
       track.update! process_id: LameWorker.perform_async(track.id)
     end
