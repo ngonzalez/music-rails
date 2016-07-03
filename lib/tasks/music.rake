@@ -161,55 +161,39 @@ namespace "music" do
     end
   end
 
+  def check_sfv release, field_name, key
+    if release.send field_name
+      return
+    elsif release.details[key]
+      return
+    elsif !release.send key
+      return
+    end
+    details = case Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
+      when /badcrc/ then "badcrc"
+      when /chksum file errors/ then "chksum file errors"
+      when /not found/ then "missing files"
+      when /No such file/ then "file not found"
+    end
+    if details
+      release.details[key] = details
+      release.save!
+    else
+      release.update! field_name => Time.now
+    end
+  end
+
   desc "check sfv"
   task check_sfv: :environment do
     Release.find_each do |release|
-      if release.last_verified_at
-        next
-      elsif release.details[:sfv]
-        next
-      elsif !release.sfv
-        next
-      end
-      cmd = "cfv" # cfv 1.18.3
-      details = case Dir.chdir(release.decorate.public_path) { %x[#{cmd} -f #{release.sfv.path}] }
-        when /badcrc/ then "badcrc"
-        when /chksum file errors/ then "chksum file errors"
-        when /not found/ then "missing files"
-        when /No such file/ then "file not found"
-      end
-      if details
-        release.details[:sfv] = details
-        release.save!
-      else
-        release.update! last_verified_at: Time.now
-      end
+      check_sfv release, :last_verified_at, :sfv
     end
   end
 
   desc "check srrdb sfv"
   task check_srrdb_sfv: :environment do
     Release.find_each do |release|
-      if release.srrdb_last_verified_at
-        next
-      elsif release.details[:srrdb_sfv]
-        next
-      elsif !release.srrdb_sfv
-        next
-      end
-      cmd = "cfv" # cfv 1.18.3
-      details = case Dir.chdir(release.decorate.public_path) { %x[#{cmd} -f #{release.srrdb_sfv.path}] }
-        when /badcrc/ then "badcrc"
-        when /chksum file errors/ then "chksum file errors"
-        when /not found/ then "missing files"
-        when /No such file/ then "file not found"
-      end
-      if details
-        release.details[:srrdb_sfv] = details
-        release.save!
-      else
-        release.update! srrdb_last_verified_at: Time.now
-      end
+      check_sfv release, :srrdb_last_verified_at, :srrdb_sfv
     end
   end
 

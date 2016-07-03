@@ -37,7 +37,6 @@ class LameWorker
       end
     rescue Exception => e
       Rails.logger.info e.inspect
-      raise e
     ensure
       track.update! process_id: nil if track.file
       FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
