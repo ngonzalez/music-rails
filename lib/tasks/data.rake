@@ -61,8 +61,7 @@ namespace "data" do
 
   desc "import sfv"
   task import_sfv: :environment do
-    Release.find_each do |release|
-      next if release.sfv
+    Release.where(sfv_uid: nil).each do |release|
       Dir[release.decorate.public_path + "/*.#{SFV_TYPE}"].each do |sfv_path|
         release.update! sfv: File.read(sfv_path), sfv_name: sfv_path.split("/").last
         sleep 0.01
@@ -72,7 +71,7 @@ namespace "data" do
 
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
-    Release.where("sfv_uid IS NOT NULL AND srrdb_sfv_uid IS NULL").each do |release|
+    Release.where(srrdb_sfv_uid: nil).each do |release|
       next if release.name.ends_with? year_from_name(release.name)
       begin
         import_srrdb_sfv release
