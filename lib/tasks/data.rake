@@ -72,12 +72,12 @@ namespace "data" do
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
     Release.where(srrdb_sfv_uid: nil).each do |release|
-      next if release.name.ends_with? year_from_name(release.name)
+      year = year_from_name(release.name)
+      next if !year || release.name.ends_with?(year)
       begin
         import_srrdb_sfv release
-        sleep 5
       rescue SrrdbLimitReachedError => e
-        Rails.logger.info "SRRDB: %s" % [ e.inspect ]
+        Rails.logger.info "SRRDB: %s" % [ e.message ]
         break
       end
     end

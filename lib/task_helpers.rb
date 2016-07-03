@@ -18,6 +18,8 @@ module TaskHelpers
     f = Tempfile.new ; f.write(content) ; f.rewind
     release.update! srrdb_sfv: f
     f.unlink
+    Rails.logger.info "--\n%s\n--" % [ content.inspect ]
+    sleep 10
   end
 
   def check_sfv release, field_name, key
