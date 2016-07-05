@@ -27,7 +27,6 @@ function init_players(tracks) {
   }
   function enable(element, data) {
     function init_player(url, callback) {
-      console.log('init_player: ' + url);
       window.player = $.extend(new Audio(url), {
         stop: function() {
           window.player.src = "";
@@ -42,9 +41,8 @@ function init_players(tracks) {
         }
       });
       // window.player.addEventListener("canplay", window.player.play);
-      // window.player.addEventListener("canplaythrough", window.player.play);
       window.player.addEventListener("ended", callback);
-      // window.player.load();
+      window.player.load();
       window.player.play();
     }
     function complete() {
@@ -78,8 +76,10 @@ function init_players(tracks) {
     }
   }
   function observe() {
+    if (!tracks) return;
     $.each($(".play-btn"), function(i, element) {
       var data = tracks[parseInt($(element).data("id"))]
+      if (!data) return;
       if (!data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
