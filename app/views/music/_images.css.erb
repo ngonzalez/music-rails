@@ -1,4 +1,4 @@
-<% @images.each do |image| %>
+<% @release.images.each do |image| %>
   #<%= "img-" + image.id.to_s %> {
     @include image-set('<%= image.thumb.url %>', '<%= image.thumb_high.url %>') {
       width: <%= image.thumb.width %>px;

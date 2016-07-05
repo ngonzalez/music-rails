@@ -11,10 +11,5 @@
   </head>
   <body>
     <%= yield %>
-    <script type="text/javascript">
-      $(document).bind("mobileinit", function() {
-        $.extend($.mobile, <%= default_transition.to_json.html_safe %>);
-      });
-    </script>
   </body>
 </html>

@@ -53,8 +53,7 @@ namespace "data" do
 
   desc "check sfv"
   task sfv: :environment do
-    ["import_sfv", "check_sfv",
-      "import_srrdb_sfv", "check_srrdb_sfv"].each do |name|
+    ["import_sfv", "check_sfv", "import_srrdb_sfv", "check_srrdb_sfv"].each do |name|
       Rake::Task["data:#{name}"].execute
     end
   end
@@ -71,9 +70,7 @@ namespace "data" do
 
   desc "import srrdb sfv"
   task import_srrdb_sfv: :environment do
-    Release.where(srrdb_sfv_uid: nil).each do |release|
-      year = year_from_name(release.name)
-      next if !year || release.name.ends_with?(year)
+    Release.where(srrdb_sfv_uid: nil).decorate.select(&:scene?).each do |release|
       begin
         import_srrdb_sfv release
       rescue SrrdbLimitReachedError => e
@@ -97,22 +94,10 @@ namespace "data" do
     end
   end
 
-  desc "check nfo"
-  task check_nfo: :environment do
-    Release.find_each do |release|
-      next if release.details[NFO_TYPE.to_sym]
-      if !release.images.detect{|image| image.file_type == NFO_TYPE }
-        release.details[NFO_TYPE.to_sym] = :not_found
-        release.save!
-      end
-    end
-  end
-
   desc "process images"
   task process_images: :environment do
     require 'progress_bar'
-    images = Image.where("thumb_uid IS NULL OR thumb_high_uid IS NULL")
-    images = images.select{|image| [NFO_TYPE].exclude? image.file_type }
+    images = Image.where thumb_uid: nil, thumb_high_uid: nil
     bar = ProgressBar.new images.count
     images.each do |image|
       begin

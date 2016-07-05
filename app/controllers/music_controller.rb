@@ -45,8 +45,6 @@ class MusicController < ApplicationController
   def find_release
     @release = Release.find params[:id]
     @tracks = @release.tracks.decorate.sort{|a, b| a.number <=> b.number }
-    @images = @release.images.where(file_type: nil)
-    @nfo = @release.images.where(file_type: NFO_TYPE)
   end
 
   def search_releases

@@ -11,4 +11,9 @@ class ReleaseDecorator < Draper::Decorator
       url: h.music_url(object, format: h.params.slice("format")), year: object.year.to_i
     )
   end
+  def scene?
+    return false if !self.name
+    year = self.name.split("-").select{|item| item.match(/(\d{4})/) }.last
+    year && !name.ends_with?(year)
+  end
 end

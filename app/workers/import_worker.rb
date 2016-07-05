@@ -68,7 +68,7 @@ class ImportWorker
     [NFO_TYPE].each do |format|
       Dir["#{release.decorate.public_path}/*.#{format}"].each do |nfo_path|
         file_name = nfo_path.split("/").last
-        next if release.images.detect{|image| image.file_name == file_name }
+        next if release.nfo_files.detect{|nfo_file| nfo_file.file_name == file_name }
         begin
           File.open(temp_file, 'w:UTF-8') do |f|
             File.open(nfo_path).each_line do |line|
@@ -83,7 +83,7 @@ class ImportWorker
           # http://www.imagemagick.org/discourse-server/viewtopic.php?t=29594
           # http://git.imagemagick.org/repos/VisualMagick/commit/d40df0bb10af73d946edd8e415d5e593420fc17e
           content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
-          release.images.create! file: content, file_type: NFO_TYPE, file_name: file_name
+          release.nfo_files.create! file: content, file_name: file_name
         rescue
           Rails.logger.info "NFO: Failed to import: #{file_name}"
           next

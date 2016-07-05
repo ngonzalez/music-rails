@@ -11,20 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160702141851) do
+ActiveRecord::Schema.define(version: 20160705165152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
 
   create_table "images", force: :cascade do |t|
-    t.integer  "release_id", null: false
-    t.string   "file_uid",   null: false
-    t.string   "file_name",  null: false
+    t.integer  "release_id",     null: false
+    t.string   "file_uid",       null: false
+    t.string   "file_name",      null: false
     t.string   "file_type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
+    t.string   "thumb_uid"
+    t.string   "thumb_high_uid"
+    t.string   "type"
   end
 
   create_table "releases", force: :cascade do |t|
