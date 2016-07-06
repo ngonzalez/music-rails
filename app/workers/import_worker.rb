@@ -63,13 +63,13 @@ class ImportWorker
     end
   end
   def import_nfo
-    temp_file = "/tmp/#{Time.now.to_i}"
-    font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
     [NFO_TYPE].each do |format|
       Dir["#{release.decorate.public_path}/*.#{format}"].each do |nfo_path|
         file_name = nfo_path.split("/").last
         next if release.nfo_files.detect{|nfo_file| nfo_file.file_name == file_name }
         begin
+          temp_file = "/tmp/#{Time.now.to_i * rand(10000)}"
+          font = Rails.root + "app/assets/fonts/ProFont/ProFontWindows.ttf"
           File.open(temp_file, 'w:UTF-8') do |f|
             File.open(nfo_path).each_line do |line|
               # Remove ^M when copy files from Windows
@@ -82,15 +82,15 @@ class ImportWorker
           # <policy domain="path" rights="none" pattern="@*" />
           # http://www.imagemagick.org/discourse-server/viewtopic.php?t=29594
           # http://git.imagemagick.org/repos/VisualMagick/commit/d40df0bb10af73d946edd8e415d5e593420fc17e
-          content = Dragonfly.app.generate(:text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' })
+          content = Dragonfly.app.generate :text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' }
           release.nfo_files.create! file: content, file_name: file_name
         rescue
           Rails.logger.info "NFO: Failed to import: #{file_name}"
-          next
+        ensure
+          FileUtils.rm(temp_file) if File.exists?(temp_file)
         end
       end
     end
-    FileUtils.rm(temp_file) if File.exists?(temp_file)
   end
   def set_release options
     return if release
