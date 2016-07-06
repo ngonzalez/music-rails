@@ -58,7 +58,6 @@ class MusicController < ApplicationController
         with(:label_name, label_name)
       }
       search.hits.each{|hit|
-        next if hash.has_key? hit.result.id
         hash[hit.result.id] = hit.result.decorate.search_infos
       }
       @releases = hash.sort_by{|k, v| v[:year] || 0 }.reverse
@@ -68,7 +67,6 @@ class MusicController < ApplicationController
         with(:year, year)
       }
       search.hits.each{|hit|
-        next if hash.has_key? hit.result.id
         hash[hit.result.id] = hit.result.decorate.search_infos
       }
       @releases = hash.sort_by{|k, v| v[:formatted_name] || 0 }

@@ -26,25 +26,18 @@ function init_players(tracks) {
     element.removeClass("grey");
   }
   function enable(element, data) {
-    function init_player(url, callback) {
-      window.player = $.extend(new Audio(url), {
-        stop: function() {
-          window.player.src = "";
-          window.player = null;
-        },
-        toggle: function() {
-          if (window.player.paused) {
-            window.player.play();
-          } else {
-            window.player.pause();
+      function init_player(url, callback) {
+          window.player = ion.sound({ volume: 0.5, url: url, preload: true });
+          window.player.init();
+          window.player.play();
+          window.player.toggle = function() {
+              if (window.player.streams[0].paused) {
+                  window.player.play();
+              } else {
+                  window.player.pause();
+              }
           }
-        }
-      });
-      // window.player.addEventListener("canplay", window.player.play);
-      window.player.addEventListener("ended", callback);
-      window.player.load();
-      window.player.play();
-    }
+      }
     function complete() {
       if (window.player) window.player.stop();
       window.current_file = null;
