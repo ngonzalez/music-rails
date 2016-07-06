@@ -56,10 +56,12 @@ CREATE TABLE images (
     release_id integer NOT NULL,
     file_uid character varying NOT NULL,
     file_name character varying NOT NULL,
-    file_type character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    thumb_uid character varying,
+    thumb_high_uid character varying,
+    type character varying
 );
 
 
@@ -402,4 +404,10 @@ INSERT INTO schema_migrations (version) VALUES ('20160702112654');
 INSERT INTO schema_migrations (version) VALUES ('20160702131009');
 
 INSERT INTO schema_migrations (version) VALUES ('20160702141851');
+
+INSERT INTO schema_migrations (version) VALUES ('20160703082507');
+
+INSERT INTO schema_migrations (version) VALUES ('20160705165152');
+
+INSERT INTO schema_migrations (version) VALUES ('20160705175855');
 

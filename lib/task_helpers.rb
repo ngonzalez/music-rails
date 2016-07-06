@@ -46,7 +46,7 @@ module TaskHelpers
   end
 
   def format_name name
-    year = name.split("-").select{|item| item.match(/(\d{4})/) }.last
+    year = year_from_name name
     name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-").each_with_object([]){|string, array|
       next if array.include? year
       str = string.gsub("_", " ")
@@ -69,8 +69,7 @@ module TaskHelpers
           when 192.0 then "MP3-192CBR"
           when 256.0 then "MP3-256CBR"
           when 320.0 then "MP3-320CBR"
-          else
-            "MP3"
+          else "MP3"
         end
       when /WAVE audio/ then "WAV"
       when /iTunes AAC/ then "iTunes AAC"

@@ -131,7 +131,7 @@ namespace "data" do
       release.update! format_name: get_format_from_release_name(release) || format_track_format(release)
     end
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
-      release.tracks.update_all format_name: format_track_format(release)
+      release.tracks.each{|track| track.update! format_name: format_track_format(release) }
     end
   end
 
