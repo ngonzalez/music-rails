@@ -99,13 +99,13 @@
     };
 
     Stream.prototype = {
-        destroy: function () {
+        destroy: function() {
             this.stop();
             this.gain && this.gain.disconnect();
             this.source && this.source.disconnect();
         },
 
-        play: function () {
+        play: function() {
             if (this.playing) return;
             this.gain = audio.createGain();
             this.source = audio.createBufferSource();
@@ -117,19 +117,10 @@
             this._play();
         },
 
-        _play: function () {
+        _play: function() {
             var start, end;
-            if (this.paused) {
-                start = this.start + this.time_offset;
-                end = this.end - this.time_offset;
-            } else {
-                start = this.start;
-                end = this.end;
-            }
-            if (end <= 0) {
-                this.clear();
-                return;
-            }
+            start = this.start + this.time_offset;
+            end = this.end - this.time_offset;
             if (typeof this.source.start === "function") {
                 this.source.start(0, start, end);
             } else {
@@ -140,7 +131,7 @@
             this.time_started = new Date().valueOf();
         },
 
-        stop: function () {
+        stop: function() {
             if (this.playing && this.source) {
                 if (typeof this.source.stop === "function") {
                     this.source.stop(0);
@@ -151,14 +142,14 @@
             this.clear();
         },
 
-        pause: function () {
+        pause: function() {
             if (this.paused) { this.play(); return; }
             if (!this.playing) return;
             this.source && this.source.stop(0);
             this.paused = true;
         },
 
-        ended: function () {
+        ended: function() {
             this.playing = false;
             this.time_ended = new Date().valueOf();
             this.time_played = (this.time_ended - this.time_started) / 1000;
@@ -166,7 +157,7 @@
             if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) this.clear();
         },
 
-        clear: function () {
+        clear: function() {
             this.time_played = 0;
             this.time_offset = 0;
             this.paused = false;
