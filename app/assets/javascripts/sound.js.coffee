@@ -13,7 +13,7 @@ class Stream
         @start = 0
         @end = @buffer.duration
         @gain_value = @options.volume || 1
-        @time_started = @time_ended = @time_offset = 0
+        @time_offset = 0
         @init @
 
     play: ->
@@ -56,10 +56,9 @@ class Stream
 
     _ended: ->
         delete @playing
-        @time_ended = new Date().valueOf()
-        @time_offset += (@time_ended - @time_started) / 1000
-        if (@time_offset >= @end) || (@end - @time_offset < 0.1)
-            @gain.disconnect()
-            @source.disconnect()
+        @time_offset += (new Date().valueOf() - @time_started) / 1000
+        if @end - @time_offset < 0.1
             @_clear()
             @complete() if @complete
+            @gain && @gain.disconnect()
+            @source && @source.disconnect()
