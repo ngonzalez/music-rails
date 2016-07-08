@@ -94,7 +94,6 @@
         this.playing = false;
         this.time_started = 0;
         this.time_ended = 0;
-        this.time_played = 0;
         this.time_offset = 0;
     };
 
@@ -152,13 +151,11 @@
         ended: function() {
             this.playing = false;
             this.time_ended = new Date().valueOf();
-            this.time_played = (this.time_ended - this.time_started) / 1000;
-            this.time_offset += this.time_played;
+            this.time_offset += (this.time_ended - this.time_started) / 1000;
             if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) this.clear();
         },
 
         clear: function() {
-            this.time_played = 0;
             this.time_offset = 0;
             this.paused = false;
             this.playing = false;
