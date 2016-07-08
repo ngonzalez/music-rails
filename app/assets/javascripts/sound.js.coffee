@@ -15,7 +15,8 @@ class Stream
         @time_started = @time_ended = @time_offset = 0
 
     play: ->
-        @playing ? return : @playing = true
+        return if @playing
+        @playing = true
         @_play()
 
     stop: ->
