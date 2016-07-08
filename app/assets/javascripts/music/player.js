@@ -32,7 +32,7 @@ function init_players(tracks) {
       clear_active();
     }
     function init_player(url, callback) {
-        new_player({ volume: 0.5, url: url, end_callback: complete }, complete);
+        new_player({ volume: 0.5, url: url }, complete);
     }
     function toggle() {
         window.player.playing ? window.player.pause() : window.player.play();
