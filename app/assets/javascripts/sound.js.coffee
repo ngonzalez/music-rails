@@ -16,11 +16,12 @@ class Stream
     play: ->
         return if @playing
         @playing = true
+        @pause_duration += new Date().valueOf() - @paused_at if @paused_at
         @_play()
 
     stop: ->
         @source.stop() if @playing
-        @_clear()
+        delete @playing
 
     pause: ->
         @paused_at = new Date().valueOf()
@@ -41,27 +42,23 @@ class Stream
         @end += @time_offset / 1000
         @time_started = new Date().valueOf()
         @source.start 0, @start, @end
-        @pause_duration += new Date().valueOf() - @paused_at if @paused_at
 
     _volume: (value) ->
         @gain.gain.value = value;
 
-    _clear: ->
-        delete @playing
-        @_set_values()
-
     _set_values: ->
-        @start = 0
         @end = @buffer.duration
         @gain_value = @options.volume || 1
-        @paused_at = @pause_duration = @time_offset = 0
+        @start = @paused_at = @pause_duration = @time_offset = 0
 
     _ended: ->
         delete @playing
         @time_offset += new Date().valueOf() - @time_started
-        @res = @buffer.duration - ((@time_offset + @pause_duration) / 1000)
-        if ((@res < 0) || parseInt(@res) == 0)
-            @_clear()
-            @complete() if @complete
-            @gain && @gain.disconnect()
-            @source && @source.disconnect()
+        @time_remaining = @buffer.duration - ((@time_offset + @pause_duration) / 1000)
+        @_reset() if parseInt(@time_remaining) <= 0
+
+    _reset: ->
+        @_set_values()
+        @complete() if @complete
+        @gain && @gain.disconnect()
+        @source && @source.disconnect()
