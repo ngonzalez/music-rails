@@ -187,11 +187,10 @@
     var Sound = function (options) {
         this.options = extend(settings);
         this.url = options.url;
-        delete this.options.url;
         extend(options, this.options);
 
         this.request = null;
-        this.streams = {};
+        this.stream = null;
         this.result = {};
         this.ext = 0;
 
@@ -213,17 +212,8 @@
         },
 
         destroy: function () {
-            var stream;
-
-            for (i in this.streams) {
-                stream = this.streams[i];
-
-                if (stream) {
-                    stream.destroy();
-                    stream = null;
-                }
-            }
-            this.streams = {};
+            this.stream.destroy();
+            this.stream = null;
             this.result = null;
             this.options.buffer = null;
             this.options = null;
@@ -315,19 +305,7 @@
                 this.options.ready_callback.call(this.options.scope, config);
             }
 
-            if (this.options.sprite) {
-
-                for (i in this.options.sprite) {
-                    this.options.start = this.options.sprite[i][0];
-                    this.options.end = this.options.sprite[i][1];
-                    this.streams[i] = new Stream(this.options, i);
-                }
-
-            } else {
-
-                this.streams[0] = new Stream(this.options);
-
-            }
+            this.stream = new Stream(this.options);
 
             if (this.autoplay) {
                 this.autoplay = false;
@@ -356,75 +334,24 @@
             if (this.no_file || !this.decoded) {
                 return;
             }
-
-            if (this.options.sprite) {
-                if (this.options.part) {
-                    this.streams[this.options.part].play(this.options);
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].play(this.options);
-                    }
-                }
-            } else {
-                this.streams[0].play(this.options);
-            }
+            this.stream.play(this.options);
         },
 
         stop: function (options) {
-            if (this.options.sprite) {
-
-                if (options) {
-                    this.streams[options.part].stop();
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].stop();
-                    }
-                }
-
-            } else {
-                this.streams[0].stop();
-            }
+            this.stream.stop();
         },
 
         pause: function (options) {
-            if (this.options.sprite) {
-
-                if (options) {
-                    this.streams[options.part].pause();
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].pause();
-                    }
-                }
-
-            } else {
-                this.streams[0].pause();
-            }
+            this.stream.pause();
         },
 
         volume: function (options) {
-            var stream;
-
             if (options) {
                 extend(options, this.options);
             } else {
                 return;
             }
-
-            if (this.options.sprite) {
-                if (this.options.part) {
-                    stream = this.streams[this.options.part];
-                    stream && stream.setVolume(this.options);
-                } else {
-                    for (i in this.options.sprite) {
-                        stream = this.streams[i];
-                        stream && stream.setVolume(this.options);
-                    }
-                }
-            } else {
-                stream = this.streams[0];
-                stream && stream.setVolume(this.options);
-            }
+            this.stream.setVolume(this.options);
         }
     };
 
@@ -666,44 +593,18 @@
         },
 
         destroy: function () {
-            var stream;
-
-            for (i in this.streams) {
-                stream = this.streams[i];
-
-                if (stream) {
-                    stream.destroy();
-                    stream = null;
-                }
-            }
-            this.streams = {};
+            this.stream.destroy();
+            this.stream = null;
             this.loaded = false;
             this.inited = false;
         },
 
         load: function () {
             var part;
-
             this.options.preload = true;
             this.options._ready = this.ready;
             this.options._scope = this;
-
-            if (this.options.sprite) {
-
-                for (i in this.options.sprite) {
-                    part = this.options.sprite[i];
-
-                    this.options.start = part[0];
-                    this.options.end = part[1];
-
-                    this.streams[i] = new Stream(this.options, i);
-                }
-
-            } else {
-
-                this.streams[0] = new Stream(this.options);
-
-            }
+            this.stream = new Stream(this.options);
         },
 
         ready: function (duration) {
@@ -734,14 +635,10 @@
             if (!this.inited) {
                 return;
             }
-
             delete this.options.part;
-
             if (options) {
                 extend(options, this.options);
             }
-
-            console.log(1);
             if (!this.loaded) {
                 if (!this.options.preload) {
                     this.autoplay = true;
@@ -752,83 +649,30 @@
 
                 return;
             }
-
-            if (this.options.sprite) {
-                if (this.options.part) {
-                    this.streams[this.options.part].play(this.options);
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].play(this.options);
-                    }
-                }
-            } else {
-                this.streams[0].play(this.options);
-            }
+            this.stream.play(this.options);
         },
 
         stop: function (options) {
             if (!this.inited) {
                 return;
             }
-
-            if (this.options.sprite) {
-
-                if (options) {
-                    this.streams[options.part].stop();
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].stop();
-                    }
-                }
-
-            } else {
-                this.streams[0].stop();
-            }
+            this.stream.stop();
         },
 
         pause: function (options) {
             if (!this.inited) {
                 return;
             }
-
-            if (this.options.sprite) {
-
-                if (options) {
-                    this.streams[options.part].pause();
-                } else {
-                    for (i in this.options.sprite) {
-                        this.streams[i].pause();
-                    }
-                }
-
-            } else {
-                this.streams[0].pause();
-            }
+            this.stream.pause();
         },
 
         volume: function (options) {
-            var stream;
-
             if (options) {
                 extend(options, this.options);
             } else {
                 return;
             }
-
-            if (this.options.sprite) {
-                if (this.options.part) {
-                    stream = this.streams[this.options.part];
-                    stream && stream.setVolume(this.options);
-                } else {
-                    for (i in this.options.sprite) {
-                        stream = this.streams[i];
-                        stream && stream.setVolume(this.options);
-                    }
-                }
-            } else {
-                stream = this.streams[0];
-                stream && stream.setVolume(this.options);
-            }
+            this.stream.setVolume(this.options);
         }
     };
 

@@ -31,7 +31,7 @@ function init_players(tracks) {
           window.player.init();
           window.player.play();
           window.player.toggle = function() {
-              if (window.player.streams[0].paused) {
+              if (window.player.stream.paused) {
                   window.player.play();
               } else {
                   window.player.pause();
