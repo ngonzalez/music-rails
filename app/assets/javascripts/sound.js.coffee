@@ -10,10 +10,7 @@
 
 class Stream
     constructor: (@audio, @buffer, @options, @init, @complete) ->
-        @start = 0
-        @end = @buffer.duration
-        @gain_value = @options.volume || 1
-        @time_offset = 0
+        @_set_values()
         @init @
 
     play: ->
@@ -22,11 +19,12 @@ class Stream
         @_play()
 
     stop: ->
-        @_stop() if @playing
+        @source.stop() if @playing
         @_clear()
 
     pause: ->
-        @_stop()
+        @paused_at = new Date().valueOf()
+        @source.stop()
 
     volume: (value) ->
         @_volume value
@@ -43,21 +41,26 @@ class Stream
         @end += @time_offset / 1000
         @time_started = new Date().valueOf()
         @source.start 0, @start, @end
-
-    _stop: ->
-        @source && @source.stop 0
+        @pause_duration += new Date().valueOf() - @paused_at if @paused_at
 
     _volume: (value) ->
         @gain.gain.value = value;
 
     _clear: ->
         delete @playing
-        @time_offset = 0
+        @_set_values()
+
+    _set_values: ->
+        @start = 0
+        @end = @buffer.duration
+        @gain_value = @options.volume || 1
+        @paused_at = @pause_duration = @time_offset = 0
 
     _ended: ->
         delete @playing
         @time_offset += new Date().valueOf() - @time_started
-        if (@buffer.duration - @audio.currentTime) < 0.5
+        @res = @buffer.duration - ((@time_offset + @pause_duration) / 1000)
+        if ((@res < 0) || parseInt(@res) == 0)
             @_clear()
             @complete() if @complete
             @gain && @gain.disconnect()
