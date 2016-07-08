@@ -27,7 +27,7 @@ function init_players(tracks) {
   }
   function enable(element, data) {
     function complete() {
-      // if (window.player) window.player.stop();
+      if (window.player) window.player.stop();
       window.current_file = null;
       clear_active();
     }
@@ -41,7 +41,7 @@ function init_players(tracks) {
       element.toggleClass("pulsate");
       toggle();
     } else {
-      if (window.player) complete();
+      if (window.player) window.player.stop();
       enable_btn(element);
       window.current_file = data.id;
       var url = document.location.protocol + "//" + document.location.host + data.media_url;
