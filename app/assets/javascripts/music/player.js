@@ -35,7 +35,7 @@ function init_players(tracks) {
         new_player({ volume: 0.5, url: url, end_callback: complete }, complete);
     }
     function toggle() {
-        window.player.paused ? window.player.play() : window.player.pause();
+        window.player.playing ? window.player.pause() : window.player.play();
     }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");

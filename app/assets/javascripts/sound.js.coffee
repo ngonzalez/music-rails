@@ -11,20 +11,18 @@ class Stream
     constructor: (@audio, @buffer, @options, @callback) ->
         @start = 0
         @end = @buffer.duration
-        @volume ||= 1
-        @playing = false
+        @volume = @options.volume || 1
         @time_started = @time_ended = @time_offset = 0
 
     play: ->
         return if @playing
-        @_set_source() if !@source
-        @source.onended = (event) => @_ended()
+        @_set_source()
         @start += @time_offset
         @end += @time_offset
+        console.log @source
         @source.start 0, @start, @end
-        @playing = true
-        @paused = false
         @time_started = new Date().valueOf()
+        @playing = true
 
     stop: ->
         @_stop() if @playing
@@ -32,7 +30,6 @@ class Stream
 
     pause: ->
         @_stop()
-        @paused = true
 
     volume: (value) ->
         @gain.gain.value = value;
@@ -44,6 +41,7 @@ class Stream
         @source.connect @gain
         @gain.connect @audio.destination
         @gain.gain.value = @volume
+        @source.onended = (event) => @_ended()
 
     _destroy: ->
         @gain && @gain.disconnect()
@@ -52,16 +50,15 @@ class Stream
     _stop: ->
         @source && @source.stop 0
 
+    _clear: ->
+        @time_offset = 0
+        delete @playing
+
     _ended: ->
-        @playing = false
+        delete @playing
         @time_ended = new Date().valueOf()
         @time_offset += (@time_ended - @time_started) / 1000
         if @time_offset >= @end || @end - @time_offset < 0.015
             @callback() if @callback
             @_destroy()
             @_clear()
-
-    _clear: ->
-        @time_offset = 0
-        @paused = false
-        @playing = false
