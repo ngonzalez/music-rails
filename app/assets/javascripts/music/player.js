@@ -27,8 +27,8 @@ function init_players(tracks) {
   }
   function enable(element, data) {
       function init_player(url, callback) {
-          window.player = ion.sound({ volume: 0.5, url: url, preload: true });
-          window.player.init();
+          window.player = ion.sound({ volume: 0.5, url: url });
+          window.player.load();
           window.player.play();
           window.player.toggle = function() {
               if (window.player.stream.paused) {

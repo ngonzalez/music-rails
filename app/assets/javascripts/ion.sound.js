@@ -30,141 +30,66 @@
         audio = new AudioContext();
     }
 
-    var Sound = function (options) {
+    var Sound = function(options) {
         this.options = options;
-        this.url = options.url;
-
-        this.request = null;
-        this.stream = null;
-        this.result = {};
-
         this.loaded = false;
-        this.decoded = false;
-        this.no_file = false;
         this.autoplay = false;
     };
 
     Sound.prototype = {
-        init: function (options) {
-            if (this.options.preload) {
-                this.load();
-            }
-        },
 
-        destroy: function () {
-            this.stream.destroy();
-            this.stream = null;
-            this.result = null;
-            this.options.buffer = null;
-            this.options = null;
-
-            if (this.request) {
-                this.request.removeEventListener("load", this.ready.bind(this), false);
-                this.request.removeEventListener("error", this.error.bind(this), false);
-                this.request.abort();
-                this.request = null;
-            }
-        },
-
-        load: function () {
-            if (this.no_file) {
-                return;
-            }
-            if (this.request) {
-                return;
-            }
+        load: function() {
+            if (this.request) return;
             this.request = new XMLHttpRequest();
-            this.request.open("GET", this.url, true);
+            this.request.open("GET", this.options.url, true);
             this.request.responseType = "arraybuffer";
             this.request.addEventListener("load", this.ready.bind(this), false);
             this.request.addEventListener("error", this.error.bind(this), false);
-
             this.request.send();
         },
 
-        reload: function () {
-            this.load();
-        },
-
-        ready: function (data) {
-            this.result = data.target;
-            if (this.result.readyState !== 4) {
-                this.reload();
-                return;
-            }
-            if (this.result.status !== 200 && this.result.status !== 0) {
-                this.reload();
-                return;
-            }
+        ready: function(data) {
             this.request.removeEventListener("load", this.ready.bind(this), false);
             this.request.removeEventListener("error", this.error.bind(this), false);
-            this.request = null;
             this.loaded = true;
-            this.decode();
+            audio.decodeAudioData(data.target.response, this.setBuffer.bind(this), this.error.bind(this));
         },
 
-        decode: function () {
-            if (!audio) {
-                return;
-            }
-
-            audio.decodeAudioData(this.result.response, this.setBuffer.bind(this), this.error.bind(this));
-        },
-
-        setBuffer: function (buffer) {
+        setBuffer: function(buffer) {
             this.options.buffer = buffer;
-            this.decoded = true;
-
-            var config = {
-                name: this.options.name,
-                alias: this.options.alias,
-                duration: this.options.buffer.duration
-            };
-
-            if (this.options.ready_callback && typeof this.options.ready_callback === "function") {
-                this.options.ready_callback.call(this.options.scope, config);
-            }
-
             this.stream = new Stream(this.options);
-
             if (this.autoplay) {
                 this.autoplay = false;
                 this.play();
             }
         },
 
-        error: function () {
-            this.reload();
+        error: function() {
+            console.log('Error decoding audio file')
         },
 
-        play: function (options) {
+        play: function(options) {
             if (!this.loaded) {
                 this.autoplay = true;
                 this.load();
-
                 return;
             }
-
-            if (this.no_file || !this.decoded) {
-                return;
-            }
-            this.stream.play(this.options);
+            this.stream.play();
         },
 
-        stop: function (options) {
+        stop: function(options) {
             this.stream.stop();
         },
 
-        pause: function (options) {
+        pause: function(options) {
             this.stream.pause();
-        },
-
-        volume: function (options) {
-            this.stream.setVolume(this.options);
         }
     };
 
     var Stream = function (options) {
+        console.log('Stream');
+        console.log(options);
+        console.log('-----');
         this.alias = options.alias;
         this.name = options.name;
 
@@ -212,18 +137,7 @@
             }
         },
 
-        update: function (options) {
-            this.setLoop(options);
-            if ("volume" in options) {
-                this.volume = options.volume;
-            }
-        },
-
-        play: function (options) {
-            if (options) {
-                this.update(options);
-            }
-
+        play: function () {
             if (!this.multiplay && this.playing) {
                 return;
             }
