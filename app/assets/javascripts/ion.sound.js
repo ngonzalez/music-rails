@@ -15,14 +15,14 @@
 
     var audio = new AudioContext();
 
-    window.new_player = function(options, callback) {
-        $.getNative(options.url).then(function(data) {
-            audio.decodeAudioData(data, function(buffer) {
-                window.player = new Stream(buffer, options, callback);
-                window.player.play();
-            });
-        });
-    }
+    // window.new_player = function(options, callback) {
+    //     $.getNative(options.url).then(function(data) {
+    //         audio.decodeAudioData(data, function(buffer) {
+    //             window.player = new Stream(buffer, options, callback);
+    //             window.player.play();
+    //         });
+    //     });
+    // }
 
     var Stream = function(buffer, options, callback) {
         this.buffer = buffer;

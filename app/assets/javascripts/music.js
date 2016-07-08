@@ -1,4 +1,4 @@
 //= require swipebox
 //= require jquery-ajax-native
-//= require ion.sound
+//= require sound
 //= require_tree ./music

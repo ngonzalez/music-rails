@@ -18,6 +18,7 @@ source "https://rubygems.org" do
   gem 'font-awesome-sass'
   gem 'jquery-rails'
   gem 'jquery_mobile_rails'
+  gem 'coffee-rails'
 
   gem 'rack-cors', require: 'rack/cors'
 

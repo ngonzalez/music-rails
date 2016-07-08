@@ -8,6 +8,6 @@ Rails.application.config.assets.version = '1.0'
 
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-Rails.application.config.assets.precompile += %w(layout.css music.js music.css upload.js ion.sound.js)
+Rails.application.config.assets.precompile += %w(layout.css music.js music.css upload.js sound.js)
 
 ::Sass.load_paths << Rails.root.join('app/assets/stylesheets/')
