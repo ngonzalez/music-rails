@@ -51,8 +51,8 @@
         ready: function(data) {
             this.request.removeEventListener("load", this.ready.bind(this), false);
             this.request.removeEventListener("error", this.error.bind(this), false);
-            this.loaded = true;
             audio.decodeAudioData(data.target.response, this.setBuffer.bind(this), this.error.bind(this));
+            this.loaded = true;
         },
 
         setBuffer: function(buffer) {
@@ -90,23 +90,12 @@
         console.log('Stream');
         console.log(options);
         console.log('-----');
-        this.alias = options.alias;
-        this.name = options.name;
 
         this.buffer = options.buffer;
-        this.start = options.start || 0;
-        this.end = options.end || this.buffer.duration;
-        this.multiplay = options.multiplay || false;
+        this.start = 0;
+        this.end = this.buffer.duration;
         this.volume = options.volume || 1;
-        this.scope = options.scope;
-        this.ended_callback = options.ended_callback;
-
-        this.setLoop(options);
-
-        this.source = null;
-        this.gain = null;
         this.playing = false;
-        this.paused = false;
 
         this.time_started = 0;
         this.time_ended = 0;
@@ -117,28 +106,12 @@
     Stream.prototype = {
         destroy: function () {
             this.stop();
-
-            this.buffer = null;
-            this.source = null;
-
             this.gain && this.gain.disconnect();
             this.source && this.source.disconnect();
-            this.gain = null;
-            this.source = null;
-        },
-
-        setLoop: function (options) {
-            if (options.loop === true) {
-                this.loop = 9999999;
-            } else if (typeof options.loop === "number") {
-                this.loop = +options.loop - 1;
-            } else {
-                this.loop = false;
-            }
         },
 
         play: function () {
-            if (!this.multiplay && this.playing) {
+            if (this.playing) {
                 return;
             }
 
@@ -213,28 +186,8 @@
             this.time_ended = new Date().valueOf();
             this.time_played = (this.time_ended - this.time_started) / 1000;
             this.time_offset += this.time_played;
-
             if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) {
-                this._ended();
                 this.clear();
-
-                if (this.loop) {
-                    this.loop--;
-                    this.play();
-                }
-            }
-        },
-
-        _ended: function () {
-            var config = {
-                name: this.name,
-                alias: this.alias,
-                start: this.start,
-                duration: this.end
-            };
-
-            if (this.ended_callback && typeof this.ended_callback === "function") {
-                this.ended_callback.call(this.scope, config);
             }
         },
 
