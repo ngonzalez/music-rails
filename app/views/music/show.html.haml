@@ -1,5 +1,5 @@
 - content_for :head do
-  = javascript_include_tag @browser.safari? && !@browser.platform.ios? ? :music_safari_osx : :music
+  = javascript_include_tag :music_safari_osx
 
 = stylesheet_link_tag :music
 

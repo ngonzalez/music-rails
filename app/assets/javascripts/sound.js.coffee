@@ -1,10 +1,10 @@
 
 ((AudioContext) ->
     audio = new AudioContext()
-    window.new_player = (options, init_callback, complete_callback) ->
+    window.new_player = (options, init, complete) ->
         $.getNative(options.url).then (data) ->
             audio.decodeAudioData data, (buffer) ->
-                new Stream audio, buffer, options, init_callback, complete_callback
+                new Stream audio, buffer, options, init, complete
 
 )(window.AudioContext || window.webkitAudioContext)
 
@@ -38,9 +38,6 @@ class Stream
 
     _ended: ->
         delete @playing
-        @_reset()
-
-    _reset: ->
         @complete() if @complete
-        @gain && @gain.disconnect()
-        @source && @source.disconnect()
+        @gain.disconnect()
+        @source.disconnect()
