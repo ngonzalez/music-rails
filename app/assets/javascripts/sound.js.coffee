@@ -17,12 +17,7 @@ class Stream
 
     play: ->
         return if @playing
-        @gain = @audio.createGain()
-        @source = @audio.createBufferSource()
-        @source.buffer = @buffer
-        @source.connect @gain
-        @gain.connect @audio.destination
-        @gain.gain.value = @volume
+        @_set_source() if !@source
         @source.onended = (event) => @_ended()
         @start += @time_offset
         @end += @time_offset
@@ -32,15 +27,30 @@ class Stream
         @time_started = new Date().valueOf()
 
     stop: ->
-        @source && @source.stop 0 if @playing
+        @_stop() if @playing
         @_clear()
 
     pause: ->
-        @source && @source.stop 0 
+        @_stop()
         @paused = true
 
-    setVolume: (value) ->
+    volume: (value) ->
         @gain.gain.value = value;
+
+    _set_source: ->
+        @gain = @audio.createGain()
+        @source = @audio.createBufferSource()
+        @source.buffer = @buffer
+        @source.connect @gain
+        @gain.connect @audio.destination
+        @gain.gain.value = @volume
+
+    _destroy: ->
+        @gain && @gain.disconnect()
+        @source && @source.disconnect()
+
+    _stop: ->
+        @source && @source.stop 0
 
     _ended: ->
         @playing = false
@@ -48,7 +58,7 @@ class Stream
         @time_offset += (@time_ended - @time_started) / 1000
         if @time_offset >= @end || @end - @time_offset < 0.015
             @callback() if @callback
-            @destroy()
+            @_destroy()
             @_clear()
 
     _clear: ->
