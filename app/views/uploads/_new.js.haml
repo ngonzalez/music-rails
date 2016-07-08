@@ -8,9 +8,9 @@
             }
 
             function display_file(item) {
-                $('body').append($('<hr />'));
-                $('body').append(item.response.created_at);
-                $('body').append(
+                $('#files').append($('<hr />'));
+                $('#files').append(item.response.created_at);
+                $('#files').append(
                     $('<a />')
                         .attr('target', 'blank')
                         .attr('href', item.response.media)
