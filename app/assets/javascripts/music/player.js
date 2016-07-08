@@ -31,9 +31,6 @@ function init_players(tracks) {
       window.current_file = null;
       clear_active();
     }
-    function init_player(url, callback) {
-        new_player({ volume: 0.5, url: url }, complete);
-    }
     function toggle() {
         window.player.playing ? window.player.pause() : window.player.play();
     }
@@ -45,7 +42,7 @@ function init_players(tracks) {
       enable_btn(element);
       window.current_file = data.id;
       var url = document.location.protocol + "//" + document.location.host + data.media_url;
-      init_player(url, complete);
+      new_player({ volume: 0.5, url: url }, complete)
     }
   }
   function loading(element, data) {
