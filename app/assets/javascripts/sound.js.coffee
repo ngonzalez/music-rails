@@ -18,7 +18,7 @@ class Stream
         @_play()
 
     stop: ->
-        @source.stop()
+        @source.stop() if @playing
 
     volume: (value) ->
         @_volume value

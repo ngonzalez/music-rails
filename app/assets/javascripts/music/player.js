@@ -1,16 +1,12 @@
 function init_players(tracks) {
   var intervals = {};
-  function clear_active() {
-    // $.each($(".play-btn.active"), function(i, element) {
-    // });
-  }
   function reset_btn(element) {
-    element.removeClass("fa-stop");
+    element.removeClass(is_safari_osx() ? "fa-stop" : "fa-pause");
     element.addClass("fa-play");
     element.removeClass("active");
   }
   function enable_btn(element) {
-    element.addClass("fa-stop");
+    element.addClass(is_safari_osx() ? "fa-stop" : "fa-pause");
     element.removeClass("fa-play");
     element.addClass("active");
   }
@@ -23,22 +19,43 @@ function init_players(tracks) {
     element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
+  function is_safari_osx() {
+      return !window.navigator.userAgent.match(/iPad|iPhone/i) && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  }
   function enable(element, data) {
     if (element.hasClass("active")) {
-      window.player.playing ? window.player.stop() : window.player.play();
+        if (is_safari_osx()) {
+            window.player.playing ? window.player.stop() : window.player.play();
+        } else {
+            element.toggleClass("pulsate");
+            window.player.paused ? window.player.play() : window.player.pause();
+        }
     } else {
       if (window.player) window.player.stop();
       enable_btn(element);
       window.current_file = data.id;
       var url = document.location.protocol + "//" + document.location.host + data.media_url;
-      new_player({ volume: 0.5, url: url }, function(player) {
-          window.player = player
+      if (is_safari_osx()) {
+          new_player({ volume: 0.5, url: url }, function(player) {
+              window.player = player
+              window.player.play()
+          }, function() {
+              window.current_file = null;
+              $(element).removeClass("pulsate");
+              reset_btn($(element));
+          })
+      } else {
+          window.player = $.extend(new Audio(url), {
+            stop: function() {
+              window.player.src = "";
+              window.player = null;
+              window.current_file = null;
+              $(element).removeClass("pulsate");
+              reset_btn($(element));
+            },
+          });
           window.player.play()
-      }, function() {
-          window.current_file = null;
-          $(element).removeClass("pulsate");
-          reset_btn($(element));
-      })
+      }
     }
   }
   function loading(element, data) {
