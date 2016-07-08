@@ -31,18 +31,18 @@ function init_players(tracks) {
       window.current_file = null;
       clear_active();
     }
-    function toggle() {
-        window.player.playing ? window.player.pause() : window.player.play();
-    }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
-      toggle();
+      window.player.playing ? window.player.pause() : window.player.play();
     } else {
       if (window.player) complete();
       enable_btn(element);
       window.current_file = data.id;
       var url = document.location.protocol + "//" + document.location.host + data.media_url;
-      new_player({ volume: 0.5, url: url }, complete)
+      new_player({ volume: 0.5, url: url }, function(player) {
+          window.player = player
+          window.player.play()
+      }, complete)
     }
   }
   function loading(element, data) {

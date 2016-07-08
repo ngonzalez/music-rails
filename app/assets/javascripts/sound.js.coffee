@@ -1,18 +1,20 @@
+
 ((AudioContext) ->
     audio = new AudioContext()
-    window.new_player = (options, callback) ->
+    window.new_player = (options, init_callback, complete_callback) ->
         $.getNative(options.url).then (data) ->
             audio.decodeAudioData data, (buffer) ->
-                window.player = new Stream audio, buffer, options, callback
-                window.player.play()
+                new Stream audio, buffer, options, init_callback, complete_callback
+
 )(window.AudioContext || window.webkitAudioContext)
 
 class Stream
-    constructor: (@audio, @buffer, @options, @callback) ->
+    constructor: (@audio, @buffer, @options, @init, @complete) ->
         @start = 0
         @end = @buffer.duration
         @gain_value = @options.volume || 1
         @time_started = @time_ended = @time_offset = 0
+        @init @
 
     play: ->
         return if @playing
@@ -27,7 +29,7 @@ class Stream
         @_stop()
 
     volume: (value) ->
-        @gain.gain.value = value;
+        @_volume value
 
     _play: ->
         @gain = @audio.createGain()
@@ -36,7 +38,7 @@ class Stream
         @source.buffer = @buffer
         @source.connect @gain
         @source.onended = (event) => @_ended()
-        @volume @gain_value
+        @_volume @gain_value
         @start += @time_offset
         @end += @time_offset
         @source.start 0, @start, @end
@@ -44,6 +46,9 @@ class Stream
 
     _stop: ->
         @source && @source.stop 0
+
+    _volume: (value) ->
+        @gain.gain.value = value;
 
     _clear: ->
         delete @playing
@@ -53,8 +58,8 @@ class Stream
         delete @playing
         @time_ended = new Date().valueOf()
         @time_offset += (@time_ended - @time_started) / 1000
-        if (@time_offset >= @end) || (@end - @time_offset < 0.015)
+        if (@time_offset >= @end) || (@end - @time_offset < 0.1)
             @gain.disconnect()
             @source.disconnect()
             @_clear()
-            @callback() if @callback
+            @complete() if @complete
