@@ -87,16 +87,11 @@
     };
 
     var Stream = function (options) {
-        console.log('Stream');
-        console.log(options);
-        console.log('-----');
-
         this.buffer = options.buffer;
         this.start = 0;
         this.end = this.buffer.duration;
         this.volume = options.volume || 1;
         this.playing = false;
-
         this.time_started = 0;
         this.time_ended = 0;
         this.time_played = 0;
@@ -111,26 +106,19 @@
         },
 
         play: function () {
-            if (this.playing) {
-                return;
-            }
-
+            if (this.playing) return;
             this.gain = audio.createGain();
             this.source = audio.createBufferSource();
             this.source.buffer = this.buffer;
             this.source.connect(this.gain);
             this.gain.connect(audio.destination);
             this.gain.gain.value = this.volume;
-
             this.source.onended = this.ended.bind(this);
-
             this._play();
         },
 
         _play: function () {
-            var start,
-                end;
-
+            var start, end;
             if (this.paused) {
                 start = this.start + this.time_offset;
                 end = this.end - this.time_offset;
@@ -138,18 +126,15 @@
                 start = this.start;
                 end = this.end;
             }
-
             if (end <= 0) {
                 this.clear();
                 return;
             }
-
             if (typeof this.source.start === "function") {
                 this.source.start(0, start, end);
             } else {
                 this.source.noteOn(0, start, end);
             }
-
             this.playing = true;
             this.paused = false;
             this.time_started = new Date().valueOf();
@@ -163,20 +148,12 @@
                     this.source.noteOff(0);
                 }
             }
-
             this.clear();
         },
 
         pause: function () {
-            if (this.paused) {
-                this.play();
-                return;
-            }
-
-            if (!this.playing) {
-                return;
-            }
-
+            if (this.paused) { this.play(); return; }
+            if (!this.playing) return;
             this.source && this.source.stop(0);
             this.paused = true;
         },
@@ -186,9 +163,7 @@
             this.time_ended = new Date().valueOf();
             this.time_played = (this.time_ended - this.time_started) / 1000;
             this.time_offset += this.time_played;
-            if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) {
-                this.clear();
-            }
+            if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) this.clear();
         },
 
         clear: function () {
@@ -198,12 +173,8 @@
             this.playing = false;
         },
 
-        setVolume: function (options) {
-            this.volume = options.volume;
-
-            if (this.gain) {
-                this.gain.gain.value = this.volume;
-            }
+        setVolume: function(value) {
+            this.gain.gain.value = value;
         }
     };
 
