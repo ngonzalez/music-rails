@@ -57,19 +57,19 @@
      * DISABLE for unsupported browsers
      */
 
-    if (typeof Audio !== "function" && typeof Audio !== "object") {
-        var func = function () {
-            warn("HTML5 Audio is not supported in this browser");
-        };
-        ion.sound = func;
-        ion.sound.play = func;
-        ion.sound.stop = func;
-        ion.sound.pause = func;
-        ion.sound.preload = func;
-        ion.sound.destroy = func;
-        func();
-        return;
-    }
+    // if (typeof Audio !== "function" && typeof Audio !== "object") {
+    //     var func = function () {
+    //         warn("HTML5 Audio is not supported in this browser");
+    //     };
+    //     ion.sound = func;
+    //     ion.sound.play = func;
+    //     ion.sound.stop = func;
+    //     ion.sound.pause = func;
+    //     ion.sound.preload = func;
+    //     ion.sound.destroy = func;
+    //     func();
+    //     return;
+    // }
 
 
 
@@ -101,7 +101,6 @@
         settings.preload = settings.preload || false;
         settings.multiplay = settings.multiplay || false;
         settings.loop = settings.loop || false;
-        settings.sprite = settings.sprite || null;
         settings.scope = settings.scope || null;
         settings.ready_callback = settings.ready_callback || null;
         settings.ended_callback = settings.ended_callback || null;
@@ -357,10 +356,9 @@
 
 
 
-    var Stream = function (options, sprite_part) {
+    var Stream = function (options) {
         this.alias = options.alias;
         this.name = options.name;
-        this.sprite_part = sprite_part;
 
         this.buffer = options.buffer;
         this.start = options.start || 0;
@@ -509,7 +507,6 @@
             var config = {
                 name: this.name,
                 alias: this.alias,
-                part: this.sprite_part,
                 start: this.start,
                 duration: this.end
             };
@@ -678,10 +675,9 @@
 
 
 
-    Stream = function (options, sprite_part) {
+    Stream = function (options) {
         this.name = options.name;
         this.alias = options.alias;
-        this.sprite_part = sprite_part;
 
         this.multiplay = options.multiplay;
         this.volume = options.volume;
@@ -860,7 +856,6 @@
             var config = {
                 name: this.name,
                 alias: this.alias,
-                part: this.sprite_part,
                 start: this.start,
                 duration: this.end
             };
