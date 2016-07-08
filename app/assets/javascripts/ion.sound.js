@@ -10,10 +10,10 @@
  * http://ionden.com/a/plugins/licence-en.html
  */
 
-;(function(window, navigator, $, undefined) {
+;(function(window, navigator, $, AudioContext) {
     "use strict";
 
-    var audio = window.AudioContext ? new window.AudioContext() : new window.webkitAudioContext();
+    var audio = new AudioContext();
 
     window.new_player = function(options, callback) {
         $.getNative(options.url).then(function(data) {
@@ -96,4 +96,4 @@
         }
     };
 
-} (window, navigator, window.jQuery || window.$));
+} (window, navigator, window.jQuery || window.$, window.AudioContext || window.webkitAudioContext));
