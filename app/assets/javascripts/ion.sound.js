@@ -15,165 +15,13 @@
 
     window.ion = window.ion || {};
 
-
     if (ion.sound) {
         return;
     }
 
-    var warn = function (text) {
-        if (!text) text = "undefined";
-
-        if (window.console) {
-            if (console.warn && typeof console.warn === "function") {
-                console.warn(text);
-            } else if (console.log && typeof console.log === "function") {
-                console.log(text);
-            }
-
-            var d = $ && $("#debug");
-            if (d && d.length) {
-                var a = d.html();
-                d.html(a + text + '<br/>');
-            }
-        }
+    ion.sound = function(options) {
+        return new Sound(options)
     };
-
-    var extend = function (parent, child) {
-        var prop;
-        child = child || {};
-
-        for (prop in parent) {
-            if (parent.hasOwnProperty(prop)) {
-                child[prop] = parent[prop];
-            }
-        }
-
-        return child;
-    };
-
-
-
-    /**
-     * DISABLE for unsupported browsers
-     */
-
-    // if (typeof Audio !== "function" && typeof Audio !== "object") {
-    //     var func = function () {
-    //         warn("HTML5 Audio is not supported in this browser");
-    //     };
-    //     ion.sound = func;
-    //     ion.sound.play = func;
-    //     ion.sound.stop = func;
-    //     ion.sound.pause = func;
-    //     ion.sound.preload = func;
-    //     ion.sound.destroy = func;
-    //     func();
-    //     return;
-    // }
-
-
-
-    /**
-     * CORE
-     * - creating sounds collection
-     * - public methods
-     */
-
-    var is_iOS = /iPad|iPhone|iPod/.test(navigator.appVersion),
-        sounds_num = 0,
-        settings = {},
-        sounds = {},
-        i;
-
-
-
-    if (!settings.supported && is_iOS) {
-        settings.supported = ["mp3", "mp4", "aac"];
-    } else if (!settings.supported) {
-        settings.supported = ["mp3", "ogg", "mp4", "aac", "wav"];
-    }
-
-    ion.sound = function (options) {
-        extend(options, settings);
-
-        settings.path = settings.path || "";
-        settings.volume = settings.volume || 1;
-        settings.preload = settings.preload || false;
-        settings.multiplay = settings.multiplay || false;
-        settings.loop = settings.loop || false;
-        settings.scope = settings.scope || null;
-        settings.ready_callback = settings.ready_callback || null;
-        settings.ended_callback = settings.ended_callback || null;
-
-        return new Sound({ url: settings.url })
-    };
-
-    ion.sound.VERSION = "3.0.7";
-
-    ion.sound._method = function (method, name, options) {
-        if (name) {
-            sounds[name] && sounds[name][method](options);
-        } else {
-            for (i in sounds) {
-                if (!sounds.hasOwnProperty(i) || !sounds[i]) {
-                    continue;
-                }
-
-                sounds[i][method](options);
-            }
-        }
-    };
-
-    ion.sound.preload = function (name, options) {
-        options = options || {};
-        extend({preload: true}, options);
-
-        ion.sound._method("init", name, options);
-    };
-
-    ion.sound.destroy = function (name) {
-        ion.sound._method("destroy", name);
-
-        if (name) {
-            sounds[name] = null;
-        } else {
-            for (i in sounds) {
-                if (!sounds.hasOwnProperty(i)) {
-                    continue;
-                }
-                if (sounds[i]) {
-                    sounds[i] = null;
-                }
-            }
-        }
-    };
-
-    ion.sound.play = function (name, options) {
-        ion.sound._method("play", name, options);
-    };
-
-    ion.sound.stop = function (name, options) {
-        ion.sound._method("stop", name, options);
-    };
-
-    ion.sound.pause = function (name, options) {
-        ion.sound._method("pause", name, options);
-    };
-
-    ion.sound.volume = function (name, options) {
-        ion.sound._method("volume", name, options);
-    };
-
-    if ($) {
-        $.ionSound = ion.sound;
-    }
-
-
-
-    /**
-     * Web Audio API core
-     * - for most advanced browsers
-     */
 
     var AudioContext = window.AudioContext || window.webkitAudioContext,
         audio;
@@ -182,16 +30,13 @@
         audio = new AudioContext();
     }
 
-
     var Sound = function (options) {
-        this.options = extend(settings);
+        this.options = options;
         this.url = options.url;
-        extend(options, this.options);
 
         this.request = null;
         this.stream = null;
         this.result = {};
-        this.ext = 0;
 
         this.loaded = false;
         this.decoded = false;
@@ -201,10 +46,6 @@
 
     Sound.prototype = {
         init: function (options) {
-            if (options) {
-                extend(options, this.options);
-            }
-
             if (this.options.preload) {
                 this.load();
             }
@@ -227,14 +68,11 @@
 
         load: function () {
             if (this.no_file) {
-                warn("No sources for \"" + this.options.name + "\" sound :(");
                 return;
             }
-
             if (this.request) {
                 return;
             }
-
             this.request = new XMLHttpRequest();
             this.request.open("GET", this.url, true);
             this.request.responseType = "arraybuffer";
@@ -245,37 +83,23 @@
         },
 
         reload: function () {
-            this.ext++;
-
-            if (this.options.supported[this.ext]) {
-                this.load();
-            } else {
-                this.no_file = true;
-                warn("No sources for \"" + this.options.name + "\" sound :(");
-            }
+            this.load();
         },
 
         ready: function (data) {
             this.result = data.target;
-
             if (this.result.readyState !== 4) {
                 this.reload();
                 return;
             }
-
             if (this.result.status !== 200 && this.result.status !== 0) {
-                warn(this.url + " was not found on server!");
                 this.reload();
                 return;
             }
-
             this.request.removeEventListener("load", this.ready.bind(this), false);
             this.request.removeEventListener("error", this.error.bind(this), false);
             this.request = null;
             this.loaded = true;
-            warn("Loaded: " + this.options.url);
-            warn("Ext: " + settings.supported[this.ext]);
-
             this.decode();
         },
 
@@ -290,13 +114,10 @@
         setBuffer: function (buffer) {
             this.options.buffer = buffer;
             this.decoded = true;
-            warn("Decoded: " + this.options.url);
-            warn("Ext: " + settings.supported[this.ext]);
 
             var config = {
                 name: this.options.name,
                 alias: this.options.alias,
-                ext: this.options.supported[this.ext],
                 duration: this.options.buffer.duration
             };
 
@@ -317,12 +138,6 @@
         },
 
         play: function (options) {
-            delete this.options.part;
-
-            if (options) {
-                extend(options, this.options);
-            }
-
             if (!this.loaded) {
                 this.autoplay = true;
                 this.load();
@@ -345,16 +160,9 @@
         },
 
         volume: function (options) {
-            if (options) {
-                extend(options, this.options);
-            } else {
-                return;
-            }
             this.stream.setVolume(this.options);
         }
     };
-
-
 
     var Stream = function (options) {
         this.alias = options.alias;
@@ -536,57 +344,10 @@
         return;
     }
 
-
-
-    /**
-     * Fallback for HTML5 audio
-     * - for not so modern browsers
-     */
-
-    var checkSupport = function () {
-        var sound = new Audio(),
-            can_play_mp3 = sound.canPlayType('audio/mpeg'),
-            can_play_ogg = sound.canPlayType('audio/ogg'),
-            can_play_aac = sound.canPlayType('audio/mp4; codecs="mp4a.40.2"'),
-            item, i;
-
-        for (i = 0; i < settings.supported.length; i++) {
-            item = settings.supported[i];
-
-            if (!can_play_mp3 && item === "mp3") {
-                settings.supported.splice(i, 1);
-            }
-
-            if (!can_play_ogg && item === "ogg") {
-                settings.supported.splice(i, 1);
-            }
-
-            if (!can_play_aac && item === "aac") {
-                settings.supported.splice(i, 1);
-            }
-
-            if (!can_play_aac && item === "mp4") {
-                settings.supported.splice(i, 1);
-            }
-        }
-
-        sound = null;
-    };
-    checkSupport();
-
-
-
     Sound.prototype = {
         init: function (options) {
-            if (options) {
-                extend(options, this.options);
-            }
-
             this.inited = true;
-
-            if (this.options.preload) {
-                this.load();
-            }
+            if (options.preload) this.load();
         },
 
         destroy: function () {
@@ -614,7 +375,6 @@
             var config = {
                 name: this.options.name,
                 alias: this.options.alias,
-                ext: this.options.supported[this.ext],
                 duration: duration
             };
 
@@ -631,10 +391,6 @@
         play: function (options) {
             if (!this.inited) {
                 return;
-            }
-            delete this.options.part;
-            if (options) {
-                extend(options, this.options);
             }
             if (!this.loaded) {
                 if (!this.options.preload) {
@@ -664,16 +420,9 @@
         },
 
         volume: function (options) {
-            if (options) {
-                extend(options, this.options);
-            } else {
-                return;
-            }
             this.stream.setVolume(this.options);
         }
     };
-
-
 
     Stream = function (options) {
         this.name = options.name;
@@ -682,7 +431,6 @@
         this.multiplay = options.multiplay;
         this.volume = options.volume;
         this.preload = options.preload;
-        this.path = settings.path;
         this.start = options.start || 0;
         this.end = options.end || 0;
         this.scope = options.scope;
