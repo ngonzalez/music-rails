@@ -39,10 +39,10 @@ class Stream
         @source.connect @gain
         @source.onended = (event) => @_ended()
         @_volume @gain_value
-        @start += @time_offset
-        @end += @time_offset
-        @source.start 0, @start, @end
+        @start += @time_offset / 1000
+        @end += @time_offset / 1000
         @time_started = new Date().valueOf()
+        @source.start 0, @start, @end
 
     _stop: ->
         @source && @source.stop 0
@@ -56,8 +56,8 @@ class Stream
 
     _ended: ->
         delete @playing
-        @time_offset += (new Date().valueOf() - @time_started) / 1000
-        if @end - @time_offset < 0.1
+        @time_offset += new Date().valueOf() - @time_started
+        if (@buffer.duration - @audio.currentTime) < 0.5
             @_clear()
             @complete() if @complete
             @gain && @gain.disconnect()
