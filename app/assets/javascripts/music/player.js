@@ -25,7 +25,7 @@ function init_players(tracks) {
   function enable(element, data) {
     if (element.hasClass("active")) {
         if (is_safari_osx()) {
-            window.player.playing ? window.player.stop() : window.player.play();
+            !window.player.playing ? window.player.play() : window.player.stop();
         } else {
             element.toggleClass("pulsate");
             window.player.paused ? window.player.play() : window.player.pause();
@@ -40,20 +40,20 @@ function init_players(tracks) {
               window.player = player
               window.player.play()
           }, function() {
+              window.player = null;
               window.current_file = null;
-              $(element).removeClass("pulsate");
-              reset_btn($(element));
+              reset_btn(element);
           })
       } else {
           window.player = $.extend(new Audio(url), {
             stop: function() {
+              $(element).removeClass("pulsate");
               window.player.src = "";
               window.player = null;
               window.current_file = null;
-              $(element).removeClass("pulsate");
-              reset_btn($(element));
-            },
-          });
+              reset_btn(element);
+            }
+          })
           window.player.play()
       }
     }
