@@ -26,26 +26,20 @@ function init_players(tracks) {
     element.removeClass("grey");
   }
   function enable(element, data) {
-      function init_player(url, callback) {
-          window.player = ion.sound({ volume: 0.5, url: url });
-          window.player.load();
-          window.player.play();
-          window.player.toggle = function() {
-              if (window.player.stream.paused) {
-                  window.player.play();
-              } else {
-                  window.player.pause();
-              }
-          }
-      }
     function complete() {
-      if (window.player) window.player.stop();
+      // if (window.player) window.player.stop();
       window.current_file = null;
       clear_active();
     }
+    function init_player(url, callback) {
+        new_player({ volume: 0.5, url: url, end_callback: complete }, complete);
+    }
+    function toggle() {
+        window.player.paused ? window.player.play() : window.player.pause();
+    }
     if (element.hasClass("active")) {
       element.toggleClass("pulsate");
-      window.player.toggle();
+      toggle();
     } else {
       if (window.player) complete();
       enable_btn(element);
