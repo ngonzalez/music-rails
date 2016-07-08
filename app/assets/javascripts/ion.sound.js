@@ -16,22 +16,16 @@
     var AudioContext = window.AudioContext || window.webkitAudioContext;
     var audio = new AudioContext();
 
-    function errorCallback(error) {
-        console.log('Error decoding audio file');
-        console.log(error)
-    }
-
     window.new_player = function(options, callback) {
-        console.log(options);
         $.getNative(options.url).then(function(data) {
             audio.decodeAudioData(data, function(buffer) {
-                window.player = new Stream(buffer, options);
-                window.player.play(callback);
-            }, errorCallback);
-        }, errorCallback);
+                window.player = new Stream(buffer, options, callback);
+                window.player.play();
+            });
+        });
     }
 
-    var Stream = function(buffer, options) {
+    var Stream = function(buffer, options, callback) {
         this.buffer = buffer;
         this.start = 0;
         this.end = this.buffer.duration;
@@ -40,7 +34,7 @@
         this.time_started = 0;
         this.time_ended = 0;
         this.time_offset = 0;
-        this.callback = null;
+        this.callback = callback;
     };
 
     Stream.prototype = {
@@ -51,7 +45,6 @@
 
         play: function(callback) {
             if (this.playing) return;
-            if (callback) this.callback = callback;
             this.gain = audio.createGain();
             this.source = audio.createBufferSource();
             this.source.buffer = this.buffer;
@@ -83,12 +76,10 @@
         },
 
         ended: function() {
-            console.log('ended');
             this.playing = false;
             this.time_ended = new Date().valueOf();
             this.time_offset += (this.time_ended - this.time_started) / 1000;
             if (this.time_offset >= this.end || this.end - this.time_offset < 0.015) {
-                console.log('--end--');
                 if (this.callback) this.callback();
                 this.destroy();
                 this.clear();
