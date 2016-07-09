@@ -28,6 +28,7 @@ function init_players(tracks, browser) {
         if (init) return;
         init = true;
         enable_btn(element);
+        $(element).addClass("text-muted")
         new_player({
             volume: 0.5,
             url: document.location.protocol + "//" + document.location.host + data.media_url
@@ -37,6 +38,7 @@ function init_players(tracks, browser) {
             window.player = player;
             window.player.play();
             init = null;
+            $(element).removeClass("text-muted")
         }, function() {
             window.current_file = null;
             element.removeClass("pulsate");
