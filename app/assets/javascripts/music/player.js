@@ -1,12 +1,12 @@
 function init_players(tracks) {
   var intervals = {};
   function reset_btn(element) {
-    element.removeClass(is_safari_osx() ? "fa-stop" : "fa-pause");
+    element.removeClass("fa-pause");
     element.addClass("fa-play");
     element.removeClass("active");
   }
   function enable_btn(element) {
-    element.addClass(is_safari_osx() ? "fa-stop" : "fa-pause");
+    element.addClass("fa-pause");
     element.removeClass("fa-play");
     element.addClass("active");
   }
@@ -23,13 +23,14 @@ function init_players(tracks) {
       return !window.navigator.userAgent.match(/iPad|iPhone/i) && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   }
   function enable(element, data) {
+    function disable() {
+        window.player = null;
+        window.current_file = null;
+        reset_btn(element);
+    }
     if (element.hasClass("active")) {
-        if (is_safari_osx()) {
-            !window.player.playing ? window.player.play() : window.player.stop();
-        } else {
-            element.toggleClass("pulsate");
-            window.player.paused ? window.player.play() : window.player.pause();
-        }
+        element.toggleClass("pulsate");
+        window.player.paused ? window.player.play() : window.player.pause();
     } else {
       if (window.player) window.player.stop();
       enable_btn(element);
@@ -40,18 +41,14 @@ function init_players(tracks) {
               window.player = player
               window.player.play()
           }, function() {
-              window.player = null;
-              window.current_file = null;
-              reset_btn(element);
+              disable()
           })
       } else {
           window.player = $.extend(new Audio(url), {
             stop: function() {
               $(element).removeClass("pulsate");
               window.player.src = "";
-              window.player = null;
-              window.current_file = null;
-              reset_btn(element);
+              disable()
             }
           })
           window.player.play()
