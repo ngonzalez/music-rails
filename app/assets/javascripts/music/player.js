@@ -32,6 +32,7 @@ function init_players(tracks, browser) {
             volume: 0.5,
             url: document.location.protocol + "//" + document.location.host + data.media_url
         }, function(player) {
+            window.trigger_ios_callbacks();
             window.current_file = data.id;
             window.player = player;
             window.player.play();

@@ -1,6 +1,5 @@
-
 ((AudioContext) ->
-    window.audio = new AudioContext()
+    window.audio = window.set_ios_callbacks(new AudioContext())
     window.new_player = (options, init, complete) ->
         xhr = new XMLHttpRequest()
         xhr.open 'GET', options.url, true
