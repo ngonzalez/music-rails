@@ -1,5 +1,5 @@
-function init_players(tracks) {
-  var intervals = {};
+function init_players(tracks, browser) {
+  var intervals = {}; var init;
   function reset_btn(element) {
     element.removeClass("fa-pause");
     element.addClass("fa-play");
@@ -19,40 +19,28 @@ function init_players(tracks) {
     element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
-  function is_safari_osx() {
-      return !window.navigator.userAgent.match(/iPad|iPhone/i) && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  }
   function enable(element, data) {
-    function disable() {
-        window.player = null;
-        window.current_file = null;
-        reset_btn(element);
-    }
     if (element.hasClass("active")) {
         element.toggleClass("pulsate");
         window.player.paused ? window.player.play() : window.player.pause();
     } else {
-      if (window.player) window.player.stop();
-      enable_btn(element);
-      window.current_file = data.id;
-      var url = document.location.protocol + "//" + document.location.host + data.media_url;
-      if (is_safari_osx()) {
-          new_player({ volume: 0.5, url: url }, function(player) {
-              window.player = player
-              window.player.play()
-          }, function() {
-              disable()
-          })
-      } else {
-          window.player = $.extend(new Audio(url), {
-            stop: function() {
-              $(element).removeClass("pulsate");
-              window.player.src = "";
-              disable()
-            }
-          })
-          window.player.play()
-      }
+        if (window.player) window.player.stop();
+        if (init) return;
+        init = true;
+        enable_btn(element);
+        window.current_file = data.id;
+        new_player({
+            volume: 0.5,
+            url: document.location.protocol + "//" + document.location.host + data.media_url
+        }, function(player) {
+            window.player = player;
+            window.player.play();
+            init = null;
+        }, function() {
+            window.current_file = null;
+            element.removeClass("pulsate");
+            reset_btn(element);
+        })
     }
   }
   function loading(element, data) {

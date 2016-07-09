@@ -30,4 +30,8 @@ module ApplicationHelper
     end
   end
 
+  def browser_infos browser
+    { mobile: browser.platform.ios? || browser.platform.android? }
+  end
+
 end

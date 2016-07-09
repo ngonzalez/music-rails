@@ -1,5 +1,5 @@
 - content_for :head do
-  = javascript_include_tag :music_safari_osx
+  = javascript_include_tag :music
 
 = stylesheet_link_tag :music
 
@@ -56,5 +56,5 @@
 
 :javascript
   $(document).ready(function(e) {
-    init_players(#{track_files.to_json});
+    init_players(#{track_files.to_json}, #{browser_infos(@browser).to_json});
   });
