@@ -28,11 +28,11 @@ function init_players(tracks, browser) {
         if (init) return;
         init = true;
         enable_btn(element);
-        window.current_file = data.id;
         new_player({
             volume: 0.5,
             url: document.location.protocol + "//" + document.location.host + data.media_url
         }, function(player) {
+            window.current_file = data.id;
             window.player = player;
             window.player.play();
             init = null;
