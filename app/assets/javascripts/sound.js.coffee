@@ -48,7 +48,8 @@ class Stream
         @source.connect @gain
         @source.onended = (event) => @_ended()
         @_volume @options.volume || 1
-        @paused = false ; @started_at = Date.now()
+        @paused = false
+        @started_at = Date.now()
         @source.start 0, @time, @buffer.duration
 
     _stop: ->
