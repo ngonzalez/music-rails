@@ -24,11 +24,11 @@ function init_players(tracks, browser) {
         element.toggleClass("pulsate");
         window.player.paused ? window.player.play() : window.player.pause();
     } else {
-        if (window.player) window.player.stop();
         if (init) return;
         init = true;
         enable_btn(element);
         $(element).addClass("text-muted")
+        if (window.player) window.player.stop();
         new_player({
             volume: 0.5,
             url: document.location.protocol + "//" + document.location.host + data.media_url
