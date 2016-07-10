@@ -1,24 +1,39 @@
-function init_players(tracks) {
-  var init;
+function init_players(tracks, browser) {
+  var intervals = {}; var init;
+  function reset_btn(element) {
+    element.removeClass("fa-pause");
+    element.addClass("fa-play");
+    element.removeClass("active");
+  }
+  function enable_btn(element) {
+    element.addClass("fa-pause");
+    element.removeClass("fa-play");
+    element.addClass("active");
+  }
+  function processing_btn(element) {
+    element.hide();
+    element.parent().find(".processing").removeClass("hidden");
+  }
+  function processing_complete_btn(element) {
+    element.show();
+    element.parent().find(".processing").addClass("hidden");
+    element.removeClass("grey");
+  }
   function enable(element, data) {
-    function toggle_btn(element) {
-      element.toggleClass('fa-pause');
-      element.toggleClass('fa-play');
-      element.toggleClass('active');
-    }
-    if (element.hasClass('active')) {
-        element.toggleClass('pulsate');
+    if (element.hasClass("active")) {
+        element.toggleClass("pulsate");
         window.player.paused ? window.player.play() : window.player.pause();
-    } else if (!init) {
+    } else {
+        if (init) return;
         init = true;
-        toggle_btn(element);
-        $(element).addClass('text-muted');
+        enable_btn(element);
+        $(element).addClass("text-muted")
         if (window.player) window.player.stop();
         new_player({
             volume: 0.5,
-            url: document.location.protocol + '//' + document.location.host + data.media_url
+            url: document.location.protocol + "//" + document.location.host + data.media_url
         }, function(player) {
-            $(element).removeClass('text-muted');
+            $(element).removeClass("text-muted")
             window.trigger_ios_callbacks();
             window.current_file = data.id;
             window.player = player;
@@ -26,24 +41,18 @@ function init_players(tracks) {
             init = null;
         }, function() {
             window.current_file = null;
-            toggle_btn(element);
+            reset_btn(element);
         })
     }
   }
-  var intervals = {};
   function loading(element, data) {
-    function toggle_btn(element) {
-      element.toggle();
-      element.removeClass('grey');
-      element.parent().find('.processing').toggleClass('hidden');
-    }
     if (!intervals[data.id]) {
-      toggle_btn(element);
+      processing_btn(element);
       intervals[data.id] = setInterval(function() {
         $.get(data.url, function(response) {
           if (response.media_url) {
             tracks[data.id].media_url = response.media_url;
-            toggle_btn(element);
+            processing_complete_btn(element);
             clearInterval(intervals[data.id]);
           }
         });
@@ -52,10 +61,10 @@ function init_players(tracks) {
   }
   function observe() {
     if (!tracks) return;
-    $.each($('.play-btn'), function(i, element) {
-      var data = tracks[parseInt($(element).data('id'))]
+    $.each($(".play-btn"), function(i, element) {
+      var data = tracks[parseInt($(element).data("id"))]
       if (!data) return;
-      if (!data.media_url) $(element).addClass('grey');
+      if (!data.media_url) $(element).addClass("grey");
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
         data.media_url ? enable($(element), data) : loading($(element), data);
