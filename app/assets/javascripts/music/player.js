@@ -16,14 +16,13 @@ function init_players(tracks, browser) {
             volume: 0.5,
             url: document.location.protocol + '//' + document.location.host + data.media_url
         }, function(player) {
+            $(element).removeClass('text-muted');
             window.trigger_ios_callbacks();
             window.current_file = data.id;
             window.player = player;
             window.player.play();
-            $(element).removeClass('text-muted');
         }, function() {
             window.current_file = null;
-            element.removeClass('pulsate');
             toggle_btn(element);
         })
     }
