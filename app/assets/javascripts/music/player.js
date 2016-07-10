@@ -1,56 +1,47 @@
 function init_players(tracks, browser) {
-  var intervals = {};
-  function reset_btn(element) {
-    element.removeClass("fa-pause");
-    element.addClass("fa-play");
-    element.removeClass("active");
-  }
-  function enable_btn(element) {
-    element.addClass("fa-pause");
-    element.removeClass("fa-play");
-    element.addClass("active");
-  }
-  function processing_btn(element) {
-    element.hide();
-    element.parent().find(".processing").removeClass("hidden");
-  }
-  function processing_complete_btn(element) {
-    element.show();
-    element.parent().find(".processing").addClass("hidden");
-    element.removeClass("grey");
-  }
   function enable(element, data) {
-    if (element.hasClass("active")) {
-        element.toggleClass("pulsate");
+    function toggle_btn(element) {
+      element.toggleClass('fa-pause');
+      element.toggleClass('fa-play');
+      element.toggleClass('active');
+    }
+    if (element.hasClass('active')) {
+        element.toggleClass('pulsate');
         window.player.paused ? window.player.play() : window.player.pause();
-    } else if (!$(element).hasClass("text-muted")) {
-        enable_btn(element);
-        $(element).addClass("text-muted")
+    } else if (!$(element).hasClass('text-muted')) {
+        toggle_btn(element);
+        $(element).addClass('text-muted')
         if (window.player) window.player.stop();
         new_player({
             volume: 0.5,
-            url: document.location.protocol + "//" + document.location.host + data.media_url
+            url: document.location.protocol + '//' + document.location.host + data.media_url
         }, function(player) {
             window.trigger_ios_callbacks();
             window.current_file = data.id;
             window.player = player;
             window.player.play();
-            $(element).removeClass("text-muted");
+            $(element).removeClass('text-muted');
         }, function() {
             window.current_file = null;
-            element.removeClass("pulsate");
-            reset_btn(element);
+            element.removeClass('pulsate');
+            toggle_btn(element);
         })
     }
   }
+  var intervals = {};
   function loading(element, data) {
+    function toggle_btn(element) {
+      element.toggle();
+      element.parent().find('.processing').toggleClass('hidden');
+      element.toggleClass('grey');
+    }
     if (!intervals[data.id]) {
-      processing_btn(element);
+      toggle_btn(element);
       intervals[data.id] = setInterval(function() {
         $.get(data.url, function(response) {
           if (response.media_url) {
             tracks[data.id].media_url = response.media_url;
-            processing_complete_btn(element);
+            toggle_btn(element);
             clearInterval(intervals[data.id]);
           }
         });
@@ -59,10 +50,10 @@ function init_players(tracks, browser) {
   }
   function observe() {
     if (!tracks) return;
-    $.each($(".play-btn"), function(i, element) {
-      var data = tracks[parseInt($(element).data("id"))]
+    $.each($('.play-btn'), function(i, element) {
+      var data = tracks[parseInt($(element).data('id'))]
       if (!data) return;
-      if (!data.media_url) $(element).addClass("grey");
+      if (!data.media_url) $(element).addClass('grey');
       if (window.current_file == data.id) enable_btn($(element));
       $(element).click(function(e) {
         data.media_url ? enable($(element), data) : loading($(element), data);
