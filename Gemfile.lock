@@ -52,7 +52,6 @@ GEM
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
-    browser (2.2.0)
     builder (3.2.2)
     coderay (1.1.1)
     coffee-rails (4.2.1)
@@ -228,7 +227,6 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass!
-  browser!
   coffee-rails!
   dragonfly!
   draper!

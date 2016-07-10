@@ -11,7 +11,6 @@ class MusicController < ApplicationController
 
   def show
     find_release
-    set_browser
     respond_to do |format|
       format.html
       format.json do
@@ -46,10 +45,6 @@ class MusicController < ApplicationController
   def find_release
     @release = Release.find params[:id]
     @tracks = @release.tracks.decorate.sort{|a, b| a.number <=> b.number }
-  end
-
-  def set_browser
-    @browser = Browser.new request.env['HTTP_USER_AGENT']
   end
 
   def search_releases
