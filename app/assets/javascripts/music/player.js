@@ -1,5 +1,5 @@
 function init_players(tracks, browser) {
-  var intervals = {}; var init;
+  var intervals = {};
   function reset_btn(element) {
     element.removeClass("fa-pause");
     element.addClass("fa-play");
@@ -23,9 +23,7 @@ function init_players(tracks, browser) {
     if (element.hasClass("active")) {
         element.toggleClass("pulsate");
         window.player.paused ? window.player.play() : window.player.pause();
-    } else {
-        if (init) return;
-        init = true;
+    } else if (!$(element).hasClass("text-muted")) {
         enable_btn(element);
         $(element).addClass("text-muted")
         if (window.player) window.player.stop();
@@ -37,8 +35,7 @@ function init_players(tracks, browser) {
             window.current_file = data.id;
             window.player = player;
             window.player.play();
-            init = null;
-            $(element).removeClass("text-muted")
+            $(element).removeClass("text-muted");
         }, function() {
             window.current_file = null;
             element.removeClass("pulsate");
