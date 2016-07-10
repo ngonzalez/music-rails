@@ -1,5 +1,5 @@
 ((AudioContext) ->
-    window.audio = window.set_ios_callbacks(new AudioContext())
+    window.audio = window.set_ios_callbacks new AudioContext()
     window.new_player = (options, init, complete) ->
         xhr = new XMLHttpRequest()
         xhr.open 'GET', options.url, true
@@ -34,6 +34,7 @@ class Stream
 
     _volume: (value) ->
         @gain.gain.value = value;
+        return true
 
     _playback_time: ->
         return @time if !@started_at
@@ -50,6 +51,7 @@ class Stream
         @paused = false
         @started_at = Date.now()
         @source.start 0, @time, @buffer.duration
+        return true
 
     _stop: ->
         if @playing
@@ -63,7 +65,7 @@ class Stream
 
     _ended: ->
         return if @paused
-        @playing = false if @playing
+        delete @playing if @playing
         @complete() if @complete
         @gain && @gain.disconnect()
         @source && @source.disconnect()
