@@ -1,5 +1,4 @@
 function init_players(tracks, browser) {
-  var intervals = {}; var init;
   function reset_btn(element) {
     element.removeClass("fa-pause");
     element.addClass("fa-play");
@@ -19,12 +18,12 @@ function init_players(tracks, browser) {
     element.parent().find(".processing").addClass("hidden");
     element.removeClass("grey");
   }
+  var init;
   function enable(element, data) {
     if (element.hasClass("active")) {
         element.toggleClass("pulsate");
         window.player.paused ? window.player.play() : window.player.pause();
-    } else {
-        if (init) return;
+    } else if (!init) {
         init = true;
         enable_btn(element);
         $(element).addClass("text-muted")
@@ -45,6 +44,7 @@ function init_players(tracks, browser) {
         })
     }
   }
+  var intervals = {};
   function loading(element, data) {
     if (!intervals[data.id]) {
       processing_btn(element);
