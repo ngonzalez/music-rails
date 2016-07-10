@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:markevans/dragonfly.git
-  revision: 288ab352faee5d1aeb61900504ddb7032b16e41d
+  revision: b8af810e647fc21e43ccc42b69beb6c9baa40abe
   specs:
     dragonfly (1.0.12)
       addressable (~> 2.3)
