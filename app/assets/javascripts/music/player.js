@@ -32,8 +32,8 @@ function init_players(tracks, browser) {
   function loading(element, data) {
     function toggle_btn(element) {
       element.toggle();
+      element.removeClass('grey');
       element.parent().find('.processing').toggleClass('hidden');
-      element.toggleClass('grey');
     }
     if (!intervals[data.id]) {
       toggle_btn(element);
