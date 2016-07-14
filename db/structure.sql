@@ -145,7 +145,7 @@ CREATE TABLE tracks (
     id integer NOT NULL,
     release_id integer NOT NULL,
     name character varying NOT NULL,
-    format character varying NOT NULL,
+    format_info character varying NOT NULL,
     artist character varying,
     title character varying,
     album character varying,
@@ -410,4 +410,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160703082507');
 INSERT INTO schema_migrations (version) VALUES ('20160705165152');
 
 INSERT INTO schema_migrations (version) VALUES ('20160705175855');
+
+INSERT INTO schema_migrations (version) VALUES ('20160714120711');
 
