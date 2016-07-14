@@ -18,7 +18,18 @@ module TaskHelpers
     f = Tempfile.new ; f.write(content) ; f.rewind
     release.update! srrdb_sfv: f
     f.unlink
-    Rails.logger.info "--\n%s\n--" % [ content.inspect ]
+    sleep 10
+  end
+
+  def import_srrdb_srr release
+    require 'open-uri'
+    url = ["http://www.srrdb.com/download/srr"]
+    url << release.name
+    restore_path = [RESTORE_PATH, release.name].join("/")
+    src_file = URI.escape url.join("/")
+    destination_file = restore_path + "/" + release.name
+    IO.copy_stream open(src_file), destination_file
+    release.update! srrdb_srr: File.open(destination_file)
     sleep 10
   end
 

@@ -23,4 +23,8 @@ class Release < ActiveRecord::Base
     storage_options {|a| { path: "srrdb_sfv/%s" % [ UUID.new.generate ] } }
   end
 
+  dragonfly_accessor :srrdb_srr do
+    storage_options {|a| { path: "srrdb_srr/%s" % [ UUID.new.generate ] } }
+  end
+
 end

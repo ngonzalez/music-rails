@@ -135,4 +135,18 @@ namespace "data" do
     end
   end
 
+  desc "restore releases"
+  task restore_releases: :environment do
+    releases = Release.all.select{|r| r.decorate.scene? && r.srrdb_sfv && !r.srrdb_last_verified_at }
+    bar = ProgressBar.new releases.count
+    releases.each do |release|
+      restore_path = [RESTORE_PATH, release.name].join("/")
+      FileUtils.cp_r release.decorate.public_path, restore_path if !File.directory?(restore_path)
+      import_srrdb_srr release if !release.srrdb_srr
+      file_path = Shellwords.escape "#{restore_path}/#{release.name}"
+      Dir.chdir(restore_path) { %x[retag.py #{file_path} -y --output .] }
+      bar.increment!
+    end
+  end
+
 end
