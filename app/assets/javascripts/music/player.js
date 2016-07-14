@@ -29,7 +29,7 @@ function init_players(tracks, browser) {
         $(element).addClass("text-muted")
         if (window.player) window.player.stop();
         new_player({
-            volume: 0.5,
+            volume: 0.9,
             url: document.location.protocol + "//" + document.location.host + data.media_url
         }, function(player) {
             $(element).removeClass("text-muted")

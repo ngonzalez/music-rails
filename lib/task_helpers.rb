@@ -59,7 +59,7 @@ module TaskHelpers
 
   def format_track_format release
     return if release.tracks.empty?
-    case release.tracks[0].format
+    case release.tracks[0].format_info
       when /FLAC/ then "FLAC"
       when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
       when /MPEG ADTS, layer III, v1, 256 kbps/ then "MP3-256CBR"

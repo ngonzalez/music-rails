@@ -7,9 +7,7 @@ class ReleaseDecorator < Draper::Decorator
     [BASE_PATH, path].join("/")
   end
   def search_infos
-    object.attributes.deep_symbolize_keys.slice(:id, :formatted_name, :folder, :format_name, :label_name).merge(
-      url: h.music_url(object, format: h.params.slice("format")), year: object.year.to_i
-    )
+    object.attributes.deep_symbolize_keys.slice(:id, :formatted_name, :folder, :format_name, :label_name).merge(year: object.year.to_i)
   end
   def scene?
     return false if !self.name

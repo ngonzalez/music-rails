@@ -36,7 +36,7 @@ class ImportWorker
         track = release.tracks.detect{|track| track.name == track_name }
         if !track
           track = release.tracks.new name: track_name
-          track.format = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
+          track.format_info = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
           TagLib::FileRef.open(file) do |infos|
             tag = infos.tag
             ["artist", "title", "album", "genre", "year"].each do |name|

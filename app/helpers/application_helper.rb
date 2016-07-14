@@ -9,6 +9,7 @@ module ApplicationHelper
   end
 
   def search_terms_array
+    return if !params[:q]
     params[:label] || params[:q].split(/ and | or /)
   end
 
