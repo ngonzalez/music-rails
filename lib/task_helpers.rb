@@ -27,7 +27,7 @@ module TaskHelpers
     url << release.name
     restore_path = [RESTORE_PATH, release.name].join("/")
     src_file = URI.escape url.join("/")
-    destination_file = restore_path + "/" + release.name
+    destination_file = restore_path + "/" + release.name + ".srr"
     IO.copy_stream open(src_file), destination_file
     release.update! srrdb_srr: File.open(destination_file)
     sleep 10
