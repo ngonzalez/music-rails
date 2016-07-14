@@ -144,7 +144,9 @@ namespace "data" do
       FileUtils.cp_r release.decorate.public_path, restore_path if !File.directory?(restore_path)
       import_srrdb_srr release if !release.srrdb_srr
       file_path = Shellwords.escape "#{restore_path}/#{release.name}.srr"
-      Dir.chdir(restore_path) { %x[retag.py #{file_path} -y --output .] }
+      FileUtils.cp release.srrdb_srr.file.path, "#{restore_path}/#{release.name}.srr" if !File.exists?("#{restore_path}/#{release.name}.srr")
+      # Dir.chdir(restore_path) { %x[retag.py #{file_path} -y --output .] }
+      # FileUtils.rm_f "#{restore_path}/#{release.name}.srr" if File.exists?("#{restore_path}/#{release.name}.srr")
       bar.increment!
     end
   end
