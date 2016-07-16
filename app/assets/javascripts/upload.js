@@ -1,8 +1,19 @@
 (function($) {
     $(function() {
 
-        window[ 'send_file' ] = function(options) {
-          
+        $.widget('ui.sendFilesProxy', {
+          _init: function() {
+            //
+          },
+          send: function(options) {
+            sendFile($.extend(options, { input_id: $(this.element).attr('id') }))
+          }
+        });
+
+        $.each($('input[type=file]'), function(i, element) { $(element).sendFilesProxy() });
+
+        function sendFile(options) {
+
             var control = $("#" + options.input_id);
 
             var files = document.getElementById(options.input_id).files;
@@ -57,7 +68,7 @@
                                             response: response
                                         });
                                     }
-                                    send_file(options);
+                                    sendFile(options);
                                 });
                             } else if (options.complete) {
                                 options.complete();

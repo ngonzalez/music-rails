@@ -19,12 +19,11 @@
             }
 
             $(document).ready(function() {
-                $("#Filedata").change(function(e) {
-                    send_file({
-                        input_id: "Filedata",
-                        name: "upload",
-                        url: "http://#{HOST_NAME}/uploads",
-                        type: "POST",
+                $('#Filedata').change(function(e) {
+                    $(e.target).sendFilesProxy('send', {
+                        name: 'upload',
+                        url: 'http://#{HOST_NAME}/uploads',
+                        type: 'POST',
                         progress: function(item) {
                             set_progress(parseInt(item.counter / item.total_files * 100))
                             display_file(item);
