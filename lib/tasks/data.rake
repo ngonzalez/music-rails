@@ -94,22 +94,6 @@ namespace "data" do
     end
   end
 
-  desc "process images"
-  task process_images: :environment do
-    require 'progress_bar'
-    images = Image.where thumb_uid: nil, thumb_high_uid: nil
-    bar = ProgressBar.new images.count
-    images.each do |image|
-      begin
-        image.update! thumb: image.file.thumb("300x250>") if !image.thumb
-        image.update! thumb_high: image.file.thumb("600x500>") if !image.thumb_high
-        bar.increment!
-      rescue
-        next
-      end
-    end
-  end
-
   desc "set details"
   task set_details: :environment do
     Track.where(number: nil).each do |track|
@@ -132,22 +116,6 @@ namespace "data" do
     end
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
       release.tracks.each{|track| track.update! format_name: format_track_format(release) }
-    end
-  end
-
-  desc "restore releases"
-  task restore_releases: :environment do
-    releases = Release.all.select{|r| r.decorate.scene? && r.srrdb_sfv && !r.srrdb_last_verified_at }
-    bar = ProgressBar.new releases.count
-    releases.each do |release|
-      restore_path = [RESTORE_PATH, release.name].join("/")
-      FileUtils.cp_r release.decorate.public_path, restore_path if !File.directory?(restore_path)
-      import_srrdb_srr release if !release.srrdb_srr
-      file_path = Shellwords.escape "#{restore_path}/#{release.name}.srr"
-      FileUtils.cp release.srrdb_srr.file.path, "#{restore_path}/#{release.name}.srr" if !File.exists?("#{restore_path}/#{release.name}.srr")
-      # Dir.chdir(restore_path) { %x[retag.py #{file_path} -y --output .] }
-      # FileUtils.rm_f "#{restore_path}/#{release.name}.srr" if File.exists?("#{restore_path}/#{release.name}.srr")
-      bar.increment!
     end
   end
 

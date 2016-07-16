@@ -21,18 +21,6 @@ module TaskHelpers
     sleep 10
   end
 
-  def import_srrdb_srr release
-    require 'open-uri'
-    url = ["http://www.srrdb.com/download/srr"]
-    url << release.name
-    restore_path = [RESTORE_PATH, release.name].join("/")
-    src_file = URI.escape url.join("/")
-    destination_file = restore_path + "/" + release.name + ".srr"
-    IO.copy_stream open(src_file), destination_file
-    release.update! srrdb_srr: File.open(destination_file)
-    sleep 10
-  end
-
   def check_sfv release, field_name, key
     return if release.send(field_name) || release.details[key] || !release.send(key)
     details = case Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
