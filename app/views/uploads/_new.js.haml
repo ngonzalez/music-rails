@@ -3,13 +3,13 @@
     (function($) {
         $(function() {
             function set_progress(value) {
-                $('#progress-bar').attr('aria-valuenow', value);
-                $('#progress-bar').css('width', value + '%');
+                $('#progress-bar').attr('aria-valuenow', value)
+                $('#progress-bar').css('width', value + '%')
             }
 
             function display_file(item) {
-                $('#files').append($('<hr />'));
-                $('#files').append(item.response.created_at);
+                $('#files').append($('<hr />'))
+                $('#files').append(item.response.created_at)
                 $('#files').append(
                     $('<a />')
                         .attr('target', 'blank')
@@ -24,9 +24,9 @@
                         name: 'upload',
                         url: 'http://#{HOST_NAME}/uploads',
                         type: 'POST',
-                        progress: function(item) {
-                            set_progress(parseInt(item.counter / item.total_files * 100))
-                            display_file(item);
+                        progress: function(response) {
+                            set_progress(parseInt(response.counter / response.total_files * 100))
+                            display_file(response)
                         }
                     });
                 });
