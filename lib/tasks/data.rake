@@ -51,6 +51,11 @@ namespace "data" do
     end
   end
 
+  desc "set details"
+  task set_details: :environment do
+    release_set_details
+  end
+
   desc "check sfv"
   task sfv: :environment do
     ["import_sfv", "check_sfv", "import_srrdb_sfv", "check_srrdb_sfv"].each do |name|
@@ -91,31 +96,6 @@ namespace "data" do
   task check_srrdb_sfv: :environment do
     Release.find_each do |release|
       check_sfv release, :srrdb_last_verified_at, :srrdb_sfv
-    end
-  end
-
-  desc "set details"
-  task set_details: :environment do
-    Track.where(number: nil).each do |track|
-      track.update! number: format_number(track.name)
-    end
-    Release.where(formatted_name: nil).each do |release|
-      release.update! formatted_name: format_name(release.name)
-    end
-    Release.where(year: nil).each do |release|
-      next if release.tracks.empty?
-      release.update! year: release.tracks[0].year.to_i
-    end
-    Release.where(year: "0").find_each do |release|
-      year = year_from_name release.name
-      release.tracks.each{|track| track.update! year: year }
-      release.update! year: year
-    end
-    Release.where(format_name: nil).each do |release|
-      release.update! format_name: get_format_from_release_name(release) || format_track_format(release)
-    end
-    Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
-      release.tracks.each{|track| track.update! format_name: format_track_format(release) }
     end
   end
 

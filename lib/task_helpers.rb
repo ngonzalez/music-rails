@@ -3,10 +3,16 @@ module TaskHelpers
   class SrrdbLimitReachedError < StandardError ; end
 
   def import_srrdb_sfv release
+    return if release.details[:srrdb_sfv_error]
+    begin
+      response = Typhoeus.get "http://www.srrdb.com/release/details/" + release.name
+      sfv_name = Nokogiri::HTML(response.body).css('a.storedFile').detect{|item| item['href'].downcase =~ /.sfv/ }['href'].split('/').last
+    rescue
+      sfv_name = release.sfv_name
+    end
     url = ["http://www.srrdb.com/download/file"]
     url << release.name
-    url << release.sfv_name
-    return if release.details[:srrdb_sfv_error]
+    url << sfv_name
     response = Typhoeus.get url.join("/")
     if response.code != 200 || response.body.blank?
       release.details[:srrdb_sfv_error] = true
@@ -23,16 +29,19 @@ module TaskHelpers
 
   def check_sfv release, field_name, key
     return if release.send(field_name) || release.details[key] || !release.send(key)
-    details = case Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
-      when /badcrc/ then :bad_crc
-      when /chksum file errors/ then :chksum_file_errors
-      when /not found|No such file/ then :missing_files
-    end
-    if details
-      release.details[key] = details
-      release.save!
-    else
+    sfv_check_results = Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
+    if sfv_check_results =~ /#{release.tracks.length} files, #{release.tracks.length} OK/
       release.update! field_name => Time.now
+    else
+      details = case sfv_check_results
+        when /badcrc/ then :bad_crc
+        when /chksum file errors/ then :chksum_file_errors
+        when /not found|No such file/ then :missing_files
+      end
+      if details
+        release.details[key] = details
+        release.save!
+      end
     end
   end
 
@@ -83,6 +92,30 @@ module TaskHelpers
       when /\-ALAC\-/ then "ALAC"
       when /\-WAV\-/ then "WAV"
       when /\-AIFF\-/ then "AIFF"
+    end
+  end
+
+  def release_set_details
+    Track.where(number: nil).each do |track|
+      track.update! number: format_number(track.name)
+    end
+    Release.where(formatted_name: nil).each do |release|
+      release.update! formatted_name: format_name(release.name)
+    end
+    Release.where(year: nil).each do |release|
+      next if release.tracks.empty?
+      release.update! year: release.tracks[0].year.to_i
+    end
+    Release.where(year: "0").find_each do |release|
+      year = year_from_name release.name
+      release.tracks.each{|track| track.update! year: year }
+      release.update! year: year
+    end
+    Release.where(format_name: nil).each do |release|
+      release.update! format_name: get_format_from_release_name(release) || format_track_format(release)
+    end
+    Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
+      release.tracks.each{|track| track.update! format_name: format_track_format(release) }
     end
   end
 
