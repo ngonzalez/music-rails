@@ -58,7 +58,10 @@ namespace "data" do
 
   desc "check sfv"
   task sfv: :environment do
-    ["import_sfv", "check_sfv", "import_srrdb_sfv", "check_srrdb_sfv"].each do |name|
+    [
+      "import_sfv", "check_sfv",
+      "import_srrdb_sfv", "check_srrdb_sfv"
+    ].each do |name|
       Rake::Task["data:#{name}"].execute
     end
   end

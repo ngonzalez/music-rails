@@ -1,30 +1,36 @@
 module TaskHelpers
 
   class SrrdbLimitReachedError < StandardError ; end
+  class SrrdbNotFound < StandardError ; end
+
+  def srrdb_request url, &block
+    response = Typhoeus.get url
+    raise SrrdbNotFound.new if response.code != 200 || response.body.blank?
+    raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
+    sleep 5
+    yield response
+  end
 
   def import_srrdb_sfv release
-    return if release.details[:srrdb_sfv_error]
+    return if release.srrdb_sfv || release.details[:srrdb_sfv_error]
     begin
-      response = Typhoeus.get "http://www.srrdb.com/release/details/" + release.name
-      sfv_name = Nokogiri::HTML(response.body).css('a.storedFile').detect{|item| item['href'].downcase =~ /.sfv/ }['href'].split('/').last
-    rescue
+      sfv_name = nil
+      srrdb_request "http://www.srrdb.com/release/details/#{release.name}" do |response|
+        sfv_name = Nokogiri::HTML(response.body).css('a.storedFile').detect{|item| item['href'].downcase =~ /.sfv/ }['href'].split('/').last
+      end
+    rescue SrrdbNotFound => e
       sfv_name = release.sfv_name
     end
-    url = ["http://www.srrdb.com/download/file"]
-    url << release.name
-    url << sfv_name
-    response = Typhoeus.get url.join("/")
-    if response.code != 200 || response.body.blank?
+    begin
+      srrdb_request "http://www.srrdb.com/download/file/#{release.name}/#{sfv_name}" do |response|
+        f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8')) ; f.rewind
+        release.update! srrdb_sfv: f
+        f.unlink
+      end
+    rescue SrrdbNotFound
       release.details[:srrdb_sfv_error] = true
       release.save!
-      return
     end
-    content = response.body.force_encoding('Windows-1252').encode('UTF-8')
-    raise SrrdbLimitReachedError.new content if content == "You've reached the daily limit."
-    f = Tempfile.new ; f.write(content) ; f.rewind
-    release.update! srrdb_sfv: f
-    f.unlink
-    sleep 10
   end
 
   def check_sfv release, field_name, key
@@ -106,8 +112,9 @@ module TaskHelpers
       next if release.tracks.empty?
       release.update! year: release.tracks[0].year.to_i
     end
-    Release.where(year: "0").find_each do |release|
+    Release.where("year::numeric = 0 OR year IS NULL").find_each do |release|
       year = year_from_name release.name
+      return if !year
       release.tracks.each{|track| track.update! year: year }
       release.update! year: year
     end
