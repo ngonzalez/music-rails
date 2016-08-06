@@ -1,6 +1,6 @@
 source "https://rubygems.org" do
 
-  gem 'rails', '4.2.6'
+  gem 'rails', '4.2.7'
   gem 'pg'
 
   gem 'taglib-ruby'
@@ -44,5 +44,6 @@ source "https://rubygems.org" do
   gem 'progress_bar'
 
   gem 'typhoeus'
+  gem 'nokogiri'
 
 end
