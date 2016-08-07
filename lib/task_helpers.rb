@@ -23,11 +23,11 @@ module TaskHelpers
     end
     begin
       srrdb_request "http://www.srrdb.com/download/file/#{release.name}/#{sfv_name}" do |response|
-        f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8')) ; f.rewind
+        f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")) ; f.rewind
         release.update! srrdb_sfv: f
         f.unlink
       end
-    rescue SrrdbNotFound
+    rescue SrrdbNotFound => e
       release.details[:srrdb_sfv_error] = true
       release.save!
     end
