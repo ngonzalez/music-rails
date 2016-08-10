@@ -4,25 +4,30 @@ module TaskHelpers
   class SrrdbNotFound < StandardError ; end
 
   def srrdb_request url, &block
-    response = Typhoeus.get url
-    raise SrrdbNotFound.new if response.code != 200 || response.body.blank?
-    raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
-    sleep 5
-    yield response
+    request = Typhoeus::Request.new url, followlocation: true
+    request.on_complete do |response|
+      raise SrrdbNotFound.new("") if response.code != 200 || response.body.blank?
+      raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
+      sleep 5
+      yield response
+    end
+    request.run
   end
 
   def import_srrdb_sfv release
     return if release.srrdb_sfv || release.details[:srrdb_sfv_error]
     begin
-      sfv_name = nil
+      sfv_name = release_name = nil
       srrdb_request "http://www.srrdb.com/release/details/#{release.name}" do |response|
         sfv_name = Nokogiri::HTML(response.body).css('a.storedFile').detect{|item| item['href'].downcase =~ /.sfv/ }['href'].split('/').last
+        release_name = Nokogiri::HTML(response.body).css('#release-name')[0]['value']
       end
     rescue SrrdbNotFound => e
       sfv_name = release.sfv_name
+      release_name = release.name
     end
     begin
-      srrdb_request "http://www.srrdb.com/download/file/#{release.name}/#{sfv_name}" do |response|
+      srrdb_request "http://www.srrdb.com/download/file/#{release_name}/#{sfv_name}" do |response|
         f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")) ; f.rewind
         release.update! srrdb_sfv: f
         f.unlink
