@@ -17,8 +17,6 @@
                 @_post_data @_set_params(data, file, options), options, (response) =>
                     options.progress response: response, counter: options.counter, total_files: @files.length if options.progress
                     @send options
-            else if options.complete
-                options.complete()
         _set_params: (data, file, options) ->
             data.append options.name, file
             if options.params
