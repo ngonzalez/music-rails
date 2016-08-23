@@ -2,6 +2,7 @@ class Release < ActiveRecord::Base
   has_many :tracks, dependent: :destroy
   has_many :images, dependent: :destroy
   has_many :nfo_files, dependent: :destroy
+  has_many :sfv_files, dependent: :destroy
 
   serialize :details, Hash
 
@@ -14,13 +15,4 @@ class Release < ActiveRecord::Base
     string :label_name
     integer :year
   end
-
-  dragonfly_accessor :sfv do
-    storage_options {|a| { path: "sfv/%s" % [ UUID.new.generate ] } }
-  end
-
-  dragonfly_accessor :srrdb_sfv do
-    storage_options {|a| { path: "srrdb_sfv/%s" % [ UUID.new.generate ] } }
-  end
-
 end

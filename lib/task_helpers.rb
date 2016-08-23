@@ -1,61 +1,5 @@
 module TaskHelpers
 
-  class SrrdbLimitReachedError < StandardError ; end
-  class SrrdbNotFound < StandardError ; end
-
-  def srrdb_request url, &block
-    request = Typhoeus::Request.new url, followlocation: true
-    request.on_complete do |response|
-      raise SrrdbNotFound.new("") if response.code != 200 || response.body.blank?
-      raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
-      sleep 5
-      yield response
-    end
-    request.run
-  end
-
-  def import_srrdb_sfv release
-    return if release.srrdb_sfv || release.details[:srrdb_sfv_error]
-    begin
-      sfv_name = release_name = nil
-      srrdb_request "http://www.srrdb.com/release/details/#{release.name}" do |response|
-        sfv_name = Nokogiri::HTML(response.body).css('a.storedFile').detect{|item| item['href'].downcase =~ /.sfv/ }['href'].split('/').last
-        release_name = Nokogiri::HTML(response.body).css('#release-name')[0]['value']
-      end
-    rescue SrrdbNotFound => e
-      sfv_name = release.sfv_name
-      release_name = release.name
-    end
-    begin
-      srrdb_request "http://www.srrdb.com/download/file/#{release_name}/#{sfv_name}" do |response|
-        f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")) ; f.rewind
-        release.update! srrdb_sfv: f
-        f.unlink
-      end
-    rescue SrrdbNotFound => e
-      release.details[:srrdb_sfv_error] = true
-      release.save!
-    end
-  end
-
-  def check_sfv release, field_name, key
-    return if release.send(field_name) || release.details[key] || !release.send(key)
-    sfv_check_results = Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{release.send(key).path}] }
-    if sfv_check_results =~ /#{release.tracks.length} files, #{release.tracks.length} OK/
-      release.update! field_name => Time.now
-    else
-      details = case sfv_check_results
-        when /badcrc/ then :bad_crc
-        when /chksum file errors/ then :chksum_file_errors
-        when /not found|No such file/ then :missing_files
-      end
-      if details
-        release.details[key] = details
-        release.save!
-      end
-    end
-  end
-
   def year_from_name name
     name.split("-").select{|item| item.match(/(\d{4})/) }.last
   end
@@ -119,7 +63,7 @@ module TaskHelpers
     end
     Release.where("year::numeric = 0 OR year IS NULL").find_each do |release|
       year = year_from_name release.name
-      return if !year
+      next if !year
       release.tracks.each{|track| track.update! year: year }
       release.update! year: year
     end
@@ -128,6 +72,21 @@ module TaskHelpers
     end
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
       release.tracks.each{|track| track.update! format_name: format_track_format(release) }
+    end
+    Release.where(folder_created_at: nil, folder_updated_at: nil).each do |release|
+      f = File::Stat.new release.decorate.public_path
+      release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+    end
+    Release.find_each do |release|
+      if release.nfo_files.any?
+        if release.details.has_key?(:nfo)
+          release.details.delete :nfo
+          release.save!
+        end
+      else
+        release.details[:nfo] = :not_found
+        release.save!
+      end
     end
   end
 
