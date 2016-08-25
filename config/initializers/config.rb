@@ -11,3 +11,6 @@ DEFAULT_ENCODING = "mp3"
 LABELS = []
 HOST_NAME = "example.net"
 BITLY_TOKEN = "REPLACE_TOKEN"
+FOLDERS = ["dnb","hc","other"]
+FOLDERS_WITH_LABELS = ["backup"]
+EXCEPT_GRPS = /EXAMPLE_INT|ABCD_INT/

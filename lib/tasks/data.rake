@@ -5,7 +5,7 @@ namespace "data" do
 
   desc "update data"
   task update: :environment do
-    ["clear_data", "load_data", "set_details"].each do |name|
+    ["clear_data", "load_data", "check_sfv", "set_details"].each do |name|
       Rake::Task["data:#{name}"].execute
     end
   end
@@ -23,25 +23,31 @@ namespace "data" do
   task load_data: :environment do
     require 'progress_bar'
     bar = ProgressBar.new Release.count
-
-    ["dnb","hc","other","backup2"].each do |folder|
+    FOLDERS.each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          ImportWorker.new.perform name: path.split("/").last, folder: folder, path: path, source: source
+          ImportWorker.new(name: path.split("/").last, folder: folder, path: path, source: source).perform
           bar.increment!
         end
       end
     end
+    FOLDERS_WITH_LABELS.each do |folder|
+      LABELS.each do |label_name|
+        ALLOWED_SOURCES.each do |source|
+          Dir["#{BASE_PATH}/#{folder}/#{label_name.gsub(" ", "_")}/#{source}/**"].each do |path|
+            ImportWorker.new(name: path.split("/").last, folder: folder, path: path, source: source, label_name: label_name).perform
+            bar.increment!
+          end
+        end
+      end
+    end
+  end
 
-    Dir["#{BASE_PATH}/backup/**"].each do |label_path|
-      label_name = label_path.split("/").last
-      ALLOWED_SOURCES.each do |source|
-        Dir["#{BASE_PATH}/backup/#{label_name}/#{source}/**"].each do |path|
-          ImportWorker.new.perform name: path.split("/").last, folder: "backup", path: path, source: source, label_name: label_name
-          bar.increment!
-        end
-      end
-    end
+  desc "check sfv"
+  task check_sfv: :environment do
+    Release.where(last_verified_at: nil).decorate.select{|release| !release.details.has_key?(:sfv) }.select{|release| release.sfv_files.where(source: nil).any? }.each{|release| ImportWorker.new(name: release.name).check_sfv }
+    Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details[:srrdb_sfv_error] && !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) && release.sfv_files.where(source: 'srrDB').none? }.each{|release| ImportWorker.new(name: release.name).import_srrdb_sfv }
+    Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details[:srrdb_sfv_error] && !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) && release.sfv_files.where(source: 'srrDB').any? }.each{|release| ImportWorker.new(name: release.name).check_sfv 'srrDB' }
   end
 
   desc "set details"

@@ -10,20 +10,22 @@ class ImportWorker
   attr_accessor :release
 
   def initialize options={}
-    @release = options[:release] if options[:release]
-    @release = Release.find_by options.slice(:name)
-    set_release options if !release
+    set_release options
+  end
+
+  def perform
+    ensure_db_connection
+    process_release
   end
 
   def set_release options
-    @release = Release.new options.slice(:name, :folder, :source)
-    release.label_name = options[:label_name].gsub("_", " ") if options[:label_name]
-    release.save!
-  end
-
-  def perform options
-    ensure_db_connection
-    process_release options.symbolize_keys
+    @release = options[:release] if options[:release]
+    @release = Release.find_by options.slice(:name)
+    if !@release
+      @release = Release.new options.slice(:name, :folder, :source)
+      release.label_name = options[:label_name].gsub("_", " ") if options[:label_name]
+      release.save!
+    end
   end
 
   def ensure_db_connection
@@ -110,11 +112,16 @@ class ImportWorker
       end
     end
   end
+  def clear_text string
+    string.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")
+  end
   def import_sfv
     Dir[release.decorate.public_path + "/**/*.#{SFV_TYPE}", release.decorate.public_path + "/**/*.#{SFV_TYPE.upcase}"].each do |sfv_path|
       file_name = sfv_path.split("/").each_with_object([]){|item, array| array << item if item == release.name || array.include?(release.name) }.reject{|item| item == release.name }.join "/"
       next if release.sfv_files.where(source: nil).detect{|sfv| sfv.file_name == file_name }
-      release.sfv_files.create! file: File.read(sfv_path), file_name: file_name
+      f = Tempfile.new ; f.write(clear_text(File.read(sfv_path))) ; f.rewind
+      release.sfv_files.create! file: f, file_name: file_name
+      f.unlink
     end
   end
   def srrdb_request url, &block
@@ -129,7 +136,6 @@ class ImportWorker
   end
   def import_srrdb_sfv
     begin
-      sfv_name = release_name = nil
       srrdb_request "http://www.srrdb.com/release/details/#{release.name}" do |response|
         release_name = Nokogiri::HTML(response.body).css('#release-name')[0]['value']
         sfv_files = Nokogiri::HTML(response.body).css('table.stored-files').css('a.storedFile').select{|item| item['href'].downcase =~ /.sfv/ }
@@ -139,8 +145,8 @@ class ImportWorker
           file_name = URI.unescape file_name
           next if release.sfv_files.where(source: 'srrDB').detect{|sfv| sfv.file_name == file_name }
           srrdb_request "http://www.srrdb.com/download/file/#{release_name}/#{file_name}" do |response|
-            f = Tempfile.new ; f.write(response.body.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")) ; f.rewind
-            release.sfv_files.create! file: f, source: 'srrDB', file_name: file_name
+            f = Tempfile.new ; f.write(clear_text(response.body)) ; f.rewind
+            release.sfv_files.create! file: f, file_name: file_name, source: 'srrDB'
             f.unlink
           end
         end
@@ -154,27 +160,20 @@ class ImportWorker
       return
     end
   end
-  def check_sfv field_name, key
+  def check_sfv source=nil
+    key = source ? "#{source}_sfv".to_sym : :sfv
+    field_name = source ? "#{source.downcase}_last_verified_at".to_sym : :last_verified_at
     return if release.send(field_name) || release.details[key]
-    sfv = release.sfv_files.where(source: nil).take if key == :sfv
-    sfv = release.sfv_files.where(source: 'srrDB').take if key == :srrdb_sfv
-    return if !sfv
-    sfv_check_results = Dir.chdir(release.decorate.public_path) { %x[#{SFV_CHECK_APP} -f #{sfv.file.path}] }
-    if sfv_check_results =~ /#{release.tracks.length} files, #{release.tracks.length} OK/
-      release.update! field_name => Time.now
+    results = release.sfv_files.where(source: source).each_with_object([]){|sfv_file, array| array << sfv_file.check }
+    if results.all?{|result| result == :ok }
+      release.details.delete(key) if release.details.has_key?(key)
+      release.update!(field_name => Time.now) if !release.send(field_name)
     else
-      details = case sfv_check_results
-        when /badcrc/ then :bad_crc
-        when /chksum file errors/ then :chksum_file_errors
-        when /not found|No such file/ then :missing_files
-      end
-      if details
-        release.details[key] = details
-        release.save!
-      end
+      release.details[key] = results.uniq.to_sentence
+      release.save!
     end
   end
-  def process_release options
+  def process_release
     return if release && (release.last_verified_at || release.details[:sfv])
     ActiveRecord::Base.transaction do
       begin
@@ -182,14 +181,7 @@ class ImportWorker
         import_images
         import_nfo
         import_sfv
-        check_sfv :last_verified_at, :sfv
-        if release.decorate.scene?
-          import_srrdb_sfv
-          check_sfv :srrdb_last_verified_at, :srrdb_sfv
-        end
       rescue Exception => e
-        puts options.inspect
-        Rails.logger.info options.inspect
         raise ActiveRecord::Rollback
       end
     end
