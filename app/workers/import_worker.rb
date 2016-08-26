@@ -15,7 +15,11 @@ class ImportWorker
 
   def perform
     ensure_db_connection
-    process_release
+    return if release && (release.last_verified_at || release.details[:sfv])
+    import_tracks
+    import_images
+    import_nfo
+    import_sfv
   end
 
   def set_release options
@@ -127,7 +131,7 @@ class ImportWorker
   def srrdb_request url, &block
     request = Typhoeus::Request.new url, followlocation: true
     request.on_complete do |response|
-      raise SrrdbNotFound.new("") if response.code != 200 || response.body.blank?
+      raise SrrdbNotFound.new if response.code != 200 || response.body.blank?
       raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
       sleep 5
       yield response
@@ -161,7 +165,7 @@ class ImportWorker
     end
   end
   def check_sfv source=nil
-    key = source ? "#{source}_sfv".to_sym : :sfv
+    key = source ? "#{source.downcase}_sfv".to_sym : :sfv
     field_name = source ? "#{source.downcase}_last_verified_at".to_sym : :last_verified_at
     return if release.send(field_name) || release.details[key]
     results = release.sfv_files.where(source: source).each_with_object([]){|sfv_file, array| array << sfv_file.check }
@@ -169,21 +173,8 @@ class ImportWorker
       release.details.delete(key) if release.details.has_key?(key)
       release.update!(field_name => Time.now) if !release.send(field_name)
     else
-      release.details[key] = results.uniq.to_sentence
+      release.details[key] = results.uniq
       release.save!
-    end
-  end
-  def process_release
-    return if release && (release.last_verified_at || release.details[:sfv])
-    ActiveRecord::Base.transaction do
-      begin
-        import_tracks
-        import_images
-        import_nfo
-        import_sfv
-      rescue Exception => e
-        raise ActiveRecord::Rollback
-      end
     end
   end
 
