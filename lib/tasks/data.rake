@@ -28,7 +28,9 @@ namespace "data" do
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
           ActiveRecord::Base.transaction do
             begin
-              ImportWorker.new(name: path.split("/").last, folder: folder, path: path, source: source).perform
+              name = path.split("/").last
+              next if EXCEPT_RLS.include?(name)
+              ImportWorker.new(path: path, name: name, folder: folder, source: source).perform
             rescue Exception => e
               raise ActiveRecord::Rollback
             end
@@ -37,13 +39,17 @@ namespace "data" do
         end
       end
     end
-    FOLDERS_WITH_LABELS.each do |folder|
-      LABELS.each do |label_name|
+    FOLDERS_WITH_SUBFOLDERS.each do |parent_folder|
+      Dir["#{BASE_PATH}/#{parent_folder}/**"].each do |folder|
         ALLOWED_SOURCES.each do |source|
-          Dir["#{BASE_PATH}/#{folder}/#{label_name.gsub(" ", "_")}/#{source}/**"].each do |path|
+          Dir["#{folder}/#{source}/**"].each do |path|
             ActiveRecord::Base.transaction do
               begin
-                ImportWorker.new(name: path.split("/").last, folder: folder, path: path, source: source, label_name: label_name).perform
+                name = path.split("/").last
+                subfolder_name = folder.split("/").last
+                folder_name = folder.gsub("#{BASE_PATH}/", "").gsub("/#{subfolder_name}", "")
+                next if EXCEPT_RLS.include?(name)
+                ImportWorker.new(path: path, name: name, folder: folder_name, subfolder: subfolder_name, source: source).perform
               rescue Exception => e
                 raise ActiveRecord::Rollback
               end

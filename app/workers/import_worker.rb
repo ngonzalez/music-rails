@@ -24,11 +24,13 @@ class ImportWorker
 
   def set_release options
     @release = options[:release] if options[:release]
-    @release = Release.find_by options.slice(:name)
+    @release = Release.where("LOWER(name) = ?", options[:name].downcase).take
+    release_attributes = [:name, :folder, :subfolder, :source]
     if !@release
-      @release = Release.new options.slice(:name, :folder, :source)
-      release.label_name = options[:label_name].gsub("_", " ") if options[:label_name]
+      @release = Release.new options.slice(*release_attributes)
       release.save!
+    elsif @release && release_attributes.any?{|attr| @release.send("#{attr}_changed?") }
+      release.update! options.slice(*release_attributes)
     end
   end
 
@@ -53,24 +55,21 @@ class ImportWorker
         track = release.tracks.detect{|track| track.name == track_name }
         if !track
           track = release.tracks.new name: track_name
-          ActiveRecord::Base.transaction do
-            begin
-              track.format_info = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
-              TagLib::FileRef.open(file) do |infos|
-                tag = infos.tag
-                ["artist", "title", "album", "genre", "year"].each do |name|
-                  track.send "#{name}=", tag.send(name)
-                end
-                audio_properties = infos.audio_properties
-                ["bitrate", "channels", "length", "sample_rate"].each do |name|
-                  track.send "#{name}=", audio_properties.send(name)
-                end
+          begin
+            track.format_info = `file -b #{Shellwords.escape(file)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
+            TagLib::FileRef.open(file) do |infos|
+              tag = infos.tag
+              ["artist", "title", "album", "genre", "year"].each do |name|
+                track.send "#{name}=", tag.send(name)
               end
-              track.save!
-            rescue Exception => e
-              Rails.logger.info "Track: Failed to import: #{track.inspect}"
-              raise ActiveRecord::Rollback
+              audio_properties = infos.audio_properties
+              ["bitrate", "channels", "length", "sample_rate"].each do |name|
+                track.send "#{name}=", audio_properties.send(name)
+              end
             end
+            track.save!
+          rescue Exception => e
+            Rails.logger.info "[track] Failed to import: #{track_name}"
           end
         end
       end
@@ -82,7 +81,11 @@ class ImportWorker
         file_name = image_path.split("/").last
         next if file_name =~ /.log./
         next if release.images.detect{|image| image.file_name == file_name }
-        release.images.create! file: File.open(image_path)
+        begin
+          release.images.create! file: File.open(image_path)
+        rescue
+          Rails.logger.info "[image] Failed to import: #{file_name}"
+        end
       end
     end
   end
@@ -109,7 +112,7 @@ class ImportWorker
           content = Dragonfly.app.generate :text, "@#{temp_file}", { 'font': font.to_s, 'format': 'svg' }
           release.nfo_files.create! file: content, file_name: file_name
         rescue
-          Rails.logger.info "NFO: Failed to import: #{file_name}"
+          Rails.logger.info "[nfo] Failed to import: #{file_name}"
         ensure
           FileUtils.rm(temp_file) if File.exists?(temp_file)
         end

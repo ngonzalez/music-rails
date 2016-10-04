@@ -19,6 +19,8 @@ class SfvFile < ActiveRecord::Base
       when /chksum file errors/ then :chksum_file_errors
       when /not found|No such file/ then :missing_files
     end
+  rescue
+    :failed
   end
 
 end

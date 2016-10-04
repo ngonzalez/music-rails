@@ -18,9 +18,9 @@
           .label.label-primary
             = link_to infos[:year], search_music_index_path(default_params.merge(q: infos[:year])), default_transition
           .label.label-info= infos[:format_name]
-          - if infos[:label_name]
+          - if infos[:subfolder]
             %span.label.label-success.label-as-badge
-              = link_to infos[:label_name], search_music_index_path(default_params.merge(q: infos[:label_name])), default_transition
+              = link_to infos[:subfolder], search_music_index_path(default_params.merge(q: infos[:subfolder])), default_transition
           %strong
             = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
 

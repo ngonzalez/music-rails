@@ -49,13 +49,13 @@ class MusicController < ApplicationController
 
   def search_releases
     return [] if params[:q].blank?
-    label_name = LABELS.detect{|name| name.downcase == params[:q].downcase } if LABELS.map(&:downcase).include? params[:q].downcase
+    subfolder = params[:subfolder]
     year = params[:q].scan(/\b\d{4}\b/)[0].to_i if params[:q].length == 4
     hash = {}
-    if label_name
+    if subfolder
       search = Release.search {
         paginate :page => params[:page], :per_page => params[:rows]
-        with(:label_name, label_name)
+        with(:subfolder, subfolder)
       }
       search.hits.each{|hit|
         hash[hit.result.id] = hit.result.decorate.search_infos
