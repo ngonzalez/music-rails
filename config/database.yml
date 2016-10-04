@@ -12,12 +12,6 @@ test:
   <<: *local-defaults
   database: music_test
 
-remote_defaults: &remote-defaults
-  adapter: postgresql
-  encoding: utf8
-  username: postgres
-  password:
-
 production:
   <<: *local-defaults
   database: music
