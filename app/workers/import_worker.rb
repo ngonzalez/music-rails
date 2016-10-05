@@ -158,14 +158,14 @@ class ImportWorker
           end
         end
       end
-    rescue SrrdbLimitReachedError => e
-      Rails.logger.info "SRRDB: %s" % [ e.message ]
-      return
     rescue SrrdbNotFound => e
-      release.details[:srrdb_sfv_error] = true
+      release.details[:srrdb_sfv] = :error
       release.save!
       return
     end
+  end
+  def check_srrdb_sfv
+    check_sfv 'srrDB'
   end
   def check_sfv source=nil
     key = source ? "#{source.downcase}_sfv".to_sym : :sfv

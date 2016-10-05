@@ -63,9 +63,26 @@ namespace "data" do
 
   desc "check sfv"
   task check_sfv: :environment do
-    Release.where(last_verified_at: nil).select{|release| !release.details.has_key?(:sfv) }.select{|release| release.sfv_files.where(source: nil).any? }.each{|release| ImportWorker.new(name: release.name).check_sfv }
-    Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details[:srrdb_sfv_error] && !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) && release.sfv_files.where(source: 'srrDB').none? }.each{|release| ImportWorker.new(name: release.name).import_srrdb_sfv }
-    Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details[:srrdb_sfv_error] && !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) && release.sfv_files.where(source: 'srrDB').any? }.each{|release| ImportWorker.new(name: release.name).check_sfv 'srrDB' }
+    def unverified_releases
+      Release.where(last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details.has_key?(:sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) }
+    end
+    def srrdb_unverified_releases
+      Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) }
+    end
+    unverified_releases.select{|release| release.sfv_files.local.any? }.each do |release|
+      ImportWorker.new(name: release.name).check_sfv
+    end
+    srrdb_unverified_releases.select{|release| release.sfv_files.srrdb.none? }.each do |release|
+      begin
+        ImportWorker.new(name: release.name).import_srrdb_sfv
+      rescue SrrdbLimitReachedError => e
+        Rails.logger.info "SRRDB: %s" % [ e.message ]
+        break
+      end
+    end
+    srrdb_unverified_releases.select{|release| release.sfv_files.srrdb.any? }.each do |release|
+      ImportWorker.new(name: release.name).check_srrdb_sfv
+    end
   end
 
   desc "set details"

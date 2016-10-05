@@ -1,6 +1,9 @@
 class SfvFile < ActiveRecord::Base
   belongs_to :release
 
+  scope :local, -> { where(source: nil) }
+  scope :srrdb, -> { where(source: 'srrDB') }
+
   has_paper_trail
 
   acts_as_paranoid
