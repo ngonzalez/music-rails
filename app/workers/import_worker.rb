@@ -15,7 +15,6 @@ class ImportWorker
   end
 
   def perform
-    return if release
     import_tracks
     import_images
     import_nfo
@@ -23,7 +22,6 @@ class ImportWorker
   end
 
   def set_release options
-    @release = options[:release] if options[:release]
     @release = Release.where("LOWER(name) = ?", options[:name].downcase).take
     release_attributes = [:name, :folder, :subfolder, :source]
     if !@release
