@@ -10,12 +10,12 @@ class ImportWorker
   attr_accessor :release
 
   def initialize options={}
+    ensure_db_connection
     set_release options
   end
 
   def perform
-    ensure_db_connection
-    return if release && (release.last_verified_at || release.details[:sfv])
+    return if release
     import_tracks
     import_images
     import_nfo
