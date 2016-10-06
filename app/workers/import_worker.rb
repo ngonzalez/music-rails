@@ -1,7 +1,6 @@
 class ImportWorker
 
-  class SrrdbLimitReachedError < StandardError ; end
-  class SrrdbNotFound < StandardError ; end
+  require Rails.root.join "lib/errors"
 
   include Sidekiq::Worker
 

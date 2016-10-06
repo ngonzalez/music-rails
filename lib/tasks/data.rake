@@ -1,5 +1,6 @@
 namespace "data" do
 
+  require Rails.root.join "lib/errors"
   require Rails.root.join "lib/task_helpers"
   include TaskHelpers
 
