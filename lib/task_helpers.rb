@@ -77,17 +77,6 @@ module TaskHelpers
       f = File::Stat.new release.decorate.public_path
       release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
     end
-    Release.find_each do |release|
-      if release.nfo_files.any?
-        if release.details.has_key?(:nfo)
-          release.details.delete :nfo
-          release.save!
-        end
-      else
-        release.details[:nfo] = :not_found
-        release.save!
-      end
-    end
   end
 
 end

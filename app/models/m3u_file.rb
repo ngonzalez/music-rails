@@ -1,4 +1,4 @@
-class SfvFile < ActiveRecord::Base
+class M3uFile < ActiveRecord::Base
 
   belongs_to :release
 
@@ -9,7 +9,7 @@ class SfvFile < ActiveRecord::Base
   include LocalFile
 
   dragonfly_accessor :file do
-    storage_options {|a| { path: "sfv/%s" % [ UUID.new.generate ] } }
+    storage_options {|a| { path: "m3u/%s" % [ UUID.new.generate ] } }
   end
 
 end

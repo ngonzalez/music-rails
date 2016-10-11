@@ -13,6 +13,8 @@ namespace "data" do
 
   desc "clear data"
   task clear_data: :environment do
+    M3uFile.local.select{|sfv_file| !sfv_file.file_exists? }.each &:destroy
+    SfvFile.local.select{|sfv_file| !sfv_file.file_exists? }.each &:destroy
     Release.find_each do |release|
       if !File.directory? release.decorate.public_path
         release.destroy
@@ -65,7 +67,7 @@ namespace "data" do
   desc "check sfv"
   task check_sfv: :environment do
     def unverified_releases
-      Release.where(last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details.has_key?(:sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) }
+      Release.where(last_verified_at: nil).select{|release| !release.details.has_key?(:sfv) }
     end
     def srrdb_unverified_releases
       Release.where(srrdb_last_verified_at: nil).decorate.select(&:scene?).select{|release| !release.details.has_key?(:srrdb_sfv) }.select{|release| !release.name.match(EXCEPT_GRPS) }

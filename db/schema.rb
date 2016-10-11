@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160823130616) do
+ActiveRecord::Schema.define(version: 20161011122633) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,16 @@ ActiveRecord::Schema.define(version: 20160823130616) do
     t.string   "type"
   end
 
+  create_table "m3u_files", force: :cascade do |t|
+    t.integer  "release_id", null: false
+    t.string   "file_uid",   null: false
+    t.string   "file_name",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+    t.string   "source"
+  end
+
   create_table "releases", force: :cascade do |t|
     t.string   "name",                   null: false
     t.string   "folder"
@@ -38,13 +48,10 @@ ActiveRecord::Schema.define(version: 20160823130616) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
-    t.string   "label_name"
+    t.string   "subfolder"
     t.string   "year"
     t.string   "format_name"
     t.string   "source"
-    t.string   "srrdb_sfv_uid"
-    t.string   "sfv_uid"
-    t.string   "sfv_name"
     t.datetime "srrdb_last_verified_at"
     t.datetime "folder_created_at"
     t.datetime "folder_updated_at"

@@ -14,10 +14,12 @@ class ImportWorker
   end
 
   def perform
+    return if @release.last_verified_at || @release.details.has_key?(:sfv)
     import_tracks
     import_images
     import_nfo
     import_sfv
+    import_m3u
   end
 
   def set_release options
@@ -41,6 +43,20 @@ class ImportWorker
         sleep 1
       end
       break if !track.nil?
+    end
+  end
+
+  def import_m3u
+    Dir[release.decorate.public_path + "/**/*.#{M3U_TYPE}", release.decorate.public_path + "/**/*.#{M3U_TYPE.upcase}"].each do |m3u_path|
+      begin
+        file_name = m3u_path.split("/").each_with_object([]){|item, array| array << item if item == release.name || array.include?(release.name) }.reject{|item| item == release.name }.join "/"
+        next if release.m3u_files.where(source: nil).detect{|m3u| m3u.file_name == file_name }
+        f = Tempfile.new ; f.write(clear_text(File.read(m3u_path))) ; f.rewind
+        release.m3u_files.create! file: f, file_name: file_name
+        f.unlink
+      rescue
+        next
+      end
     end
   end
 
@@ -121,11 +137,15 @@ class ImportWorker
   end
   def import_sfv
     Dir[release.decorate.public_path + "/**/*.#{SFV_TYPE}", release.decorate.public_path + "/**/*.#{SFV_TYPE.upcase}"].each do |sfv_path|
-      file_name = sfv_path.split("/").each_with_object([]){|item, array| array << item if item == release.name || array.include?(release.name) }.reject{|item| item == release.name }.join "/"
-      next if release.sfv_files.where(source: nil).detect{|sfv| sfv.file_name == file_name }
-      f = Tempfile.new ; f.write(clear_text(File.read(sfv_path))) ; f.rewind
-      release.sfv_files.create! file: f, file_name: file_name
-      f.unlink
+      begin
+        file_name = sfv_path.split("/").each_with_object([]){|item, array| array << item if item == release.name || array.include?(release.name) }.reject{|item| item == release.name }.join "/"
+        next if release.sfv_files.where(source: nil).detect{|sfv| sfv.file_name == file_name }
+        f = Tempfile.new ; f.write(clear_text(File.read(sfv_path))) ; f.rewind
+        release.sfv_files.create! file: f, file_name: file_name
+        f.unlink
+      rescue
+        next
+      end
     end
   end
   def srrdb_request url, &block
@@ -164,16 +184,27 @@ class ImportWorker
   def check_srrdb_sfv
     check_sfv 'srrDB'
   end
+  def run_check_sfv sfv_file
+    files_count = File.read(release.m3u_files.local.detect{|item| item.base_path == sfv_file.base_path }.file.path).split("\n").reject{|line| line =~ /EXT/ }.length
+    case Dir.chdir(sfv_file.file_path) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
+      when /#{files_count} files, #{files_count} OK/ then :ok
+      when /badcrc/ then :bad_crc
+      when /chksum file errors/ then :chksum_file_errors
+      when /not found|No such file/ then :missing_files
+    end
+  rescue
+    :failed
+  end
   def check_sfv source=nil
     key = source ? "#{source.downcase}_sfv".to_sym : :sfv
     field_name = source ? "#{source.downcase}_last_verified_at".to_sym : :last_verified_at
     return if release.send(field_name) || release.details[key]
-    results = release.sfv_files.where(source: source).each_with_object([]){|sfv_file, array| array << sfv_file.check }
+    results = release.sfv_files.where(source: source).each_with_object([]){|sfv_file, array| array << run_check_sfv(sfv_file) }
     if results.all?{|result| result == :ok }
       release.details.delete(key) if release.details.has_key?(key)
       release.update!(field_name => Time.now) if !release.send(field_name)
     else
-      release.details[key] = results.uniq
+      release.details[key] = results
       release.save!
     end
   end
