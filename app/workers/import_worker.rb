@@ -139,7 +139,7 @@ class ImportWorker
     Dir[release.decorate.public_path + "/**/*.#{SFV_TYPE}", release.decorate.public_path + "/**/*.#{SFV_TYPE.upcase}"].each do |sfv_path|
       begin
         file_name = sfv_path.split("/").each_with_object([]){|item, array| array << item if item == release.name || array.include?(release.name) }.reject{|item| item == release.name }.join "/"
-        next if release.sfv_files.where(source: nil).detect{|sfv| sfv.file_name == file_name }
+        next if release.sfv_files.local.detect{|sfv| sfv.file_name == file_name }
         f = Tempfile.new ; f.write(clear_text(File.read(sfv_path))) ; f.rewind
         release.sfv_files.create! file: f, file_name: file_name
         f.unlink
@@ -167,10 +167,10 @@ class ImportWorker
         sfv_files.each do |sfv_file|
           file_name = sfv_file['href'].split("/").each_with_object([]){|item, array| array << item if item == release_name || array.include?(release_name) }.reject{|item| item == release_name }.join "/"
           file_name = URI.unescape file_name
-          next if release.sfv_files.where(source: 'srrDB').detect{|sfv| sfv.file_name == file_name }
+          next if release.sfv_files.srrdb.detect{|sfv| sfv.file_name == file_name }
           srrdb_request "http://www.srrdb.com/download/file/#{release_name}/#{file_name}" do |response|
             f = Tempfile.new ; f.write(clear_text(response.body)) ; f.rewind
-            release.sfv_files.create! file: f, file_name: file_name, source: 'srrDB'
+            release.sfv_files.srrdb.create! file: f, file_name: file_name
             f.unlink
           end
         end
@@ -185,7 +185,7 @@ class ImportWorker
     check_sfv 'srrDB'
   end
   def run_check_sfv sfv_file
-    files_count = File.read(release.m3u_files.local.detect{|item| item.base_path == sfv_file.base_path }.file.path).split("\n").reject{|line| line =~ /EXT/ }.length
+    files_count = File.read(release.m3u_files.local.detect{|item| item.base_path == sfv_file.base_path }.file.path).split("\n").reject{|line| line =~ /^#/ }.length
     case Dir.chdir(sfv_file.file_path) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
       when /#{files_count} files, #{files_count} OK/ then :ok
       when /badcrc/ then :bad_crc
