@@ -1,7 +1,5 @@
 class ImportWorker
 
-  require Rails.root.join "lib/errors"
-
   include Sidekiq::Worker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
@@ -153,7 +151,7 @@ class ImportWorker
     request.on_complete do |response|
       raise SrrdbNotFound.new if response.code != 200 || response.body.blank?
       raise SrrdbLimitReachedError.new response.body if response.body == "You've reached the daily limit."
-      sleep 5
+      sleep 1
       yield response
     end
     request.run
