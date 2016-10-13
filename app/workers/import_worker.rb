@@ -61,7 +61,7 @@ class ImportWorker
   require 'taglib'
   def import_tracks
     ALLOWED_AUDIO_FORMATS.each do |format|
-      Dir["#{release.decorate.public_path}/*.#{format}"].each do |file|
+      Dir["#{release.decorate.public_path}/**/*.#{format}"].each do |file|
         track_name = file.split("/").last
         track = release.tracks.detect{|track| track.name == track_name }
         if !track
@@ -183,7 +183,8 @@ class ImportWorker
     check_sfv 'srrDB'
   end
   def run_check_sfv sfv_file
-    files_count = File.read(release.m3u_files.local.detect{|item| item.base_path == sfv_file.base_path }.file.path).split("\n").reject{|line| line =~ /^#/ }.length
+    m3u_file = release.m3u_files.local.select{ |item| item.file_name =~ /^0{2,3}/ }.detect{|item| item.base_path == sfv_file.base_path }
+    files_count = m3u_file.files.length
     case Dir.chdir(sfv_file.file_path) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
       when /#{files_count} files, #{files_count} OK/ then :ok
       when /badcrc/ then :bad_crc
