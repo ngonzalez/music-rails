@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.5.3
--- Dumped by pg_dump version 9.5.3
+-- Dumped by pg_dump version 9.5.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -85,6 +85,41 @@ ALTER SEQUENCE images_id_seq OWNED BY images.id;
 
 
 --
+-- Name: m3u_files; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE m3u_files (
+    id integer NOT NULL,
+    release_id integer NOT NULL,
+    file_uid character varying NOT NULL,
+    file_name character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    deleted_at timestamp without time zone,
+    source character varying
+);
+
+
+--
+-- Name: m3u_files_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE m3u_files_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: m3u_files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE m3u_files_id_seq OWNED BY m3u_files.id;
+
+
+--
 -- Name: releases; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -98,14 +133,13 @@ CREATE TABLE releases (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     deleted_at timestamp without time zone,
-    label_name character varying,
+    subfolder character varying,
     year character varying,
     format_name character varying,
     source character varying,
-    srrdb_sfv_uid character varying,
-    sfv_uid character varying,
-    sfv_name character varying,
-    srrdb_last_verified_at timestamp without time zone
+    srrdb_last_verified_at timestamp without time zone,
+    folder_created_at timestamp without time zone,
+    folder_updated_at timestamp without time zone
 );
 
 
@@ -135,6 +169,41 @@ ALTER SEQUENCE releases_id_seq OWNED BY releases.id;
 CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: sfv_files; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE sfv_files (
+    id integer NOT NULL,
+    release_id integer NOT NULL,
+    file_uid character varying NOT NULL,
+    file_name character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    deleted_at timestamp without time zone,
+    source character varying
+);
+
+
+--
+-- Name: sfv_files_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE sfv_files_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sfv_files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE sfv_files_id_seq OWNED BY sfv_files.id;
 
 
 --
@@ -264,7 +333,21 @@ ALTER TABLE ONLY images ALTER COLUMN id SET DEFAULT nextval('images_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY m3u_files ALTER COLUMN id SET DEFAULT nextval('m3u_files_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY releases ALTER COLUMN id SET DEFAULT nextval('releases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sfv_files ALTER COLUMN id SET DEFAULT nextval('sfv_files_id_seq'::regclass);
 
 
 --
@@ -297,11 +380,27 @@ ALTER TABLE ONLY images
 
 
 --
+-- Name: m3u_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY m3u_files
+    ADD CONSTRAINT m3u_files_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY releases
     ADD CONSTRAINT releases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sfv_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sfv_files
+    ADD CONSTRAINT sfv_files_pkey PRIMARY KEY (id);
 
 
 --
@@ -412,4 +511,16 @@ INSERT INTO schema_migrations (version) VALUES ('20160705165152');
 INSERT INTO schema_migrations (version) VALUES ('20160705175855');
 
 INSERT INTO schema_migrations (version) VALUES ('20160714120711');
+
+INSERT INTO schema_migrations (version) VALUES ('20160817092026');
+
+INSERT INTO schema_migrations (version) VALUES ('20160823130616');
+
+INSERT INTO schema_migrations (version) VALUES ('20160823171156');
+
+INSERT INTO schema_migrations (version) VALUES ('20160823171719');
+
+INSERT INTO schema_migrations (version) VALUES ('20161004135805');
+
+INSERT INTO schema_migrations (version) VALUES ('20161011122633');
 

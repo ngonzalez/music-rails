@@ -17,7 +17,7 @@ class LameWorker
     end
     begin
       if !track.file
-        if ["iTunes AAC"].include?(track.format_name) || track.format_name =~ /MP3/
+        if ["iTunes AAC", "ALAC"].include?(track.format_name) || track.format_name =~ /MP3/
           track.update! file: File.open(track.decorate.public_path)
         elsif ["FLAC"].include? track.format_name
           file_path = Shellwords.escape track.decorate.public_path

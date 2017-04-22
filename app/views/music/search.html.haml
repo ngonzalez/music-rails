@@ -3,7 +3,6 @@
 
 .container
   = form_tag search_music_index_path, default_transition.merge(method: :get) do
-    = hidden_field_tag :rows, search_rows
     .form-group
       .col-md-5
         = text_field_tag :q, params[:q], class: "form-control"
@@ -14,13 +13,13 @@
   %ol
     - @releases.each do |release_id, infos|
       %li
-        %h4
+        %h5
           .label.label-primary
-            = link_to infos[:year], search_music_index_path(default_params.merge(q: infos[:year])), default_transition
+            = link_to infos[:year], search_music_index_path(default_params.merge(q: infos[:year], subfolder: nil)), default_transition
           .label.label-info= infos[:format_name]
-          - if infos[:subfolder]
+          - if infos[:subfolder] && infos[:subfolder].to_i == 0
             %span.label.label-success.label-as-badge
-              = link_to infos[:subfolder], search_music_index_path(default_params.merge(q: infos[:subfolder])), default_transition
+              = link_to infos[:subfolder].titleize, search_music_index_path(default_params.merge(subfolder: infos[:subfolder], q: nil)), default_transition
           %strong
             = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
 

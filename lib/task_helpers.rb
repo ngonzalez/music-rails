@@ -1,7 +1,10 @@
 module TaskHelpers
 
   def year_from_name name
-    name.split("-").select{|item| item.match(/(\d{4})/) }.last
+    res = name.split("-").select{|item| item.match(/(\d{4})/) }.last
+    res = '1999' if ['199','99','19'].include?(res)
+    res = '2000' if res == '200'
+    return res
   end
 
   def format_number name
@@ -76,6 +79,35 @@ module TaskHelpers
     Release.where(folder_created_at: nil, folder_updated_at: nil).each do |release|
       f = File::Stat.new release.decorate.public_path
       release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+    end
+  end
+
+  def run_check_sfv release, sfv_file
+    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path == sfv_file.base_path }
+    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
+    m3u_file = release.m3u_files.local.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
+    files_count = m3u_file.files.length
+    case Dir.chdir(sfv_file.file_path) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
+      when /#{files_count} files, #{files_count} OK/ then :ok
+      when /badcrc/ then :bad_crc
+      when /chksum file errors/ then :chksum_file_errors
+      when /not found|No such file/ then :missing_files
+    end
+  rescue
+    :failed
+  end
+
+  def check_sfv release, source=nil
+    key = source ? "#{source.downcase}_sfv".to_sym : :sfv
+    field_name = source ? "#{source.downcase}_last_verified_at".to_sym : :last_verified_at
+    return if release.send(field_name) || release.details[key]
+    results = release.sfv_files.where(source: source).each_with_object([]){ |sfv_file, array| array << run_check_sfv(release, sfv_file) }
+    if results.all? { |result| result == :ok }
+      release.details.delete(key) if release.details.has_key?(key)
+      release.update!(field_name => Time.now) if !release.send(field_name)
+    else
+      release.details[key] = results
+      release.save!
     end
   end
 

@@ -1,6 +1,6 @@
 source "https://rubygems.org" do
 
-  gem 'rails', '4.2.7'
+  gem 'rails', '4.2.8'
   gem 'pg'
 
   gem 'taglib-ruby'
@@ -24,7 +24,7 @@ source "https://rubygems.org" do
 
   gem 'rack-cache', require: 'rack/cache'
 
-  gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
+  gem 'dragonfly' #, git: 'git@github.com:markevans/dragonfly.git'
 
   gem 'swipebox'
 

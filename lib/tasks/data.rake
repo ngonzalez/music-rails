@@ -26,15 +26,9 @@ namespace "data" do
     FOLDERS.each do |folder|
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
-          ActiveRecord::Base.transaction do
-            begin
-              name = path.split("/").last
-              next if EXCEPT_RLS.include?(name)
-              ImportWorker.new(path: path, name: name, folder: folder, source: source).perform
-            rescue Exception => e
-              raise ActiveRecord::Rollback
-            end
-          end
+          name = path.split("/").last
+          next if EXCEPT_RLS.include?(name)
+          ImportWorker.new(path: path, name: name, folder: folder, source: source).perform
           bar.increment!
         end
       end
@@ -43,17 +37,11 @@ namespace "data" do
       Dir["#{BASE_PATH}/#{parent_folder}/**"].each do |folder|
         ALLOWED_SOURCES.each do |source|
           Dir["#{folder}/#{source}/**"].each do |path|
-            ActiveRecord::Base.transaction do
-              begin
-                name = path.split("/").last
-                subfolder_name = folder.split("/").last
-                folder_name = folder.gsub("#{BASE_PATH}/", "").gsub("/#{subfolder_name}", "")
-                next if EXCEPT_RLS.include?(name)
-                ImportWorker.new(path: path, name: name, folder: folder_name, subfolder: subfolder_name, source: source).perform
-              rescue Exception => e
-                raise ActiveRecord::Rollback
-              end
-            end
+            name = path.split("/").last
+            next if EXCEPT_RLS.include?(name)
+            subfolder_name = folder.split("/").last
+            folder_name = folder.gsub("#{BASE_PATH}/", "").gsub("/#{subfolder_name}", "")
+            ImportWorker.new(path: path, name: name, folder: folder_name, subfolder: subfolder_name, source: source).perform
             bar.increment!
           end
         end
@@ -64,7 +52,10 @@ namespace "data" do
   desc "check sfv"
   task check_sfv: :environment do
     Release.joins(:sfv_files).merge(SfvFile.local).where(last_verified_at: nil).select{|release| !release.details.has_key?(:sfv) }.each do |release|
-      ImportWorker.new(name: release.name).check_sfv
+      check_sfv release
+    end
+    Release.joins(:sfv_files).merge(SfvFile.srrdb).where(srrdb_last_verified_at: nil).select{|release| !release.details.has_key?(:srrdb_sfv) }.each do |release|
+      check_sfv release, "srrDB"
     end
   end
 

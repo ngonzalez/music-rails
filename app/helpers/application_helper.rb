@@ -5,16 +5,12 @@ module ApplicationHelper
   end
 
   def default_params
-    params.slice("format", "q", "rows", "label")
+    params.slice "format", "q", "subfolder"
   end
 
   def search_terms_array
     return if !params[:q]
     params[:label] || params[:q].split(/ and | or /)
-  end
-
-  def search_rows
-    100_000
   end
 
   def asset_url asset

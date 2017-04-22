@@ -55,4 +55,6 @@ Rails.application.configure do
   # gem 'rack-cache', :require => 'rack/cache'
   config.action_dispatch.rack_cache = true
 
+  config.eager_load = false
+
 end

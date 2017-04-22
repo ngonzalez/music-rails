@@ -13,7 +13,7 @@ class M3uFile < ActiveRecord::Base
   end
 
   def files
-    File.read(file.path).split("\n").reject{ |line| line =~ /^#/ }.reject(&:blank?).grep /#{ALLOWED_AUDIO_FORMATS.join("|")}/
+    File.read(file.path).split("\n").reject{ |line| line =~ /^#/ }.reject(&:blank?).grep(/#{ALLOWED_AUDIO_FORMATS.join("|")}/).map(&:strip)
   end
 
 end

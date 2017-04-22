@@ -48,9 +48,11 @@ class MusicController < ApplicationController
   end
 
   def search_releases
-    return [] if params[:q].blank?
+    return [] if params[:q].blank? && params[:subfolder].blank?
     subfolder = params[:subfolder]
-    year = params[:q].scan(/\b\d{4}\b/)[0].to_i if params[:q].length == 4
+    year = params[:q].scan(/\b\d{4}\b/)[0].to_i if params[:q] && params[:q].length == 4
+    params[:rows] ||= 100000
+    params[:page] ||= 1
     hash = {}
     if subfolder
       search = Release.search {
@@ -76,7 +78,6 @@ class MusicController < ApplicationController
         paginate :page => params[:page], :per_page => params[:rows]
       }
       search.hits.each{|hit|
-        next if hash.has_key? hit.result.release_id
         hash[hit.result.release_id] = hit.result.release.decorate.search_infos
       }
       @releases = hash.sort_by{|k, v| v[:year] || 0 }.reverse
