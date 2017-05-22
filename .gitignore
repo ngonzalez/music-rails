@@ -8,3 +8,4 @@ public/test/
 solr/
 tmp/cache/
 .sass-cache
+sunspot-solr.pid
