@@ -12,8 +12,4 @@ class M3uFile < ActiveRecord::Base
     storage_options {|a| { path: "m3u/%s" % [ UUID.new.generate ] } }
   end
 
-  def files
-    File.read(file.path).split("\n").reject{ |line| line =~ /^#/ }.reject(&:blank?).grep(/#{ALLOWED_AUDIO_FORMATS.join("|")}/).map(&:strip)
-  end
-
 end

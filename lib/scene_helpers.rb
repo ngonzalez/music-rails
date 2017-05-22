@@ -74,9 +74,10 @@ Release.class_eval do
   def missing_files
     track_names = tracks.map { |track| track.name.split("/").last.downcase }
     m3u_files.each_with_object([]) do |m3u_file, array|
-      array << :empty_folder if m3u_file.files.empty?
-      m3u_file.files.each do |file_name|
-        array << file_name if track_names.exclude?(file_name.downcase)
+      file_names = m3u_file.decorate.file_names
+      array << :empty_folder if file_names.empty?
+      file_names.each do |name|
+        array << name if track_names.exclude?(name.downcase)
       end
     end
   end

@@ -15,9 +15,5 @@ module LocalFile
     rescue
       false
     end
-
-    def file_path
-      [release.decorate.public_path, base_path].join '/'
-    end
   end
 end
