@@ -87,7 +87,7 @@ module TaskHelpers
     m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
     m3u_file = release.m3u_files.local.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
     files_count = m3u_file.decorate.file_names.length
-    case Dir.chdir([release.decorate.public_path, sfv.base_path].join('/')) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
+    case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
       when /#{files_count} files, #{files_count} OK/ then :ok
       when /badcrc/ then :bad_crc
       when /chksum file errors/ then :chksum_file_errors

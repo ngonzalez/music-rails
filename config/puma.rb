@@ -6,7 +6,7 @@
 threads 8,32
 workers 5
 worker_timeout 15
-stdout_redirect '/tmp/puma.stdout', '/tmp/puma.stderr', true
+stdout_redirect '/tmp/puma.stdout.log', '/tmp/puma.stderr.log', true
 preload_app!
 
 # root = "#{Dir.getwd}" ; base_directory = "#{root}/tmp/puma"
