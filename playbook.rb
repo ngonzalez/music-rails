@@ -42,7 +42,7 @@ end
 # Clear Empty Files
 desc "clear local files"
 task clear_local_files: :environment do
-  NfoFile.select{ |nfo_file| !nfo_file.file_exists? }.each &:destroy
-  M3uFile.select{ |m3u_file| !m3u_file.file_exists? }.each &:destroy
-  SfvFile.select{ |sfv_file| !sfv_file.file_exists? }.each &:destroy
+  NfoFile.select { |nfo_file| !nfo_file.file_exists? }.each &:destroy
+  M3uFile.select { |m3u_file| !m3u_file.file_exists? }.each &:destroy
+  SfvFile.select { |sfv_file| !sfv_file.file_exists? }.each &:destroy
 end

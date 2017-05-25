@@ -9,3 +9,4 @@ solr/
 tmp/cache/
 .sass-cache
 sunspot-solr.pid
+node_modules

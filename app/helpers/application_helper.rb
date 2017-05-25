@@ -4,13 +4,17 @@ module ApplicationHelper
     { "data-transition" => "none" }
   end
 
+  def permitted_params
+    params.permit(:format, :q, :subfolder, :label)
+  end
+
   def default_params
-    params.slice "format", "q", "subfolder"
+    permitted_params.slice "format", "q", "subfolder"
   end
 
   def search_terms_array
-    return if !params[:q]
-    params[:label] || params[:q].split(/ and | or /)
+    return if !permitted_params[:q]
+    permitted_params[:label] || permitted_params[:q].split(/ and | or /)
   end
 
   def asset_url asset

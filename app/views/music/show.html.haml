@@ -56,5 +56,5 @@
 
 :javascript
   $(document).ready(function(e) {
-    init_players(#{track_files.to_json});
+    init_players(#{track_files.to_json.html_safe});
   });
