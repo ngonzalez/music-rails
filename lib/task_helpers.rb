@@ -83,9 +83,10 @@ module TaskHelpers
   end
 
   def run_check_sfv release, sfv_file
-    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path == sfv_file.base_path }
-    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
-    m3u_file = release.m3u_files.local.detect { |item| item.base_path == sfv_file.base_path } if !m3u_file
+    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) }
+    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) } if !m3u_file
+    m3u_file = release.m3u_files.local.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) } if !m3u_file
+    return :failed if !m3u_file
     files_count = m3u_file.decorate.file_names.length
     case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[#{SFV_CHECK_APP} -f #{sfv_file.file.path}] }
       when /#{files_count} files, #{files_count} OK/ then :ok
@@ -93,8 +94,6 @@ module TaskHelpers
       when /chksum file errors/ then :chksum_file_errors
       when /not found|No such file/ then :missing_files
     end
-  rescue
-    :failed
   end
 
   def check_sfv release, source=nil
