@@ -59,29 +59,22 @@ class MusicController < ApplicationController
         paginate :page => params[:page], :per_page => params[:rows]
         with(:subfolder, subfolder)
       }
-      search.hits.each{|hit|
-        hash[hit.result.id] = hit.result.decorate.search_infos
-      }
+      search.hits.each { |hit| hash[hit.result.id] = hit.result.decorate.search_infos }
       @releases = hash.sort_by{|k, v| v[:year] || 0 }.reverse
     elsif year && year > 0
       search = Release.search {
         paginate :page => params[:page], :per_page => params[:rows]
         with(:year, year)
       }
-      search.hits.each{|hit|
-        hash[hit.result.id] = hit.result.decorate.search_infos
-      }
+      search.hits.each { |hit| hash[hit.result.id] = hit.result.decorate.search_infos }
       @releases = hash.sort_by{|k, v| v[:formatted_name] || 0 }
     elsif !params[:q].blank?
       search = Track.search(include: [:release]) {
         fulltext params[:q]
         paginate :page => params[:page], :per_page => params[:rows]
       }
-      search.hits.each{|hit|
-        hash[hit.result.release_id] = hit.result.release.decorate.search_infos
-      }
-      @releases = hash.sort_by{|k, v| v[:year] || 0 }.reverse
+      search.hits.each { |hit| hash[hit.result.release_id] = hit.result.release.decorate.search_infos }
+      @releases = hash.sort_by { |k, v| v[:year] || 0 }.reverse
     end
   end
-
 end

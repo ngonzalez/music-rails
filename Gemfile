@@ -1,6 +1,6 @@
 source "https://rubygems.org" do
 
-  gem 'rails', '5.1.1'
+  gem 'rails', '5.1.4'
   gem 'pg'
 
   gem 'taglib-ruby'
@@ -45,5 +45,7 @@ source "https://rubygems.org" do
 
   gem 'typhoeus'
   gem 'nokogiri'
+
+  gem 'listen'
 
 end
