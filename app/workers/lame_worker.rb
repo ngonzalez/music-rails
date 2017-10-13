@@ -38,7 +38,7 @@ class LameWorker
     rescue Exception => e
       Rails.logger.info e.inspect
     ensure
-      track.update! process_id: nil if track.file
+      track.update! process_id: nil
       FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
       FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
       FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
