@@ -18,6 +18,6 @@ class TrackDecorator < Draper::Decorator
   end
   def media_url
     return if !track.file_uid
-    return h.asset_url track.file.url
+    track.file.url
   end
 end

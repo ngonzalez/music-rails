@@ -17,15 +17,18 @@ class LameWorker
     end
     begin
       if !track.file
-        if ["iTunes AAC", "ALAC"].include?(track.format_name) || track.format_name =~ /MP3/
-          track.update! file: File.open(track.decorate.public_path)
+        if track.format_name =~ /MP3/ || ["iTunes AAC", "ALAC"].include?(track.format_name)
+          file_path = Shellwords.escape track.decorate.public_path
+          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          strip_metadata file_path, temp_file
+          track.update! file: File.open(temp_file)
         elsif ["FLAC"].include? track.format_name
           file_path = Shellwords.escape track.decorate.public_path
+          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
           temp_file_flac = "/tmp/#{track.id}.flac"
           temp_file_wav = "/tmp/#{track.id}.wav"
           copy_file file_path, temp_file_flac
           decode_file temp_file_flac
-          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
           encode temp_file_wav, temp_file
           track.update! file: File.open(temp_file)
         elsif ["WAV", "AIFF"].include? track.format_name
@@ -45,10 +48,14 @@ class LameWorker
     end
   end
 
+  def strip_metadata source, destination
+    `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats -loglevel 0`
+  end
+
   def encode source, destination
     case DEFAULT_ENCODING
       when "mp3"
-        `lame -S -b 320 -ms #{source} #{destination}`
+        `lame --silent -b 320 -ms #{source} #{destination}`
       when "aac"
         `ffmpeg -i #{source} -c:a aac -strict -2 #{destination}`
     end
@@ -59,7 +66,7 @@ class LameWorker
   end
 
   def decode_file source
-    `flac -d -f #{source}`
+    `flac -d -s -f #{source}`
   end
 
 end

@@ -53,3 +53,13 @@ i.fa-4 {
   color: #FFF !important;
   text-decoration: none;
 }
+video {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  height: 100px;
+}
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: 1 !important;
+}

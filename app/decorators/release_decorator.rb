@@ -9,4 +9,7 @@ class ReleaseDecorator < Draper::Decorator
   def search_infos
     object.attributes.deep_symbolize_keys.slice(:id, :formatted_name, :folder, :format_name, :subfolder).merge(year: object.year.to_i)
   end
+  def data_url
+    object.formatted_name.gsub(' ', '_').downcase
+  end
 end

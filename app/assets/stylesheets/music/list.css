@@ -1,9 +1,3 @@
-.margin-20 {
-  margin: 20px;
-}
-.margin-10 {
-  margin: 10px;
-}
 ul li a :hover {
   text-decoration: none;
 }
@@ -13,6 +7,15 @@ i.grey {
 i.grey-dark {
   opacity: 0.95;
 }
+.red {
+  color: deeppink;
+}
+.margin-20 {
+  margin: 20px;
+}
+.margin-10 {
+  margin: 10px;
+}
 .polaroid-images a {
 	background: white;
 	display: inline;
@@ -20,4 +23,11 @@ i.grey-dark {
 	margin: 0 15px 30px;
 	padding: 10px 10px 25px;
 	box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
+}
+.tracks {
+  margin-bottom: 100px;
+}
+#video-content {
+  height: 200px;
+  border: 4px solid red;
 }

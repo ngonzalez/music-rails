@@ -14,7 +14,7 @@ bundle exec sidekiq -C config/sidekiq.yml -e production -d -L /tmp/sidekiq.log
 
 rm -rf public/assets/ ; bundle exec rake assets:precompile RAILS_ENV=production
 
-bundle exec puma -p 9292 -C config/puma.rb -e production -d -b unix:///tmp/puma.sock
+bundle exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
 
 sudo nginx -s stop ; sudo nginx
 ```
