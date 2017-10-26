@@ -2,43 +2,36 @@
 - content_for :head do
   = javascript_include_tag "//google.com/jsapi"
 
-.container
+%div{ "data-role": "page", "id": "stats" }
+  .container
+    .row
+      = form_tag stats_path, { "data-ajax" => "false", "method" => "GET" } do
+        .form-group
+          .col-md-2.col-xs-2
+            %p
+              = select_tag :m1, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @m1)
+            %p
+              = select_tag :m2, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @m2)
+          .col-md-2.col-xs-2
+            %button.btn.btn-default{ type: "submit" } Update
+    .row
+      .col-md-8.col-xs-8
+        #chart_div
 
-  .row
-    = form_tag stats_path, method: :get do
-      .form-group
-        .col-md-2.col-xs-2
-          %p
-            = select_tag :m2, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @metric2)
-          %p
-            = select_tag :m1, options_for_select(ALLOWED_METRICS.map{|name| [name.titleize, name] }, selected: @metric1)
-        .col-md-2.col-xs-2
-          %button.btn.btn-default{ type: "submit" } Update
-
-  .row
-    .col-md-8.col-xs-8
-      #chart_div
-
-:javascript
-
-  google.load('visualization', '1', {packages: ['corechart', 'bar']});
-  google.setOnLoadCallback(drawStacked);
-
-  function drawStacked() {
-
-    var data = google.visualization.arrayToDataTable(
-      #{([["Metric"] + @metrics1] + @data).to_json}
-    );
-
-    var options = {
-      width: 1000,
-      height: 700,
-      legend: { position: 'top', maxLines: 3 },
-      bar: { groupWidth: '75%' },
-      isStacked: true,
-    };
-
-    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
-
-  }
+  :javascript
+    google.load('visualization', '1', {packages: ['corechart', 'bar']});
+    google.setOnLoadCallback(drawStacked);
+    function drawStacked() {
+      var data = google.visualization.arrayToDataTable(
+        #{([["Metric"] + @metrics1] + @data).to_json.html_safe}
+      );
+      var options = {
+        width: 1000,
+        height: 700,
+        legend: { position: 'top', maxLines: 3 },
+        bar: { groupWidth: '75%' },
+        isStacked: true,
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
