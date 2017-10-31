@@ -1,7 +1,10 @@
 class SrrdbLimitReachedError < StandardError ; end
 class SrrdbNotFound < StandardError ; end
 
-ImportWorker.class_eval do
+class SrrdbImportWorker < ImportWorker
+  def set_release options
+    @release = Release.find_by name: options[:name]
+  end
   def srrdb_request url, &_
     request = Typhoeus::Request.new url, followlocation: true
     request.on_complete do |response|
@@ -86,5 +89,31 @@ Release.class_eval do
     year = self.name.split("-").select{ |item| item.match(/(\d{4})/) }.last
     year = self.name.split("-").select{ |item| ['19xx','199x','20xx','200x'].include?(item.downcase) } if !year
     year && !name.ends_with?(year.to_s)
+  end
+end
+
+module SceneHelpers
+  def import_srrdb_sfv
+    releases = Release.without_srrdb_sfv_file \
+      .select { |release| !release.details.has_key?(:srrdb_sfv) } \
+      .select { |release| !release.name.match(EXCEPT_GRPS) } \
+      .select(&:scene?) \
+      .take 200
+
+    releases.each do |release|
+      begin
+        SrrdbImportWorker.new(name: release.name).import_srrdb_sfv
+      rescue SrrdbLimitReachedError => e
+        Rails.logger.info e
+        break
+      end
+    end
+  end
+  def list_missing_files
+    Release.includes([:m3u_files, :tracks]).each do |release|
+      if release.missing_files.any?
+        puts release.name
+      end
+    end
   end
 end

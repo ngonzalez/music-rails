@@ -1,6 +1,6 @@
 class ImportWorker
 
-  require Rails.root + "lib/import_helpers"
+  require Rails.root + "lib/helpers/import_helpers"
 
   include ImportHelpers
 
@@ -15,26 +15,6 @@ class ImportWorker
     set_release options
   end
 
-  def perform
-    return if @release.last_verified_at || @release.details.has_key?(:sfv)
-    import_tracks
-    import_images
-    import_nfo
-    import_sfv
-    import_m3u
-  end
-
-  def set_release options
-    @release = Release.where("LOWER(name) = ?", options[:name].downcase).take
-    release_attributes = [:name, :folder, :subfolder, :source]
-    if !@release
-      @release = Release.new options.slice(*release_attributes)
-      release.save!
-    elsif @release && release_attributes.any? { |attr| @release.send("#{attr}_changed?") }
-      release.update! options.slice(*release_attributes)
-    end
-  end
-
   def ensure_db_connection
     track = nil
     loop do
@@ -46,6 +26,18 @@ class ImportWorker
       end
       break if !track.nil?
     end
+  end
+
+  def set_release options
+    @release = Release.create! options.slice(*[:name, :folder, :subfolder, :source])
+  end
+
+  def perform
+    import_tracks
+    import_images
+    import_nfo
+    import_sfv
+    import_m3u
   end
 
   def import_tracks
