@@ -58,6 +58,7 @@ video {
   position: fixed;
   bottom: 0;
   height: 100px;
+  z-index: 1000;
 }
 video::-webkit-media-controls-panel {
   display: flex !important;
