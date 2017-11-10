@@ -77,15 +77,20 @@ function init_players(streams_path, tracks, css) {
             if (response.error) {
                 toggleIcon(element, css.BUFFERING);
             } else {
-                initPlayer(data, response.stream_url, function(player) {
+                if (Hls.isSupported()) {
+                    initPlayer(data, response.stream_url, function(player) {
+                        toggleIcon(element, css.BUFFERING);
+                        toggleActive(element);
+                        player.play();
+                    }, function(player) {
+                        toggleActive(element);
+                        if (window.current_file == data.id)
+                            window.current_file = null;
+                    });
+                } else {
                     toggleIcon(element, css.BUFFERING);
-                    toggleActive(element);
-                    player.play();
-                }, function(player) {
-                    toggleActive(element);
-                    if (window.current_file == data.id)
-                        window.current_file = null;
-                });
+                    window.location = response.stream_url;
+                }
             }
         });
     }
