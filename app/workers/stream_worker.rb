@@ -5,18 +5,13 @@ class StreamWorker
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
   def perform track_id, stream_uuid
-    track = nil
-    loop do
-      begin
-        track = Track.find track_id
-      rescue
-        Rails.logger.info "\sLameWorker: DB Busy, Retrying.."
-        sleep 1
-      end
-      break if !track.nil?
-    end
-    `ffmpeg -re -i #{track.file.path} -c copy -f flv rtmp://#{INTERNAL_IP}/hls/#{stream_uuid} -nostats -loglevel 0`
-    return true
+    track = Track.find track_id
+    `ln -s #{track.file.path} /tmp/hls/#{track.id}.#{DEFAULT_ENCODING}`
+    `mediafilesegmenter -b http://#{HOST_NAME}/hls -f /tmp/hls /tmp/hls/#{track.id}.#{DEFAULT_ENCODING} -B #{stream_uuid} -i #{stream_uuid}.m3u8`
+  rescue Exception => e
+    Rails.logger.info e.inspect
+  ensure
+    `rm /tmp/hls/#{track.id}.#{DEFAULT_ENCODING}`
   end
 
 end
