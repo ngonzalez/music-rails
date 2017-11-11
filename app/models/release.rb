@@ -17,4 +17,7 @@ class Release < ActiveRecord::Base
     integer :year
   end
 
+  extend FriendlyId
+  friendly_id :data_url
+
 end

@@ -6,6 +6,14 @@ module FormatHelpers
     Release.where(formatted_name: nil).each do |release|
       release.update! formatted_name: format_name(release.name)
     end
+    Release.where(data_url: nil).each do |release|
+      data_url = release.formatted_name.downcase.gsub(' ', '-').gsub('_', '-').gsub('__', '-').gsub('--', '-')
+      begin
+        release.update! data_url: data_url
+      rescue ActiveRecord::RecordNotUnique
+        release.update! data_url: [data_url, rand(1000) * rand(1000)].join('-')
+      end
+    end
     Release.where(year: nil).each do |release|
       next if release.tracks.empty?
       release.update! year: release.tracks[0].year.to_i

@@ -39,7 +39,7 @@ class MusicController < ApplicationController
   private
 
   def set_release
-    @release = Release.find(params[:id]).decorate
+    @release = Release.friendly.find(params[:id]).decorate
   end
 
   def set_tracks

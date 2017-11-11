@@ -1,7 +1,7 @@
 - content_for :head do
   = javascript_include_tag :music
 
-%div{ "data-role": "page", "id": "release-#{@release.id}", "data-url": "#{@release.data_url}" }
+%div{ "data-role": "page", "id": "release-#{@release.id}" }
   .row
     %ul
       %li
@@ -52,6 +52,7 @@
               = track.link_to_search :year
             .col-md-1
               .badge= track.duration
+              .spacer
             .col-md-2
               %i.fa.fa-gear.fa-4.fa-spin.processing.hidden.grey-dark
               %i.fa.fa-refresh.fa-4.fa-spin.buffering.hidden.grey-dark

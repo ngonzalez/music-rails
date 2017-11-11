@@ -1,15 +1,11 @@
-source "https://rubygems.org" do
+source 'https://rubygems.org' do
 
   gem 'rails', '5.1.4'
   gem 'pg'
-
   gem 'taglib-ruby'
-
   gem 'sunspot_solr'
   gem 'sunspot_rails'
-
   gem 'puma'
-
   gem 'uglifier'
   gem 'bootstrap-sass'
   gem 'sass-rails'
@@ -19,35 +15,22 @@ source "https://rubygems.org" do
   gem 'jquery-rails'
   gem 'jquery_mobile_rails'
   gem 'coffee-rails'
-
   gem 'rack-cors', require: 'rack/cors'
-
   gem 'rack-cache', require: 'rack/cache'
-
   gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
-
   gem 'swipebox'
-
   gem 'draper'
-
-  gem 'sinatra', :require => nil
+  gem 'sinatra', require: nil
   gem 'sidekiq'
-
   gem 'uuid'
-
   gem 'paranoia'
-
   gem 'paper_trail'
-
   gem 'pry'
-
   gem 'progress_bar'
-
   gem 'typhoeus'
   gem 'nokogiri'
-
   gem 'listen'
-
   gem 'whenever'
+  gem 'friendly_id'
 
 end

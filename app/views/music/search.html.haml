@@ -1,28 +1,28 @@
 - content_for :head do
   = javascript_include_tag :music
 
-%div{ "data-role": "page", "id": "search" }
+%div{ 'data-role': 'page', 'id': 'search' }
   .container
     = form_tag search_music_index_path, default_transition.merge(method: :get) do
       .form-group
         .col-md-5
-          = text_field_tag :q, params[:q], class: "form-control"
+          = text_field_tag :q, params[:q], class: 'form-control'
         .col-md-5
-          %button.btn.btn-default{ type: "submit" } Search
+          %button.btn.btn-default{ type: 'submit' } Search
     .clear
 
     %ol
-      - @releases.each do |release_id, infos|
+      - @releases.each do |_, infos|
         %li
           %h5
             .label.label-primary
-              = link_to infos[:year], search_music_index_path(default_params.merge(q: infos[:year], subfolder: nil)), default_transition
+              = link_to infos[:year], infos[:year_url], default_transition
             .label.label-info= infos[:format_name]
-            - if infos[:subfolder] && infos[:subfolder].to_i == 0
+            - if infos[:subfolder_url]
               %span.label.label-success.label-as-badge
-                = link_to infos[:subfolder].titleize, search_music_index_path(default_params.merge(subfolder: infos[:subfolder], q: nil)), default_transition
+                = link_to infos[:subfolder].titleize, infos[:subfolder_url], default_transition
             %strong
-              = link_to highlight(infos[:formatted_name], search_terms_array), music_path(release_id, default_params), default_transition
+              = link_to highlight(infos[:formatted_name], search_terms_array), infos[:url], default_transition
 
     %small.margin-20
-      = "Page rendered in %s seconds - %s" % [ Time.now - @t1, Time.now ]
+      = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
