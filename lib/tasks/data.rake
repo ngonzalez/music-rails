@@ -11,8 +11,8 @@ namespace 'data' do
 
   desc 'update data'
   task update: :environment do
-    ['update_data', 'load_data', 'check_sfv',
-      'check_srrdb_sfv', 'set_details'].each do |name|
+    ['update_data', 'load_data',
+     'check_sfv', 'set_details'].each do |name|
       Rake::Task["data:#{name}"].execute
     end
   end
