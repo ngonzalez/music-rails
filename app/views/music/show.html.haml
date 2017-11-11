@@ -62,7 +62,7 @@
     $(document).ready(function(e) {
       init_players(
         #{streams_path.to_json.html_safe},
-        #{track_files.to_json.html_safe},
+        #{track_files(@release, @tracks).to_json.html_safe},
         { HIDDEN: 'hidden', ACTIVE: 'red active', DISABLED: 'grey',
           PROCESSING: 'processing', BUFFERING: 'buffering' }
       );

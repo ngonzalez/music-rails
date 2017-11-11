@@ -21,8 +21,8 @@ module ApplicationHelper
     return asset_path(asset)
   end
 
-  def track_files
-    @tracks.each_with_object({}) do |track, hash|
+  def track_files release, tracks
+    tracks.each_with_object({}) do |track, hash|
       hash[track.id] = {
         id: track.id,
         media_url: track.media_url,

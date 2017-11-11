@@ -12,17 +12,17 @@
     .clear
 
     %ol
-      - @releases.each do |_, infos|
+      - @releases.each do |_, item|
         %li
           %h5
             .label.label-primary
-              = link_to infos[:year], infos[:year_url], default_transition
-            .label.label-info= infos[:format_name]
-            - if infos[:subfolder_url]
+              = link_to item.year, item.year_url, default_transition
+            .label.label-info= item.format_name
+            - if item.subfolder_url
               %span.label.label-success.label-as-badge
-                = link_to infos[:subfolder].titleize, infos[:subfolder_url], default_transition
+                = link_to item.subfolder.titleize, item.subfolder_url, default_transition
             %strong
-              = link_to highlight(infos[:formatted_name], search_terms_array), infos[:url], default_transition
+              = link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
 
     %small.margin-20
       = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
