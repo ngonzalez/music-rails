@@ -11,21 +11,7 @@ class ImportWorker
   attr_accessor :release
 
   def initialize options={}
-    ensure_db_connection
     set_release options
-  end
-
-  def ensure_db_connection
-    track = nil
-    loop do
-      begin
-        track = Track.take
-      rescue
-        Rails.logger.info "\sImportWorker: DB Busy, Retrying.."
-        sleep 1
-      end
-      break if !track.nil?
-    end
   end
 
   def set_release options
