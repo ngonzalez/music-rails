@@ -1,12 +1,6 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 9.5.3
--- Dumped by pg_dump version 9.5.4
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -46,6 +40,51 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: friendly_id_slugs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE friendly_id_slugs (
+    id bigint NOT NULL,
+    slug character varying NOT NULL,
+    sluggable_id integer NOT NULL,
+    sluggable_type character varying(50),
+    scope character varying,
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: friendly_id_slugs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE friendly_id_slugs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: friendly_id_slugs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE friendly_id_slugs_id_seq OWNED BY friendly_id_slugs.id;
+
 
 --
 -- Name: images; Type: TABLE; Schema: public; Owner: -
@@ -139,7 +178,8 @@ CREATE TABLE releases (
     source character varying,
     srrdb_last_verified_at timestamp without time zone,
     folder_created_at timestamp without time zone,
-    folder_updated_at timestamp without time zone
+    folder_updated_at timestamp without time zone,
+    data_url character varying
 );
 
 
@@ -323,56 +363,79 @@ ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: friendly_id_slugs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY friendly_id_slugs ALTER COLUMN id SET DEFAULT nextval('friendly_id_slugs_id_seq'::regclass);
+
+
+--
+-- Name: images id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY images ALTER COLUMN id SET DEFAULT nextval('images_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: m3u_files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY m3u_files ALTER COLUMN id SET DEFAULT nextval('m3u_files_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: releases id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY releases ALTER COLUMN id SET DEFAULT nextval('releases_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: sfv_files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sfv_files ALTER COLUMN id SET DEFAULT nextval('sfv_files_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: tracks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY tracks ALTER COLUMN id SET DEFAULT nextval('tracks_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: uploads id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploads ALTER COLUMN id SET DEFAULT nextval('uploads_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
 
 
 --
--- Name: images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: friendly_id_slugs friendly_id_slugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY friendly_id_slugs
+    ADD CONSTRAINT friendly_id_slugs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY images
@@ -380,7 +443,7 @@ ALTER TABLE ONLY images
 
 
 --
--- Name: m3u_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: m3u_files m3u_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY m3u_files
@@ -388,7 +451,7 @@ ALTER TABLE ONLY m3u_files
 
 
 --
--- Name: releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: releases releases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY releases
@@ -396,7 +459,7 @@ ALTER TABLE ONLY releases
 
 
 --
--- Name: sfv_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sfv_files sfv_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sfv_files
@@ -404,7 +467,7 @@ ALTER TABLE ONLY sfv_files
 
 
 --
--- Name: tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: tracks tracks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY tracks
@@ -412,7 +475,7 @@ ALTER TABLE ONLY tracks
 
 
 --
--- Name: uploads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: uploads uploads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploads
@@ -420,7 +483,7 @@ ALTER TABLE ONLY uploads
 
 
 --
--- Name: versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: versions versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY versions
@@ -428,10 +491,80 @@ ALTER TABLE ONLY versions
 
 
 --
+-- Name: index_friendly_id_slugs_on_slug_and_sluggable_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendly_id_slugs_on_slug_and_sluggable_type ON friendly_id_slugs USING btree (slug, sluggable_type);
+
+
+--
+-- Name: index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope ON friendly_id_slugs USING btree (slug, sluggable_type, scope);
+
+
+--
+-- Name: index_friendly_id_slugs_on_sluggable_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendly_id_slugs_on_sluggable_id ON friendly_id_slugs USING btree (sluggable_id);
+
+
+--
+-- Name: index_friendly_id_slugs_on_sluggable_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendly_id_slugs_on_sluggable_type ON friendly_id_slugs USING btree (sluggable_type);
+
+
+--
+-- Name: index_images_on_release_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_images_on_release_id ON images USING btree (release_id);
+
+
+--
+-- Name: index_m3u_files_on_release_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_m3u_files_on_release_id ON m3u_files USING btree (release_id);
+
+
+--
+-- Name: index_releases_on_data_url; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_releases_on_data_url ON releases USING btree (data_url);
+
+
+--
+-- Name: index_releases_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_releases_on_name ON releases USING btree (name);
+
+
+--
+-- Name: index_sfv_files_on_release_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sfv_files_on_release_id ON sfv_files USING btree (release_id);
+
+
+--
 -- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_tracks_on_format_name ON tracks USING btree (format_name);
+
+
+--
+-- Name: index_tracks_on_release_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tracks_on_release_id ON tracks USING btree (release_id);
 
 
 --
@@ -454,73 +587,45 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 SET search_path TO "$user", public;
 
-INSERT INTO schema_migrations (version) VALUES ('20150326232536');
+INSERT INTO "schema_migrations" (version) VALUES
+('20150326232536'),
+('20150516233141'),
+('20150822175748'),
+('20150829150052'),
+('20150906182151'),
+('20150906201817'),
+('20150913185133'),
+('20150920123243'),
+('20150924012943'),
+('20150926131407'),
+('20151004150048'),
+('20151004160152'),
+('20151004172324'),
+('20151009015928'),
+('20151010153614'),
+('20151012032252'),
+('20151012034225'),
+('20151012034723'),
+('20151031162241'),
+('20151031171634'),
+('20160521153356'),
+('20160702110906'),
+('20160702112654'),
+('20160702131009'),
+('20160702141851'),
+('20160703082507'),
+('20160705165152'),
+('20160705175855'),
+('20160714120711'),
+('20160817092026'),
+('20160823130616'),
+('20160823171156'),
+('20160823171719'),
+('20161004135805'),
+('20161011122633'),
+('20171101075211'),
+('20171111112943'),
+('20171111115428'),
+('20171118103631');
 
-INSERT INTO schema_migrations (version) VALUES ('20150516233141');
-
-INSERT INTO schema_migrations (version) VALUES ('20150822175748');
-
-INSERT INTO schema_migrations (version) VALUES ('20150829150052');
-
-INSERT INTO schema_migrations (version) VALUES ('20150906182151');
-
-INSERT INTO schema_migrations (version) VALUES ('20150906201817');
-
-INSERT INTO schema_migrations (version) VALUES ('20150913185133');
-
-INSERT INTO schema_migrations (version) VALUES ('20150920123243');
-
-INSERT INTO schema_migrations (version) VALUES ('20150924012943');
-
-INSERT INTO schema_migrations (version) VALUES ('20150926131407');
-
-INSERT INTO schema_migrations (version) VALUES ('20151004150048');
-
-INSERT INTO schema_migrations (version) VALUES ('20151004160152');
-
-INSERT INTO schema_migrations (version) VALUES ('20151004172324');
-
-INSERT INTO schema_migrations (version) VALUES ('20151009015928');
-
-INSERT INTO schema_migrations (version) VALUES ('20151010153614');
-
-INSERT INTO schema_migrations (version) VALUES ('20151012032252');
-
-INSERT INTO schema_migrations (version) VALUES ('20151012034225');
-
-INSERT INTO schema_migrations (version) VALUES ('20151012034723');
-
-INSERT INTO schema_migrations (version) VALUES ('20151031162241');
-
-INSERT INTO schema_migrations (version) VALUES ('20151031171634');
-
-INSERT INTO schema_migrations (version) VALUES ('20160521153356');
-
-INSERT INTO schema_migrations (version) VALUES ('20160702110906');
-
-INSERT INTO schema_migrations (version) VALUES ('20160702112654');
-
-INSERT INTO schema_migrations (version) VALUES ('20160702131009');
-
-INSERT INTO schema_migrations (version) VALUES ('20160702141851');
-
-INSERT INTO schema_migrations (version) VALUES ('20160703082507');
-
-INSERT INTO schema_migrations (version) VALUES ('20160705165152');
-
-INSERT INTO schema_migrations (version) VALUES ('20160705175855');
-
-INSERT INTO schema_migrations (version) VALUES ('20160714120711');
-
-INSERT INTO schema_migrations (version) VALUES ('20160817092026');
-
-INSERT INTO schema_migrations (version) VALUES ('20160823130616');
-
-INSERT INTO schema_migrations (version) VALUES ('20160823171156');
-
-INSERT INTO schema_migrations (version) VALUES ('20160823171719');
-
-INSERT INTO schema_migrations (version) VALUES ('20161004135805');
-
-INSERT INTO schema_migrations (version) VALUES ('20161011122633');
 

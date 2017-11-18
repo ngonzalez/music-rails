@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171111115428) do
+ActiveRecord::Schema.define(version: 20171118103631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20171111115428) do
     t.string "thumb_uid"
     t.string "thumb_high_uid"
     t.string "type"
+    t.index ["release_id"], name: "index_images_on_release_id"
   end
 
   create_table "m3u_files", id: :serial, force: :cascade do |t|
@@ -48,6 +49,7 @@ ActiveRecord::Schema.define(version: 20171111115428) do
     t.datetime "updated_at"
     t.datetime "deleted_at"
     t.string "source"
+    t.index ["release_id"], name: "index_m3u_files_on_release_id"
   end
 
   create_table "releases", id: :serial, force: :cascade do |t|
@@ -79,6 +81,7 @@ ActiveRecord::Schema.define(version: 20171111115428) do
     t.datetime "updated_at"
     t.datetime "deleted_at"
     t.string "source"
+    t.index ["release_id"], name: "index_sfv_files_on_release_id"
   end
 
   create_table "tracks", id: :serial, force: :cascade do |t|
@@ -103,6 +106,7 @@ ActiveRecord::Schema.define(version: 20171111115428) do
     t.string "number"
     t.datetime "deleted_at"
     t.index ["format_name"], name: "index_tracks_on_format_name"
+    t.index ["release_id"], name: "index_tracks_on_release_id"
   end
 
   create_table "uploads", id: :serial, force: :cascade do |t|
