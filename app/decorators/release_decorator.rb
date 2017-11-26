@@ -1,7 +1,7 @@
 class ReleaseDecorator < Draper::Decorator
   delegate_all
   def path
-    [self.folder, self.subfolder, self.read_attribute(:source), self.name].reject(&:blank?).join("/")
+    [folder, subfolder, read_attribute(:source), name].reject(&:blank?).join("/")
   end
   def public_path
     [BASE_PATH, path].join("/")
