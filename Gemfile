@@ -1,6 +1,6 @@
 source 'https://rubygems.org' do
 
-  gem 'rails', '5.1.4'
+  gem 'rails', '5.2.0.rc1'
   gem 'pg'
   gem 'taglib-ruby'
   gem 'sunspot_solr'
