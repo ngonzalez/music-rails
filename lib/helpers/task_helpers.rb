@@ -7,7 +7,7 @@ module TaskHelpers
         end
       end
       FOLDERS_WITH_SUBFOLDERS.each do |folder|
-        subfolders(folder).each do |subfolder|
+        Dir["#{BASE_PATH}/#{folder}/**"].map { |name| name.split("/").last }.each do |subfolder|
           ALLOWED_SOURCES.each do |source|
             set_changes release, folder, source, subfolder
           end
@@ -22,9 +22,6 @@ module TaskHelpers
       release.update!(folder: folder) if release.folder != folder
       release.update!(subfolder: subfolder) if release.subfolder != subfolder
     end
-  end
-  def subfolders folder
-    Release.where(folder: folder).pluck(:subfolder).uniq
   end
   def import_folders
     items = Release.pluck :name
