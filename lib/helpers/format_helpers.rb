@@ -30,9 +30,11 @@ module FormatHelpers
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
       release.tracks.each{|track| track.update! format_name: format_track_format(release) }
     end
-    Release.where(folder_created_at: nil, folder_updated_at: nil).each do |release|
+    Release.find_each do |release|
       f = File::Stat.new release.decorate.public_path
-      release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+      if f.birthtime != release.folder_created_at || f.mtime != release.folder_updated_at
+        release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+      end
     end
   end
   def year_from_name name
