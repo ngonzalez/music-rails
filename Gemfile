@@ -1,6 +1,5 @@
 source 'https://rubygems.org' do
-
-  gem 'rails', '5.2.0.rc1'
+  gem 'rails', '5.2.0'
   gem 'pg'
   gem 'taglib-ruby'
   gem 'sunspot_solr'
@@ -32,5 +31,4 @@ source 'https://rubygems.org' do
   gem 'listen'
   gem 'whenever'
   gem 'friendly_id'
-
 end
