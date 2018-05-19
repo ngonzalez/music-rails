@@ -4,5 +4,5 @@
 # http://en.wikipedia.org/wiki/Cron
 
 every 10.hours do
-  command "find /tmp/hls -atime +10h -print0 | xargs -0 rm"
+  command "find /tmp/hls/* -atime +10h -print0 | xargs -0 rm"
 end
