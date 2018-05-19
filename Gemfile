@@ -31,4 +31,5 @@ source 'https://rubygems.org' do
   gem 'listen'
   gem 'whenever'
   gem 'friendly_id'
+  gem 'redis'
 end
