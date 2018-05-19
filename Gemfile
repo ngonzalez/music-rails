@@ -10,7 +10,7 @@ source 'https://rubygems.org' do
   gem 'sass-rails'
   gem 'tilt', require: 'tilt/sass'
   gem 'haml-rails'
-  gem 'font-awesome-sass'
+  gem 'font-awesome-sass', '4.7.0'
   gem 'jquery-rails'
   gem 'jquery_mobile_rails'
   gem 'coffee-rails'
