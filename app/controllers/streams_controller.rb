@@ -11,7 +11,7 @@ class StreamsController < ApplicationController
       end
     end
   end
-  def create
+  def get_url
     stream_uuid = params[:stream_uuid]
     file_exists = begin
       File.exists? "/tmp/hls/#{stream_uuid}.m3u8"

@@ -21,10 +21,7 @@ class MusicController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: {
-          release: @release,
-          tracks: @tracks
-        }.to_json, layout: false, status: 200
+        render json: @tracks.to_json, layout: false, status: 200
       end
     end
   end
@@ -35,7 +32,7 @@ class MusicController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: @releases.to_json,
+        render json: @releases.map(&:marshal_dump).to_json,
           layout: false, status: 200
       end
     end

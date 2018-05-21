@@ -34,7 +34,7 @@ function init_players(streams_path, tracks, css) {
                 $.ajax({
                     url: streams_path,
                     data: { stream_uuid: response.stream_uuid },
-                    type: 'POST',
+                    type: 'GET',
                     dataType: 'json',
                     success: function(response) {
                         if (response.stream_url) {
