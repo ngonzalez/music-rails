@@ -6,7 +6,7 @@ class LameWorker
 
   def perform track_id
     track = Track.find track_id
-    redis_db.setex 'stream:%s' % track.id, 120, 1
+    redis_db.setex 'tracks:%s' % track.id, 120, 1
     if !track.file
       if track.format_name =~ /MP3/ || ["iTunes AAC", "ALAC"].include?(track.format_name)
         file_path = Shellwords.escape track.decorate.public_path
@@ -32,7 +32,7 @@ class LameWorker
   rescue Exception => e
     Rails.logger.info e.inspect
   ensure
-    redis_db.del 'stream:%s' % track.id
+    redis_db.del 'tracks:%s' % track.id
     FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
     FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
     FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)

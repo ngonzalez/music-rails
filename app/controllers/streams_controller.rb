@@ -2,7 +2,10 @@ class StreamsController < ApplicationController
   def show
     track = Track.find params[:id]
     stream_uuid = UUID.new.generate
-    StreamWorker.perform_async(track.id, stream_uuid)
+    if !redis_db.get 'streams:%s' % stream_uuid
+      redis_db.setex 'streams:%s' % stream_uuid, 120, 1
+      StreamWorker.perform_async(track.id, stream_uuid)
+    end
     respond_to do |format|
       format.json do
         render json: {
