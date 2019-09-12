@@ -56,18 +56,10 @@ module ImportHelpers
   ensure
     f.try :unlink
   end
-  def list_files release, format, &_
-    release_path = release.decorate.public_path
+  def list_files release_path, format, &_
     Dir[release_path + "/**/*.#{format}",
         release_path + "/**/*.#{format.upcase}" ].each do |path|
-      yield path, get_file_name_from_path(release.name, path)
+      yield path, path.split("/").last
     end
-  end
-  def get_file_name_from_path release_name, path
-    path.split("/").each_with_object([]) { |item, array|
-      array << item if item == release_name || array.include?(release_name)
-    }.reject { |item|
-      item == release_name
-    }.join "/"
   end
 end
