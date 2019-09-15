@@ -4,6 +4,7 @@ module SearchHelpers
     ids = []
     search.hits.each_with_object([]) { |hit, array|
       item = accessor ? hit.result.send(accessor) : hit.result
+      next if item.nil?
       item = item.decorate.search_infos
       next if ids.include? item[:id]
       ids << item[:id]
