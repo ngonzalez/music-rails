@@ -13,3 +13,4 @@ FOLDERS = ["music"]
 FOLDERS_WITH_SUBFOLDERS = ["backup"]
 EXCEPT_GRPS = /EXAMPLE/
 EXCEPT_RLS = []
+HLS_FOLDER = "/tmp/hls"

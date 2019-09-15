@@ -17,7 +17,7 @@ class StreamsController < ApplicationController
   def get_url
     stream_uuid = params[:stream_uuid]
     file_exists = begin
-      File.exists? "/tmp/hls/#{stream_uuid}.m3u8"
+      File.exists? "#{HLS_FOLDER}/#{stream_uuid}.m3u8"
     rescue
       false
     end
