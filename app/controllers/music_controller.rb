@@ -1,7 +1,12 @@
 class MusicController < ApplicationController
-
   require Rails.root.join "lib/helpers/search_helpers"
   include SearchHelpers
+
+  before_action :set_release, only: [:show]
+  before_action :set_tracks, only: [:show]
+
+  before_action :set_time, only: [:search]
+  before_action :search_releases, only: [:search]
 
   def index
     respond_to do |format|
@@ -10,30 +15,27 @@ class MusicController < ApplicationController
       end
       format.json do
         render json: {}.to_json,
-          layout: false, status: 200
+          layout: false
       end
     end
   end
 
   def show
-    set_release
-    set_tracks
     respond_to do |format|
       format.html
       format.json do
-        render json: @tracks.to_json, layout: false, status: 200
+        render json: @tracks.to_json,
+          layout: false
       end
     end
   end
 
   def search
-    @t1 = Time.now
-    search_releases
     respond_to do |format|
       format.html
       format.json do
         render json: @releases.map(&:marshal_dump).to_json,
-          layout: false, status: 200
+          layout: false
       end
     end
   end
@@ -46,6 +48,10 @@ class MusicController < ApplicationController
 
   def set_tracks
     @tracks = @release.tracks.decorate.sort { |a, b| a.number <=> b.number }
+  end
+
+  def set_time
+    @t1 = Time.now
   end
 
   def search_releases
