@@ -1,4 +1,5 @@
 source 'https://rubygems.org' do
+  gem 'bootsnap'
   gem 'bootstrap-sass'
   gem 'coffee-rails'
   gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
