@@ -5,6 +5,7 @@ class TracksController < ApplicationController
     if track.file
       response.merge! media_url: track.decorate.media_url
     elsif !redis_db.get 'tracks:%s' % track.id
+      redis_db.setex 'tracks:%s' % track.id, 120, 1
       LameWorker.perform_async(track.id)
     end
     respond_to do |format|
