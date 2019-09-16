@@ -17,7 +17,13 @@ class TrackDecorator < Draper::Decorator
     end
   end
   def media_url
-    return if !track.file_uid
-    track.file.url
+    return if !object.file_uid
+    object.file.url
+  end
+  def details
+    object.attributes.deep_symbolize_keys
+      .slice(:id)
+      .merge(media_url: media_url)
+      .compact
   end
 end
