@@ -8,32 +8,42 @@ class LameWorker
     track = Track.find track_id
     if !track.file
       if track.format_name =~ /MP3/ || ["iTunes AAC", "ALAC"].include?(track.format_name)
-        file_path = Shellwords.escape track.decorate.public_path
-        temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
-        strip_metadata file_path, temp_file
-        track.update! file: File.open(temp_file)
+        begin
+          file_path = Shellwords.escape track.decorate.public_path
+          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          strip_metadata file_path, temp_file
+          track.update! file: File.open(temp_file)
+        ensure
+          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
+        end
       elsif ["FLAC"].include? track.format_name
-        file_path = Shellwords.escape track.decorate.public_path
-        temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
-        temp_file_flac = "/tmp/#{track.id}.flac"
-        temp_file_wav = "/tmp/#{track.id}.wav"
-        copy_file file_path, temp_file_flac
-        decode_file temp_file_flac
-        encode temp_file_wav, temp_file
-        track.update! file: File.open(temp_file)
+        begin
+          file_path = Shellwords.escape track.decorate.public_path
+          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          temp_file_flac = "/tmp/#{track.id}.flac"
+          temp_file_wav = "/tmp/#{track.id}.wav"
+          copy_file file_path, temp_file_flac
+          decode_file temp_file_flac
+          encode temp_file_wav, temp_file
+          track.update! file: File.open(temp_file)
+        ensure
+          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
+          FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
+          FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
+        end
       elsif ["WAV", "AIFF"].include? track.format_name
-        file_path = Shellwords.escape track.decorate.public_path
-        temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
-        encode file_path, temp_file
-        track.update! file: File.open(temp_file)
+        begin
+          file_path = Shellwords.escape track.decorate.public_path
+          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          encode file_path, temp_file
+          track.update! file: File.open(temp_file)
+        ensure
+          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
+        end
       end
     end
   rescue Exception => e
-    Rails.logger.info e.inspect
-  ensure
-    FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
-    FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
-    FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
+    Rails.logger.error e.inspect
   end
 
   private
