@@ -55,12 +55,12 @@
             .col-md-2
               %i.fa.fa-gear.fa-4.fa-spin.processing.hidden.grey-dark
               %i.fa.fa-refresh.fa-4.fa-spin.buffering.hidden.grey-dark
-              %i.fa.fa-podcast.fa-4.play-btn{ "data-id" => track.id, "data-url" => stream_path(track) }
+              %i.fa.fa-podcast.fa-4.play-btn{ "data-id" => track.id }
 
   :javascript
     $(document).ready(function(e) {
       init_players(
-        #{get_url_streams_path.to_json.html_safe},
+        #{streams_path.to_json.html_safe},
         #{track_files(@release, @tracks).to_json.html_safe},
         { HIDDEN: 'hidden', ACTIVE: 'red active', DISABLED: 'grey',
           PROCESSING: 'processing', BUFFERING: 'buffering' }

@@ -11,11 +11,7 @@ Rails.application.routes.draw do
 
   resources :tracks, only: [:show]
 
-  resources :streams, only: [:show] do
-    collection do
-      get :get_url
-    end
-  end
+  resources :streams, only: [:create]
 
   resources :uploads, only: [:new, :create]
 

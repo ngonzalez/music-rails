@@ -27,28 +27,29 @@ function init_players(streams_path, tracks, css) {
             }
         });
     }
-    function testStream(url, callback) {
-        $.get(url, function(response) {
-            var x = 0;
-            var intervalID = setInterval(function () {
-                $.ajax({
-                    url: streams_path,
-                    data: { stream_uuid: response.stream_uuid },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.stream_url) {
-                            clearInterval(intervalID);
-                            callback({ stream_url: response.stream_url });
-                        }
-                    }
-                });
-                if (++x === 10) {
-                    clearInterval(intervalID);
-                    callback({ error: 'TIMEOUT' });
-                }
-            }, 2000);
-        });
+    function testStream(track_id, callback) {
+      var x = 0;
+      var data = { track_id: track_id };
+      var intervalID = setInterval(function () {
+          $.ajax({
+              url: streams_path,
+              data: data,
+              type: 'POST',
+              dataType: 'json',
+              success: function(response) {
+                  if (response.stream_uuid) {
+                      data['stream_uuid'] = response.stream_uuid;
+                  } else if (response.stream_url) {
+                      clearInterval(intervalID);
+                      callback({ stream_url: response.stream_url });
+                  }
+              }
+          });
+          if (++x === 10) {
+              clearInterval(intervalID);
+              callback({ error: 'TIMEOUT' });
+          }
+      }, 2000);
     }
     function hasIcon(element, className) {
         return element.parent().find('.' + className).is(':visible');
@@ -73,7 +74,7 @@ function init_players(streams_path, tracks, css) {
     function enable(element, data) {
         resetBtns();
         toggleIcon(element, css.BUFFERING);
-        testStream(element.data('url'), function(response) {
+        testStream(element.data('id'), function(response) {
             if (response.error) {
                 toggleIcon(element, css.BUFFERING);
             } else {

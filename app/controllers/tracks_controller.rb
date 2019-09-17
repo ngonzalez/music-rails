@@ -1,6 +1,6 @@
 class TracksController < ApplicationController
-  before_action :set_track, only: [:show]
-  before_action :encode_track, only: [:show]
+  before_action :set_track
+  before_action :encode_track
 
   def show
     respond_to do |format|
