@@ -14,7 +14,6 @@ source 'https://rubygems.org' do
   gem 'paper_trail'
   gem 'paranoia'
   gem 'pg'
-  gem 'progress_bar'
   gem 'pry'
   gem 'puma'
   gem 'rack-cache', require: 'rack/cache'

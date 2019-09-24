@@ -1,48 +1,15 @@
-namespace 'data' do
-
+namespace :data do
   require Rails.root.join 'lib/helpers/task_helpers'
   include TaskHelpers
 
-  require Rails.root.join 'lib/helpers/format_helpers'
-  include FormatHelpers
-
-  require Rails.root.join 'lib/helpers/sfv_helpers'
-  include SfvHelpers
-
-  desc 'update data'
+  desc 'update'
   task update: :environment do
-    ['update_data', 'load_data',
-     'check_sfv', 'set_details'].each do |name|
-      Rake::Task["data:#{name}"].execute
-    end
-  end
-
-  desc 'update data'
-  task update_data: :environment do
-    require 'progress_bar'
-    bar = ProgressBar.new Release.count
-    Release.find_each do |release|
-      update_release release
-      bar.increment!
-    end
-  end
-
-  desc 'load data'
-  task load_data: :environment do
+    clear_deleted_folders
+    update_releases
     import_folders
     import_subfolders
-  end
-
-  desc 'set details'
-  task set_details: :environment do
     release_set_details
-  end
-
-  desc 'check sfv'
-  task check_sfv: :environment do
-    unchecked_releases.each do |release|
-      check_sfv release
-    end
+    release_check_sfv
   end
 
   desc 'clear'
@@ -55,5 +22,4 @@ namespace 'data' do
     FileUtils.rm_rf '/tmp/dragonfly'
     Rails.cache.clear
   end
-
 end
