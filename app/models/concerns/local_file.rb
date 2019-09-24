@@ -4,8 +4,6 @@ module LocalFile
 
     scope :local, -> { where(source: nil) }
 
-    scope :srrdb, -> { where(source: 'srrDB') }
-
     def base_path
       file_name.split('/')[0] if file_name.split('/').length > 1
     end

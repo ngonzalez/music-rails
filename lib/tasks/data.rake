@@ -45,16 +45,6 @@ namespace 'data' do
     end
   end
 
-  desc 'check srrdb sfv'
-  task check_srrdb_sfv: :environment do
-    require Rails.root.join "lib/helpers/scene_helpers"
-    include SceneHelpers
-    import_srrdb_sfv
-    unchecked_releases(:srrdb).each do |release|
-      check_sfv release, 'srrDB'
-    end
-  end
-
   desc 'clear'
   task clear: :environment do
     NfoFile.select { |nfo_file| !nfo_file.file_exists? }.each &:destroy

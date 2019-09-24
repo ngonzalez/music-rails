@@ -1,10 +1,6 @@
 module SfvHelpers
-  def unchecked_releases(source=nil)
-    if source && source == :srrdb
-      Release.joins(:sfv_files).merge(SfvFile.srrdb).where(srrdb_last_verified_at: nil).select { |release| !release.details.has_key?(:srrdb_sfv) }
-    else
-      Release.joins(:sfv_files).merge(SfvFile.local).where(last_verified_at: nil).select { |release| !release.details.has_key?(:sfv) }
-    end
+  def unchecked_releases
+    Release.joins(:sfv_files).merge(SfvFile.local).where(last_verified_at: nil).select { |release| !release.details.has_key?(:sfv) }
   end
   def run_check_sfv release, sfv_file
     m3u_file = find_m3u release, sfv_file
