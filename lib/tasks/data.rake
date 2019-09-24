@@ -14,9 +14,11 @@ namespace :data do
 
   desc 'clear'
   task clear: :environment do
-    NfoFile.select { |nfo_file| !nfo_file.file_exists? }.each &:destroy
-    M3uFile.select { |m3u_file| !m3u_file.file_exists? }.each &:destroy
-    SfvFile.select { |sfv_file| !sfv_file.file_exists? }.each &:destroy
+    ActiveRecord::Base.connection.execute "DELETE FROM #{Release.table_name} WHERE deleted_at IS NOT NULL"
+    ActiveRecord::Base.connection.execute "DELETE FROM #{Image.table_name} WHERE deleted_at IS NOT NULL"
+    ActiveRecord::Base.connection.execute "DELETE FROM #{Track.table_name} WHERE deleted_at IS NOT NULL"
+    ActiveRecord::Base.connection.execute "DELETE FROM #{SfvFile.table_name} WHERE deleted_at IS NOT NULL"
+    ActiveRecord::Base.connection.execute "DELETE FROM #{M3uFile.table_name} WHERE deleted_at IS NOT NULL"
     Track.update_all file_uid: nil, file_name: nil
     FileUtils.rm_rf Rails.root + 'public/system/dragonfly/tracks'
     FileUtils.rm_rf '/tmp/dragonfly'
