@@ -5,7 +5,7 @@ module ApplicationHelper
   end
 
   def permitted_params
-    params.permit(:format, :q, :subfolder, :label)
+    params.permit(:format, :q, :subfolder)
   end
 
   def default_params
@@ -13,8 +13,7 @@ module ApplicationHelper
   end
 
   def search_terms_array
-    return if !permitted_params[:q]
-    permitted_params[:label] || permitted_params[:q].split(/ and | or /)
+     permitted_params[:q].split(/ and | or /) if permitted_params[:q]
   end
 
   def asset_url asset
