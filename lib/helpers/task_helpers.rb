@@ -44,10 +44,10 @@ module TaskHelpers
   end
 
   def release_set_details
-    update_releases_data_url
     update_releases_folder_dates
     update_releases_format_name
     update_releases_formatted_name
+    update_releases_data_url
     update_releases_year
     update_tracks_format_name
     update_tracks_number
