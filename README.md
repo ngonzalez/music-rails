@@ -10,7 +10,7 @@ bundle exec rake data:update RAILS_ENV=production
 
 bundle exec rake sunspot:solr:reindex RAILS_ENV=production
 
-bundle exec sidekiq -C config/sidekiq.yml -e production -d -L /tmp/sidekiq.log
+bundle exec sidekiq -C config/sidekiq.yml -e production
 
 rm -rf public/assets/ ; bundle exec rake assets:precompile RAILS_ENV=production
 
