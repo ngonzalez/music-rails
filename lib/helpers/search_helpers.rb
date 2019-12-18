@@ -8,7 +8,7 @@ module SearchHelpers
         paginate :page => 1, :per_page => 100000
         with(:subfolder, subfolder)
       }
-      return decorate(search).sort_by { |item| [item[:year], item[:formatted_name].downcase] || 0 }.reverse
+      return decorate(search).sort_by { |item| [-item[:year], item[:formatted_name].downcase] || 0 }
 
     elsif year
       search = Release.search {
@@ -22,7 +22,7 @@ module SearchHelpers
         fulltext q
         paginate :page => 1, :per_page => 100000
       }
-      return decorate(search, :release).sort_by { |item| [item[:year], item[:formatted_name].downcase] || 0 }.reverse
+      return decorate(search, :release).sort_by { |item| [-item[:year], item[:formatted_name].downcase] || 0 }
 
     end
   end
