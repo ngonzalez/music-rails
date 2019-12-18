@@ -1,32 +1,4 @@
 function init_players(streams_path, tracks, css) {
-    function initPlayer(data, url, loaded, complete) {
-        $('video').remove();
-        $('<video />', { id: 'video_' + data.id, controls: true }).appendTo($('body'));
-        var player = document.getElementById('video_' + data.id);
-        if (typeof hls !== 'undefined') hls.destroy();
-        window.hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(player);
-        player.load();
-        player.volume = 0.5;
-        player.addEventListener('progress', function() {
-            if (!data.buffered && player.buffered.end(0) > 10) {
-                data.buffered = true;
-                loaded(player);
-            }
-        });
-        hls.on(Hls.Events.ERROR, function(event, data) {
-            switch(data.type) {
-                case Hls.ErrorTypes.MEDIA_ERROR:
-                    if (data.details == Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-                        delete data.buffered;
-                        if (typeof hls !== 'undefined') hls.destroy();
-                        complete(player);
-                    }
-                    break;
-            }
-        });
-    }
     function testStream(track_id, callback) {
       var x = 0;
       var data = { track_id: track_id };
@@ -78,20 +50,8 @@ function init_players(streams_path, tracks, css) {
             if (response.error) {
                 toggleIcon(element, css.BUFFERING);
             } else {
-                if (Hls.isSupported()) {
-                    initPlayer(data, response.stream_url, function(player) {
-                        toggleIcon(element, css.BUFFERING);
-                        toggleActive(element);
-                        player.play();
-                    }, function(player) {
-                        toggleActive(element);
-                        if (window.current_file == data.id)
-                            window.current_file = null;
-                    });
-                } else {
-                    toggleIcon(element, css.BUFFERING);
-                    window.location = response.stream_url;
-                }
+              toggleIcon(element, css.BUFFERING);
+              window.location = response.stream_url;
             }
         });
     }
