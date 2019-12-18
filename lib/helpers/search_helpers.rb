@@ -1,11 +1,12 @@
 module SearchHelpers
   def search_db options
-    q, subfolder, year = get_search_params options
+    q, folder, subfolder, year = get_search_params options
     return [] if [q, subfolder, year].all? &:blank?
 
-    if subfolder
+    if folder && subfolder
       search = Release.search {
         paginate :page => 1, :per_page => 100000
+        with(:folder, folder)
         with(:subfolder, subfolder)
       }
       return decorate(search).sort_by { |item| [-item[:year], item[:formatted_name].downcase] || 0 }
@@ -28,15 +29,16 @@ module SearchHelpers
   end
 
   def get_search_params options
-    q = nil ; subfolder = nil ; year = nil
+    q = nil ; folder = nil ; subfolder = nil ; year = nil
     if options[:q]
       q = options[:q].strip
       year = q.scan(/\b\d{4}\b/)[0].to_i if q && q.length == 4
       year = nil if year && year <= 0
-    elsif options[:subfolder]
+    elsif options[:folder] && options[:subfolder]
+      folder = options[:folder].strip
       subfolder = options[:subfolder].strip
     end
-    [q, subfolder, year]
+    [q, folder, subfolder, year]
   end
 
   def decorate search, accessor=nil

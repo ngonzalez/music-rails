@@ -13,6 +13,7 @@ class Release < ActiveRecord::Base
 
   searchable do
     text :formatted_name
+    string :folder
     string :subfolder
     integer :year
   end

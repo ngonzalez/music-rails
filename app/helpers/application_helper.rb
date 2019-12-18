@@ -5,11 +5,11 @@ module ApplicationHelper
   end
 
   def permitted_params
-    params.permit(:format, :q, :subfolder)
+    params.permit(:format, :q, :folder, :subfolder)
   end
 
   def default_params
-    permitted_params.slice "format", "q", "subfolder"
+    permitted_params.slice "format", "q", "folder", "subfolder"
   end
 
   def search_terms_array

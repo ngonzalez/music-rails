@@ -10,14 +10,17 @@ class ReleaseDecorator < Draper::Decorator
     h.music_path object, h.default_params
   end
   def year_url
-    h.search_music_index_path h.default_params.merge(q: object.year, subfolder: nil)
+    h.search_music_index_path h.default_params.merge(q: object.year, folder: nil, subfolder: nil)
+  end
+  def subfolder_name
+    [object.folder.titleize, object.subfolder.titleize].join " | "
   end
   def subfolder_url
-    h.search_music_index_path h.default_params.merge(subfolder: object.subfolder, q: nil)
+    h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: object.subfolder, q: nil)
   end
   def url_infos
     hash = { url: url, year_url: year_url }
-    hash.merge!(subfolder_url: subfolder_url) if object.subfolder
+    hash.merge!(subfolder_name: subfolder_name, subfolder_url: subfolder_url) if object.subfolder
     return hash
   end
   def search_infos

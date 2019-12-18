@@ -20,7 +20,7 @@
             .label.label-info= item.format_name
             - if item.subfolder_url
               %span.label.label-success.label-as-badge
-                = link_to item.subfolder.titleize, item.subfolder_url, default_transition
+                = link_to item.subfolder_name, item.subfolder_url, default_transition
             %strong
               = link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
 

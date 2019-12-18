@@ -55,6 +55,6 @@ class MusicController < ApplicationController
   end
 
   def search_releases
-    @releases = search_db params.slice(:q, :subfolder)
+    @releases = search_db params.slice(:q, :folder, :subfolder)
   end
 end
