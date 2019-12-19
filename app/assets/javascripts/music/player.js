@@ -1,27 +1,30 @@
+var xhr_requests = [];
 function init_players(streams_path, tracks, css) {
     function testStream(track_id, callback) {
-      var x = 0;
-      var data = { track_id: track_id };
-      var intervalID = setInterval(function () {
-          $.ajax({
-              url: streams_path,
-              data: data,
-              type: 'POST',
-              dataType: 'json',
-              success: function(response) {
-                  if (response.stream_uuid) {
-                      data['stream_uuid'] = response.stream_uuid;
-                  } else if (response.stream_url) {
-                      clearInterval(intervalID);
-                      callback({ stream_url: response.stream_url });
-                  }
-              }
-          });
-          if (++x === 10) {
-              clearInterval(intervalID);
-              callback({ error: 'TIMEOUT' });
-          }
-      }, 2000);
+        var x = 0;
+        var data = { track_id: track_id };
+        var intervalID = setInterval(function () {
+            xhr_requests.push(
+                $.ajax({
+                    url: streams_path,
+                    data: data,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.stream_uuid) {
+                            data['stream_uuid'] = response.stream_uuid;
+                        } else if (response.stream_url) {
+                            clearInterval(intervalID);
+                            callback({ stream_url: response.stream_url });
+                        }
+                    }
+                })
+            )
+            if (++x === 10) {
+                clearInterval(intervalID);
+                callback({ error: 'TIMEOUT' });
+            }
+        }, 2000);
     }
     function hasIcon(element, className) {
         return element.parent().find('.' + className).is(':visible');
@@ -29,9 +32,6 @@ function init_players(streams_path, tracks, css) {
     function toggleIcon(element, className) {
         hasIcon(element, className) ? element.show() : element.hide();
         element.parent().find('.' + className).toggleClass(css.HIDDEN);
-    }
-    function toggleActive(element) {
-        element.toggleClass(css.ACTIVE);
     }
     function resetBtns() {
         $.each($('.play-btn'), function(i, element) {
@@ -77,17 +77,12 @@ function init_players(streams_path, tracks, css) {
         if (!tracks) return;
         $.each($('.play-btn'), function(i, element) {
             var data = tracks[parseInt($(element).data('id'))]
-            if (!data) return;
             if (!data.media_url) $(element).addClass(css.DISABLED);
-            if (window.current_file == data.id) toggleActive($(element));
             $(element).click(function(e) {
-                if ($(element).hasClass(css.ACTIVE) ||
-                    $(element).hasClass(css.PROCESSING) ||
-                    $(element).hasClass(css.BUFFERING)) {
-                    $(element).toggleClass('pulsate');
-                    return;
-                }
                 window.current_file = data.id;
+                $.each(xhr_requests, function(i, xhr_request) {
+                    xhr_request.abort();
+                });
                 if (data.media_url) {
                     enable($(element), data);
                 } else {
