@@ -17,4 +17,6 @@ rm -rf public/assets/ ; bundle exec rake assets:precompile RAILS_ENV=production
 bundle exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
 
 sudo nginx -s stop ; sudo nginx
+
+whenever --update-crontab
 ```
