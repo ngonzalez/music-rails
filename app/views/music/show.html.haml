@@ -36,6 +36,7 @@
 
   .tracks
     - @tracks.each do |track|
+      .spacer
       .row
         %ul
           %li
@@ -51,18 +52,16 @@
               = track.link_to_search :year
             .col-md-1
               .badge= track.duration
-              .spacer
             .col-md-2
               %i.fa.fa-gear.fa-4.fa-spin.processing.hidden.grey-dark
               %i.fa.fa-refresh.fa-4.fa-spin.buffering.hidden.grey-dark
-              %i.fa.fa-podcast.fa-4.play-btn{ "data-id" => track.id }
+              %i.fa.fa-play-circle.fa-4.play-btn{ "data-id" => track.id }
 
   :javascript
     $(document).ready(function(e) {
       init_players(
         #{streams_path.to_json.html_safe},
         #{track_files(@release, @tracks).to_json.html_safe},
-        { HIDDEN: 'hidden', ACTIVE: 'red active', DISABLED: 'grey',
-          PROCESSING: 'processing', BUFFERING: 'buffering' }
+        { HIDDEN: 'hidden', PROCESSING: 'processing', BUFFERING: 'buffering' }
       );
     });
