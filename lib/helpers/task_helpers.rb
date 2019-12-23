@@ -157,14 +157,14 @@ module TaskHelpers
 
   def format_name name
     year = year_from_name name
-    name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-").each_with_object([]){|string, array|
+    array = name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-")
+    array -= ALLOWED_SOURCES
+    array -= ["Promo_CD", "Promo_CDS", "VA", "CDS", "WAV", "FLAC", "AIFF", "ALAC"]
+    array.reject! &:blank?
+    array.each_with_object([]){|string, array|
       next if array.include? year
-      str = string.gsub("_", " ")
-      next if str.blank?
-      next if ["WEB", "VA", "WAV", "FLAC", "AIFF", "ALAC"].include?(str)
-      next if ALLOWED_SOURCES.map(&:upcase).include?(str.upcase)
-      array << str
-    }.reject{|item| item == year }.join(" ")
+      array << string.gsub("_", " ")
+    }.join(" ")
   end
 
   def format_track_format release
