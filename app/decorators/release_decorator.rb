@@ -10,23 +10,25 @@ class ReleaseDecorator < Draper::Decorator
     h.music_path object, h.default_params
   end
   def year_url
-    h.search_music_index_path h.default_params.merge(q: object.year, folder: nil, subfolder: nil)
+    h.search_music_index_path h.default_params.merge(folder: nil, subfolder: nil, q: object.year)
   end
-  def subfolder_name
-    [object.folder.titleize, object.subfolder.titleize].join " | "
+  def folder_url
+    h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: nil, q: nil)
   end
   def subfolder_url
     h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: object.subfolder, q: nil)
   end
   def url_infos
     hash = { url: url, year_url: year_url }
-    hash.merge!(subfolder_name: subfolder_name, subfolder_url: subfolder_url) if object.subfolder
+    hash.merge! folder_name: object.folder.titleize, folder_url: folder_url
+    hash.merge! subfolder_name: object.subfolder.titleize, subfolder_url: subfolder_url if object.subfolder
     return hash
   end
   def search_infos
     OpenStruct.new(
           object.attributes.deep_symbolize_keys
           .slice(:id, :formatted_name, :folder, :format_name, :subfolder)
+          .merge(last_verified_at: object.last_verified_at.try(:strftime, "%Y-%m-%d"))
           .merge(year: object.year.to_i)
           .merge(url_infos)
     )

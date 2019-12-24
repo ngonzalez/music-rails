@@ -17,8 +17,11 @@
           %h5
             .label.label-primary= link_to item.year, item.year_url, default_transition
             .label.label-info= item.format_name
-            - if item.subfolder_url
-              %span.label.label-success.label-as-badge= link_to item.subfolder_name, item.subfolder_url, default_transition
+            %span.label.label-default.label-as-badge
+              = link_to item.folder_name, item.folder_url, default_transition
+              - if item.subfolder_url
+                |
+                = link_to item.subfolder_name, item.subfolder_url, default_transition
             %strong= link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
 
     %small.margin-20

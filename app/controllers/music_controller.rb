@@ -54,7 +54,11 @@ class MusicController < ApplicationController
     @t1 = Time.now
   end
 
+  def search_params
+    @search_params ||= get_search_params params.slice(:q, :folder, :subfolder)
+  end
+
   def search_releases
-    @releases = search_db params.slice(:q, :folder, :subfolder)
+    @releases = search_params.values.all?(&:blank?) ? [] : search_db(search_params)
   end
 end
