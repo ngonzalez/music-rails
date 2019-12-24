@@ -23,7 +23,7 @@ module SearchHelpers
         paginate :page => 1, :per_page => 100000
         with(:year, search_params[:year])
       }
-      return decorate(search).sort_by { |item| item[:formatted_name] }
+      return decorate(search).sort_by { |item| [item[:year], item[:folder_created_at]] }.reverse
     #
     # Fulltext search
     elsif search_params[:q]
