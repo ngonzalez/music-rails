@@ -50,7 +50,8 @@ i.fa-4 {
   text-decoration: none;
 }
 span.search_link {
-  margin: 10px;
+  margin: 0 10px;
+  vertical-align: -webkit-baseline-middle;
 }
 i.fa-chevron-right {
   color: rgba(232, 232, 232, 0.30);
