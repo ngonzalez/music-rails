@@ -36,12 +36,11 @@ module SearchHelpers
   end
 
   def get_search_params search_params
-    if search_params[:q]
-      q = search_params[:q].strip
-      year = q.scan(/\b\d{4}\b/)[0].to_i
+    q = search_params[:q].strip if search_params[:q]
+    if q && year = q.scan(/\b\d{4}\b/)[0].to_i
+      year = nil if year && year <= 0
       year = nil if year && year.to_s.length != 4
       year = nil if year && %w(1 2).exclude?(year.to_s[0])
-      year = nil if year && year <= 0
     end
     folder = search_params[:folder].strip if search_params[:folder]
     subfolder = search_params[:subfolder].strip if search_params[:subfolder]
