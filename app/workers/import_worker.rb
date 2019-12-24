@@ -1,7 +1,6 @@
 class ImportWorker
 
   require Rails.root + "lib/helpers/import_helpers"
-
   include ImportHelpers
 
   include Sidekiq::Worker
