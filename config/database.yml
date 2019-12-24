@@ -1,4 +1,5 @@
 local_defaults: &local-defaults
+  host: localhost
   adapter: postgresql
   encoding: utf8
   username: enyo
