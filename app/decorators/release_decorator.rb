@@ -28,7 +28,7 @@ class ReleaseDecorator < Draper::Decorator
     OpenStruct.new(
           object.attributes.deep_symbolize_keys
           .slice(:id, :formatted_name, :folder, :format_name, :subfolder)
-          .merge(last_verified_at: object.last_verified_at.try(:strftime, "%Y-%m-%d"))
+          .merge(folder_created_at: object.folder_created_at.try(:strftime, "%Y-%m-%d"))
           .merge(year: object.year.to_i)
           .merge(url_infos)
     )
