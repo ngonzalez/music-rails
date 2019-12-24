@@ -18,10 +18,16 @@ class ReleaseDecorator < Draper::Decorator
   def subfolder_url
     h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: object.subfolder, q: nil)
   end
+  def folder_name
+    object.folder.titleize.truncate 20, omission: "…#{object.folder.titleize.last(10)}"
+  end
+  def subfolder_name
+    object.subfolder.titleize.truncate 20, omission: "…#{object.subfolder.titleize.last(10)}"
+  end
   def url_infos
     hash = { url: url, year_url: year_url }
-    hash.merge! folder_name: object.folder.titleize, folder_url: folder_url
-    hash.merge! subfolder_name: object.subfolder.titleize, subfolder_url: subfolder_url if object.subfolder
+    hash.merge! folder_name: folder_name, folder_url: folder_url
+    hash.merge! subfolder_name: subfolder_name, subfolder_url: subfolder_url if object.subfolder
     return hash
   end
   def search_infos

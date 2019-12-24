@@ -21,9 +21,6 @@ small {
   background-size: 100% 1.3em;
   color: #000;
 }
-.ui-page-theme-a a {
-  font-weight: bold;
-}
 .label-primary, .label-info {
   opacity: 0.7;
 }
@@ -42,22 +39,21 @@ ul {
 i.fa-4 {
   font-size: 50px !important;
 }
-.label-as-badge {
-  border-radius: 1em;
-  margin-right: 5px;
-}
 .label-as-badge a,
 .label-as-badge a:hover,
 .label-as-badge a:visited {
   color: #FFF;
   text-decoration: none;
 }
-.label-primary {
-  margin-right: 5px;
-}
 .label-primary a {
   color: #FFF !important;
   text-decoration: none;
+}
+span.search_link {
+  margin: 0 5px;
+}
+i.fa-caret-right {
+  color: rgba(232, 232, 232, 0.70);
 }
 video {
   width: 100%;

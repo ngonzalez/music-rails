@@ -22,7 +22,9 @@
               - if item.subfolder_url
                 |
                 = link_to item.subfolder_name, item.subfolder_url, default_transition
-            %strong= link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
+            %span.search_link
+              %i.fa.fa-caret-right
+              = link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
 
     %small.margin-20
       = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
