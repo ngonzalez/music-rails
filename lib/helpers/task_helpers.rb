@@ -159,7 +159,9 @@ module TaskHelpers
     year = year_from_name name
     array = name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-")
     array -= ALLOWED_SOURCES
-    array -= ["Promo_CD", "Promo_CDS", "VA", "CDS", "WAV", "FLAC", "AIFF", "ALAC"]
+    array -= ["Promo_CD", "Promo_CDS", "Promo_WEB"]
+    array -= ["VA", "CDS", "REPACK", "7INCH", "VINYL", "VLS"]
+    array -= ["WAV", "FLAC", "AIFF", "ALAC"]
     array.reject! &:blank?
     array.each_with_object([]){|string, array|
       next if array.include? year
