@@ -222,18 +222,15 @@ module TaskHelpers
     return m3u_file
   end
 
-  def check_sfv release, source=nil
-    key = source ? "#{source.downcase}_sfv".to_sym : :sfv
-    field_name = source ? "#{source.downcase}_last_verified_at".to_sym : :last_verified_at
-    return if release.send(field_name) || release.details[key]
-    results = release.sfv_files.where(source: source).each_with_object([]){ |sfv_file, array| array << run_check_sfv(release, sfv_file) }
+  def check_sfv release
+    return if release.last_verified_at || release.details[:sfv]
+    results = release.sfv_files.each_with_object([]) { |sfv_file, array| array << run_check_sfv(release, sfv_file) }
     if results.all? { |result| result == :ok }
-      release.details.delete(key) if release.details.has_key?(key)
-      release.update!(field_name => Time.now) if !release.send(field_name)
+      release.details.delete(:sfv) if release.details.has_key?(:sfv)
+      release.update!(last_verified_at: Time.now) if !release.last_verified_at
     else
-      release.details[key] = results
+      release.details[:sfv] = results
       release.save!
     end
   end
-
 end
