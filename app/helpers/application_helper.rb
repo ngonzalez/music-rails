@@ -1,5 +1,4 @@
 module ApplicationHelper
-
   def default_transition
     { "data-transition" => "none" }
   end
@@ -16,10 +15,6 @@ module ApplicationHelper
      permitted_params[:q].split(/ and | or /) if permitted_params[:q]
   end
 
-  def asset_url asset
-    return asset_path(asset)
-  end
-
   def track_files release, tracks
     tracks.each_with_object({}) do |track, hash|
       hash[track.id] = {
@@ -29,5 +24,4 @@ module ApplicationHelper
       }
     end
   end
-
 end
