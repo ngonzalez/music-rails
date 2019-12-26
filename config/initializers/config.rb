@@ -1,8 +1,8 @@
 BASE_PATH = "/Volumes/My\ Drive/music"
+HLS_FOLDER = "/tmp/hls"
 ALLOWED_AUDIO_FORMATS = ["mp3", "mp4", "m4a", "flac", "wav", "aiff", "aif"]
 ALLOWED_IMAGE_FORMATS = ["jpg", "JPG", "jpeg", "JPEG"]
 ALLOWED_SOURCES = ["WEB", "Vinyl", "CD", "Live", "TAPE", "FLASH"]
-HLS_FOLDER = "/tmp/hls"
 NFO_TYPE = "nfo"
 SFV_TYPE = "sfv"
 M3U_TYPE = "m3u"
