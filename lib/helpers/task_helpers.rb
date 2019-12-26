@@ -8,6 +8,7 @@ module TaskHelpers
   def update_releases
     Release.find_each do |release|
       update_release_path release
+      update_release_folder_dates release
     end
   end
 
@@ -44,7 +45,6 @@ module TaskHelpers
   end
 
   def release_set_details
-    update_releases_folder_dates
     update_releases_format_name
     update_releases_formatted_name
     update_releases_data_url
@@ -79,6 +79,13 @@ module TaskHelpers
     end
   end
 
+  def update_release_folder_dates release
+    f = File::Stat.new release.decorate.public_path
+    if f.birthtime != release.folder_created_at || f.mtime != release.folder_updated_at
+      release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+    end
+  end
+
   def set_changes release, folder, source, subfolder=nil
     if File.directory? [BASE_PATH, folder, subfolder, source, release.name].reject(&:blank?).join('/')
       release.update!(source: source) if release.read_attribute(:source) != source
@@ -94,15 +101,6 @@ module TaskHelpers
         release.update! data_url: data_url
       rescue ActiveRecord::RecordNotUnique
         release.update! data_url: [data_url, rand(1000) * rand(1000)].join('-')
-      end
-    end
-  end
-
-  def update_releases_folder_dates
-    Release.find_each do |release|
-      f = File::Stat.new release.decorate.public_path
-      if f.birthtime != release.folder_created_at || f.mtime != release.folder_updated_at
-        release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
       end
     end
   end

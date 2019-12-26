@@ -14,7 +14,9 @@ class ImportWorker
   end
 
   def set_release options
-    @release = Release.create! options.slice(*[:name, :folder, :subfolder, :source])
+    @release = Release.create!(options.slice(*[:name, :folder, :subfolder, :source]))
+  rescue Exception => exception
+    Rails.logger.error exception
   end
 
   def perform
