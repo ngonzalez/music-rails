@@ -30,6 +30,12 @@ small {
 .label-success {
   background-color: rgba(65, 191, 63, 0.7);
 }
+.label a,
+.label a:hover,
+.label a:visited {
+  color: #FFF;
+  text-decoration: none;
+}
 .clear {
   clear: both;
 }
@@ -39,31 +45,7 @@ ul {
 i.fa-4 {
   font-size: 50px !important;
 }
-.label-as-badge a,
-.label-as-badge a:hover,
-.label-as-badge a:visited {
-  color: #FFF;
-  text-decoration: none;
-}
-.label-primary a {
-  color: #FFF !important;
-  text-decoration: none;
-}
 span.search_link {
   margin: 0 10px;
   vertical-align: -webkit-baseline-middle;
-}
-i.fa-chevron-right {
-  color: rgba(232, 232, 232, 0.30);
-}
-video {
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  height: 1px;
-  z-index: 1000;
-}
-video::-webkit-media-controls-panel {
-  display: flex !important;
-  opacity: 1 !important;
 }
