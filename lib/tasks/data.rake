@@ -14,6 +14,12 @@ namespace :data do
 
   desc 'clear'
   task clear: :environment do
+    begin
+      redis = Redis.new host: '127.0.0.1', port: 6379, db: 0
+      redis.flushall
+    rescue Exception => exception
+      Rails.logger.error exception
+    end
     ActiveRecord::Base.connection.execute "DELETE FROM #{Release.table_name} WHERE deleted_at IS NOT NULL"
     ActiveRecord::Base.connection.execute "DELETE FROM #{Image.table_name} WHERE deleted_at IS NOT NULL"
     ActiveRecord::Base.connection.execute "DELETE FROM #{Track.table_name} WHERE deleted_at IS NOT NULL"
@@ -22,6 +28,7 @@ namespace :data do
     Track.update_all file_uid: nil, file_name: nil
     FileUtils.rm_rf Rails.root + 'public/system/dragonfly/tracks'
     FileUtils.rm_rf '/tmp/dragonfly'
+    FileUtils.rm_rf '/tmp/rack-cache'
     Rails.cache.clear
   end
 end
