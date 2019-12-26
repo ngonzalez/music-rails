@@ -14,7 +14,7 @@ class ImportWorker
   end
 
   def set_release options
-    @release = Release.create!(options.slice(*[:name, :folder, :subfolder, :source]))
+    @release = Release.create! options.slice(*[:name, :folder, :subfolder, :source])
   rescue Exception => exception
     Rails.logger.error exception
   end
@@ -25,6 +25,8 @@ class ImportWorker
     import_nfo
     import_sfv
     import_m3u
+  rescue Exception => exception
+    Rails.logger.error exception
   end
 
   def import_tracks

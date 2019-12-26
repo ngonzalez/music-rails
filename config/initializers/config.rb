@@ -13,3 +13,11 @@ FOLDERS = ["music"]
 FOLDERS_WITH_SUBFOLDERS = ["backup"]
 EXCEPT_GRPS = /EXAMPLE/
 EXCEPT_RLS = []
+FORMAT_NAME_STRINGS = [
+  "7INCH", "VINYL", "VLS", "CDA", "CDS", "CDM", "2CD", "Bootleg",
+  "(Bootleg)", "(Promo_CD)", "(Promo_CDS)", "(Promo_WEB)",
+  "VA", "EP", "Repack", "REPACK", "Retail", "RETAiL",
+  "BONUS_TRACKS", "Proper", "PROPER", "READNFO",
+  "BR", "ES", "FR", "IT", "SP",
+  "WAV", "FLAC", "AIFF", "ALAC",
+]

@@ -1,9 +1,6 @@
 module ReleaseHelpers
   def year_from_name name
-    res = name.split("-").select{|item| item.match(/(\d{4})/) }.last
-    res = '1999' if ['199','99','19'].include?(res)
-    res = '2000' if res == '200'
-    return res
+    name.split("-").select{|item| item.match(/(\d{4})/) }.last
   end
 
   def format_number name
@@ -12,16 +9,10 @@ module ReleaseHelpers
 
   def format_name name
     year = year_from_name name
-    array = name.gsub("_-_", "-").gsub("(", "").gsub(")", "").gsub(".", "").split("-")
+    array = name.gsub("_-_", "-").gsub(".", "").split("-")
     array -= ALLOWED_SOURCES
-    array -= ["Promo_CD", "Promo_CDS", "Promo_WEB"]
-    array -= ["VA", "CDS", "REPACK", "7INCH", "VINYL", "VLS"]
-    array -= ["WAV", "FLAC", "AIFF", "ALAC"]
-    array.reject! &:blank?
-    array.each_with_object([]){|string, array|
-      next if array.include? year
-      array << string.gsub("_", " ")
-    }.reject{|item| item == year }.join(" ")
+    array -= FORMAT_NAME_STRINGS
+    array[0..array.index(year)-1].join(" ").gsub("_", " ")
   end
 
   def format_track_format release
@@ -41,7 +32,7 @@ module ReleaseHelpers
       when /WAVE audio/ then "WAV"
       when /iTunes AAC/ then "iTunes AAC"
       when /MPEG v4/ then "MPEG4"
-      when /clip art|BINARY|data/ then get_format_from_release_name(release) || "DATA"
+      when /clip art|BINARY|data/ then "DATA"
     end
   end
 
@@ -55,21 +46,22 @@ module ReleaseHelpers
   end
 
   def run_check_sfv release, sfv_file
-    m3u_file = find_m3u release, sfv_file
-    return :failed if !m3u_file
+    m3u_file = find_m3u release, sfv_file.base_path
+    return :m3u_file_not_found if !m3u_file
     files_count = m3u_file.decorate.file_names.length
     case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[cfv -f #{sfv_file.file.path}] }
       when /#{files_count} files, #{files_count} OK/ then :ok
       when /badcrc/ then :bad_crc
       when /chksum file errors/ then :chksum_file_errors
       when /not found|No such file/ then :missing_files
+      else :error
     end
   end
 
-  def find_m3u release, sfv_file
-    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) }
-    m3u_file = release.m3u_files.local.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) } if !m3u_file
-    m3u_file = release.m3u_files.local.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) } if !m3u_file
+  def find_m3u release, base_path
+    m3u_file = release.m3u_files.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) }
+    m3u_file = release.m3u_files.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) } if !m3u_file
+    m3u_file = release.m3u_files.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) } if !m3u_file
     return m3u_file
   end
 end
