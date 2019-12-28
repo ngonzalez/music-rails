@@ -7,7 +7,7 @@ class LameWorker
   def perform track_id
     track = Track.find(track_id).decorate
     if !track.file
-      if track.format_name =~ /MP3/ || ["AAC", "ALAC"].include?(track.format_name)
+      if ["AAC", "ALAC", "MP3"].include?(track.format_name)
         begin
           file_path = Shellwords.escape track.decorate.public_path
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
@@ -31,7 +31,7 @@ class LameWorker
           FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
           FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
         end
-      elsif ["WAV", "AIFF"].include? track.format_name
+      elsif ["AIFF", "WAV"].include? track.format_name
         begin
           file_path = Shellwords.escape track.decorate.public_path
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
