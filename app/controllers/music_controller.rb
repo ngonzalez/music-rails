@@ -2,7 +2,7 @@ class MusicController < ApplicationController
   require Rails.root.join "lib/helpers/search_helpers"
   include SearchHelpers
 
-  before_action :session_store, only: [:create]
+  before_action :session_store
   before_action :session_load
 
   attr_accessor :search_params
