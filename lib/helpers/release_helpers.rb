@@ -35,17 +35,4 @@ module ReleaseHelpers
       else "UNKNOWN"
     end
   end
-
-  def run_check_sfv release, sfv_file
-    m3u_file = release.m3u_files.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) }
-    return :m3u_file_not_found if !m3u_file
-    files_count = m3u_file.decorate.file_names.length
-    case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[cfv -f #{sfv_file.file.path}] }
-      when /#{files_count} files, #{files_count} OK/ then :ok
-      when /badcrc/ then :bad_crc
-      when /chksum file errors/ then :chksum_file_errors
-      when /not found|No such file/ then :missing_files
-      else :error
-    end
-  end
 end

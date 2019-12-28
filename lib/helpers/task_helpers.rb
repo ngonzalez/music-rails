@@ -155,7 +155,7 @@ module TaskHelpers
 
   def check_sfv release
     return if release.last_verified_at || release.details[:sfv]
-    results = release.sfv_files.each_with_object([]) { |sfv_file, array| array << run_check_sfv(release, sfv_file) }
+    results = release.sfv_files.collect &:check
     if results.all? { |result| result == :ok }
       release.details.delete(:sfv) if release.details.has_key?(:sfv)
       release.update!(last_verified_at: Time.now) if !release.last_verified_at
