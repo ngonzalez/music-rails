@@ -17,12 +17,7 @@ class TrackDecorator < Draper::Decorator
     end
   end
   def format_name
-    case object.format_info
-    when /MPEG ADTS|Audio file with ID3/ then "MP3"
-    when /FLAC/ then "FLAC"
-    when /WAV/ then "WAV"
-    when /AIFF/ then "AIFF"
-    end
+    SUPPORTED_AUDIO_FORMATS.detect { |format, _| track.format_info =~ /#{format}/ }[1]
   end
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
@@ -40,9 +35,9 @@ class TrackDecorator < Draper::Decorator
   end
   def details
     OpenStruct.new(
-          object.attributes.deep_symbolize_keys
-          .slice(:id)
-          .merge(url_infos)
+      object.attributes.deep_symbolize_keys
+      .slice(:id)
+      .merge(url_infos)
     )
   end
 end

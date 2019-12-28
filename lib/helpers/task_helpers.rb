@@ -101,6 +101,7 @@ module TaskHelpers
       array = release.name.gsub("_-_", "-").gsub(".", "").split("-")
       array -= ALLOWED_SOURCES
       array -= FORMAT_NAME_STRINGS
+      array -= SUPPORTED_AUDIO_FORMATS.map &:last
       formatted_name = array[0..array.index(release.year)-1].join(" ").gsub("_", " ")
       release.update! formatted_name: formatted_name
     end
