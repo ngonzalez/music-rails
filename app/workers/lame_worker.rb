@@ -7,7 +7,7 @@ class LameWorker
   def perform track_id
     track = Track.find(track_id).decorate
     if !track.file
-      if ["AAC", "ALAC", "MP3"].include?(track.format_name)
+      if ["AAC", "ALAC", "MP3"].include? track.format_name
         begin
           file_path = Shellwords.escape track.decorate.public_path
           temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
