@@ -1,5 +1,4 @@
 class ImportWorker
-
   require Rails.root + "lib/helpers/import_helpers"
   include ImportHelpers
 
@@ -53,13 +52,13 @@ class ImportWorker
   end
   def import_sfv
     list_files(release.decorate.public_path, SFV_TYPE) do |path, file_name|
-      next if release.sfv_files.local.detect { |sfv| sfv.file_name == file_name }
+      next if release.sfv_files.detect { |sfv| sfv.file_name == file_name }
       import_file release, :sfv_files, path, file_name
     end
   end
   def import_m3u
     list_files(release.decorate.public_path, M3U_TYPE) do |path, file_name|
-      next if release.m3u_files.local.detect { |m3u| m3u.file_name == file_name }
+      next if release.m3u_files.detect { |m3u| m3u.file_name == file_name }
       import_file release, :m3u_files, path, file_name
     end
   end

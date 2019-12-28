@@ -6,10 +6,7 @@ class SfvFile < ActiveRecord::Base
 
   acts_as_paranoid
 
-  include LocalFile
-
   dragonfly_accessor :file do
     storage_options {|a| { path: "sfv/%s" % [ UUID.new.generate ] } }
   end
-
 end

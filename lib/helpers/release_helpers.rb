@@ -37,7 +37,7 @@ module ReleaseHelpers
   end
 
   def run_check_sfv release, sfv_file
-    m3u_file = find_m3u release, sfv_file.base_path
+    m3u_file = release.m3u_files.detect { |item| item.base_path.try(:downcase) == sfv_file.base_path.try(:downcase) }
     return :m3u_file_not_found if !m3u_file
     files_count = m3u_file.decorate.file_names.length
     case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[cfv -f #{sfv_file.file.path}] }
@@ -47,12 +47,5 @@ module ReleaseHelpers
       when /not found|No such file/ then :missing_files
       else :error
     end
-  end
-
-  def find_m3u release, base_path
-    m3u_file = release.m3u_files.select { |item| item.file_name =~ /^0{2,3}/ }.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) }
-    m3u_file = release.m3u_files.select { |item| item.file_name =~ /0{2,3}/  }.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) } if !m3u_file
-    m3u_file = release.m3u_files.detect { |item| item.base_path.try(:downcase) == base_path.try(:downcase) } if !m3u_file
-    return m3u_file
   end
 end
