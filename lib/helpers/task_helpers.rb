@@ -75,23 +75,19 @@ module TaskHelpers
       next unless release.formatted_name
       data_url = release.formatted_name.downcase.gsub(' ', '-').gsub('_', '-').gsub('__', '-').gsub('--', '-')
       begin
-        release.update!(data_url: data_url) if release.data_url != data_url
+        release.update!(data_url: data_url)
       rescue ActiveRecord::RecordNotUnique
         data_url = [data_url, rand(1000) * rand(1000)].join('-')
-        release.update!(data_url: data_url) if release.data_url != data_url
+        release.update!(data_url: data_url)
       end
     end
   end
 
   def update_releases_year
     Release.where(year: nil).each do |release|
-      next if release.tracks.empty?
-      release.update! year: release.tracks[0].year.to_i
-    end
-    Release.where("year::numeric = 0 OR year IS NULL").find_each do |release|
-      next unless year = release.name.split("-").select { |item| item.match(/(\d{4})/) }.last
-      release.tracks.each { |track| track.update!(year: year) if track.year != year }
-      release.update!(year: year) if release.year != year
+      next unless release.tracks.any?
+      year = release.tracks[0].year.to_i
+      release.update! year: year
     end
   end
 
@@ -102,6 +98,7 @@ module TaskHelpers
       array -= ALLOWED_SOURCES
       array -= FORMAT_NAME_STRINGS
       array -= SUPPORTED_AUDIO_FORMATS.map &:last
+      next unless array.index(release.year)
       formatted_name = array[0..array.index(release.year)-1].join(" ").gsub("_", " ")
       release.update! formatted_name: formatted_name
     end
