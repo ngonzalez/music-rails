@@ -161,9 +161,7 @@ CREATE TABLE public.releases (
     deleted_at timestamp without time zone,
     subfolder character varying,
     year character varying,
-    format_name character varying,
     source character varying,
-    srrdb_last_verified_at timestamp without time zone,
     folder_created_at timestamp without time zone,
     folder_updated_at timestamp without time zone,
     data_url character varying
@@ -252,12 +250,10 @@ CREATE TABLE public.tracks (
     channels integer,
     length integer,
     sample_rate integer,
-    format_name character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     file_uid character varying,
     file_name character varying,
-    number character varying,
     deleted_at timestamp without time zone
 );
 
@@ -541,13 +537,6 @@ CREATE INDEX index_sfv_files_on_release_id ON public.sfv_files USING btree (rele
 
 
 --
--- Name: index_tracks_on_format_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_tracks_on_format_name ON public.tracks USING btree (format_name);
-
-
---
 -- Name: index_tracks_on_release_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -615,6 +604,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171111115428'),
 ('20171118103631'),
 ('20180519084659'),
-('20191228074102');
+('20191228074102'),
+('20191228084501'),
+('20191228090840'),
+('20191228091356');
 
 

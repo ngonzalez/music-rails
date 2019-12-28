@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_28_074102) do
+ActiveRecord::Schema.define(version: 2019_12_28_091356) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,9 +64,7 @@ ActiveRecord::Schema.define(version: 2019_12_28_074102) do
     t.datetime "deleted_at"
     t.string "subfolder"
     t.string "year"
-    t.string "format_name"
     t.string "source"
-    t.datetime "srrdb_last_verified_at"
     t.datetime "folder_created_at"
     t.datetime "folder_updated_at"
     t.string "data_url"
@@ -99,14 +97,11 @@ ActiveRecord::Schema.define(version: 2019_12_28_074102) do
     t.integer "channels"
     t.integer "length"
     t.integer "sample_rate"
-    t.string "format_name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "file_uid"
     t.string "file_name"
-    t.string "number"
     t.datetime "deleted_at"
-    t.index ["format_name"], name: "index_tracks_on_format_name"
     t.index ["release_id"], name: "index_tracks_on_release_id"
   end
 
