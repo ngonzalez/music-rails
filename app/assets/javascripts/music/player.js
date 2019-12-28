@@ -17,10 +17,9 @@ function init_players(tracks, css) {
                     window.location = response.stream_url;
                 }
             });
-        }, 2000);
+        }, 1500);
     }
     function observe() {
-        if (!tracks) return;
         $.each($('.play-btn'), function(i, element) {
             var data = tracks[parseInt($(element).data('id'))]
             $(element).click(function(e) {
