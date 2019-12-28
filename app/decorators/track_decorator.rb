@@ -30,6 +30,9 @@ class TrackDecorator < Draper::Decorator
       else "UNKNOWN"
     end
   end
+  def number
+    object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
+  end
   def m3u8_exists?
     File.exists? m3u8_path rescue false
   end

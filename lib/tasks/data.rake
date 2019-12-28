@@ -8,8 +8,12 @@ namespace :data do
     update_releases
     import_folders
     import_subfolders
-    release_set_details
-    release_check_sfv
+    update_releases_year
+    update_releases_formatted_name
+    update_releases_data_url
+    unchecked_releases.each do |release|
+      check_sfv release
+    end
   end
 
   desc 'clear'
