@@ -2,16 +2,23 @@ class MusicController < ApplicationController
   require Rails.root.join "lib/helpers/search_helpers"
   include SearchHelpers
 
+  before_action :session_clear, only: [:index]
+  before_action :session_store, only: [:create]
+  before_action :session_load
+
+  attr_accessor :search_params
+  helper_method :search_params, :permitted_params
+
   before_action :set_release, only: [:show]
   before_action :set_tracks, only: [:show]
 
-  before_action :set_time, only: [:search]
-  before_action :search_releases, only: [:search]
+  before_action :set_time, only: [:index, :create]
+  before_action :search_releases, only: [:index, :create]
 
   def index
     respond_to do |format|
       format.html do
-        render nothing: true
+        render "search"
       end
       format.json do
         render json: {}.to_json,
@@ -30,9 +37,11 @@ class MusicController < ApplicationController
     end
   end
 
-  def search
+  def create
     respond_to do |format|
-      format.html
+      format.html do
+        render "search"
+      end
       format.json do
         render json: @releases.map(&:marshal_dump).to_json,
           layout: false
@@ -54,8 +63,24 @@ class MusicController < ApplicationController
     @t1 = Time.now
   end
 
-  def search_params
-    @search_params ||= get_search_params params.permit(:q, :folder, :subfolder)
+  def permitted_params
+    params.permit :format, :q, :folder, :subfolder
+  end
+
+  def session_store
+    if permitted_params.to_hash.any?
+      session[:search_params] = permitted_params.to_hash.compact.to_json
+    end
+  end
+
+  def session_load
+    if session[:search_params]
+      @search_params = get_search_params  JSON.parse(session[:search_params], symbolize_names: true)
+    end
+  end
+
+  def session_clear
+    session[:search_params] = {}.to_json
   end
 
   def search_releases

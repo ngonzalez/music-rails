@@ -3,10 +3,10 @@
 
 %div{ 'data-role': 'page', 'id': 'search' }
   .container
-    = form_tag search_music_index_path, default_transition.merge(method: :get) do
+    = form_tag music_index_path, default_transition.merge('data-method': :post) do
       .form-group
         .col-md-5
-          = text_field_tag :q, params[:q], class: 'form-control'
+          = text_field_tag :q, search_params[:q], class: 'form-control'
         .col-md-5
           %button.btn.btn-default{ type: 'submit' } Search
     .clear

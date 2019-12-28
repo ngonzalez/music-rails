@@ -5,7 +5,7 @@
   .row
     %ul
       %li
-        = link_to search_music_index_path(default_params), default_transition do
+        = link_to music_index_path(permitted_params), default_transition.merge('data-method': :post) do
           %i.fa.fa-list.fa-4
 
   = stylesheet_link_tag :music

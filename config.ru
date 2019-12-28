@@ -2,11 +2,4 @@
 
 require ::File.expand_path('../config/environment', __FILE__)
 
-require 'rack/cache'
-
-use Rack::Cache,
-  :verbose     => true,
-  :metastore   => 'file:/tmp/rack-cache/meta',
-  :entitystore => 'file:/tmp/rack-cache/body'
-
 run Rails.application

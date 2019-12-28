@@ -20,6 +20,7 @@ source 'https://rubygems.org' do
   gem 'rack-cors', require: 'rack/cors'
   gem 'rails', '5.2.3'
   gem 'redis'
+  gem 'redis-rails'
   gem 'sass-rails'
   gem 'sidekiq'
   gem 'sinatra', require: nil

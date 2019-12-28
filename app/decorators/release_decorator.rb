@@ -10,16 +10,16 @@ class ReleaseDecorator < Draper::Decorator
     object.year.to_i
   end
   def url
-    h.music_path object, h.default_params
+    h.music_path object
   end
   def year_url
-    h.search_music_index_path h.default_params.merge(folder: nil, subfolder: nil, q: object.year)
+    h.music_index_path h.permitted_params.merge(folder: nil, subfolder: nil, q: object.year, 'data-method': :post)
   end
   def folder_url
-    h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: nil, q: nil)
+    h.music_index_path h.permitted_params.merge(folder: object.folder, subfolder: nil, q: nil, 'data-method': :post)
   end
   def subfolder_url
-    h.search_music_index_path h.default_params.merge(folder: object.folder, subfolder: object.subfolder, q: nil)
+    h.music_index_path h.permitted_params.merge(folder: object.folder, subfolder: object.subfolder, q: nil, 'data-method': :post)
   end
   def folder_name
     object.folder.titleize.truncate 20, omission: "…#{object.folder.titleize.last(10)}"
