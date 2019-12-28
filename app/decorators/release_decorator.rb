@@ -6,6 +6,12 @@ class ReleaseDecorator < Draper::Decorator
   def public_path
     [BASE_PATH, path].join("/")
   end
+  def year
+    object.year.to_i
+  end
+  def folder_created_at
+    Time.parse object.folder_created_at
+  end
   def url
     h.music_path object, h.default_params
   end
@@ -34,8 +40,8 @@ class ReleaseDecorator < Draper::Decorator
     OpenStruct.new(
           object.attributes.deep_symbolize_keys
           .slice(:id, :formatted_name, :folder, :format_name, :subfolder)
+          .merge(year: year)
           .merge(folder_created_at: object.folder_created_at.try(:strftime, "%Y-%m-%d"))
-          .merge(year: object.year.to_i)
           .merge(url_infos)
     )
   end

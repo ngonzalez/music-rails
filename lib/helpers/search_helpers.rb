@@ -15,7 +15,7 @@ module SearchHelpers
           with(:folder, search_params[:folder])
         }
       end
-      return decorate(search).sort_by { |item| [item[:year], item[:folder_created_at]] }.reverse
+      return decorate(search).sort_by { |item| [item.year, item.folder_created_at] }.reverse
     #
     # Search by year
     elsif search_params[:year]
@@ -23,7 +23,7 @@ module SearchHelpers
         paginate :page => 1, :per_page => 100000
         with(:year, search_params[:year])
       }
-      return decorate(search).sort_by { |item| [item[:year], item[:folder_created_at]] }.reverse
+      return decorate(search).sort_by { |item| [item.year, item.folder_created_at] }.reverse
     #
     # Fulltext search
     elsif search_params[:q]
@@ -31,7 +31,7 @@ module SearchHelpers
         fulltext search_params[:q]
         paginate :page => 1, :per_page => 100000
       }
-      return decorate(search, :release).sort_by { |item| [item[:year], item[:folder_created_at]] }.reverse
+      return decorate(search, :release).sort_by { |item| [item.year, item.folder_created_at] }.reverse
     end
   end
 
