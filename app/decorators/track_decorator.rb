@@ -16,14 +16,22 @@ class TrackDecorator < Draper::Decorator
       h.highlight object.send(name), h.search_terms_array
     end
   end
-  def media_url
-    return if !object.file_uid
-    object.file.url
+  def m3u8_exists?
+    File.exists? m3u8_path rescue false
+  end
+  def m3u8_path
+     "#{HLS_FOLDER}/#{object.id}.m3u8"
+  end
+  def url_infos
+    hash = {}
+    hash.merge! stream_url: "http://#{HOST_NAME}/hls/#{object.id}.m3u8" if m3u8_exists?
+    return hash
   end
   def details
-    object.attributes.deep_symbolize_keys
-      .slice(:id)
-      .merge(media_url: media_url)
-      .compact
+    OpenStruct.new(
+          object.attributes.deep_symbolize_keys
+          .slice(:id)
+          .merge(url_infos)
+    )
   end
 end

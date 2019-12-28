@@ -1,28 +1,4 @@
-function init_players(streams_path, tracks, css) {
-    function testStream(track_id, callback) {
-        var x = 0;
-        var data = { track_id: track_id };
-        var intervalID = setInterval(function () {
-            $.ajax({
-                url: streams_path,
-                data: data,
-                type: 'POST',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.stream_uuid) {
-                        data['stream_uuid'] = response.stream_uuid;
-                    } else if (response.stream_url) {
-                        clearInterval(intervalID);
-                        callback({ stream_url: response.stream_url });
-                    }
-                }
-            })
-            if (++x === 10) {
-                clearInterval(intervalID);
-                callback({ error: 'TIMEOUT' });
-            }
-        }, 2000);
-    }
+function init_players(tracks, css) {
     function hasIcon(element, className) {
         return element.parent().find('.' + className).is(':visible');
     }
@@ -30,38 +6,17 @@ function init_players(streams_path, tracks, css) {
         hasIcon(element, className) ? element.show() : element.hide();
         element.parent().find('.' + className).toggleClass(css.HIDDEN);
     }
-    function resetBtns() {
-        $.each($('.play-btn'), function(i, element) {
-            if (parseInt($(element).data('id')) != window.current_file)
-                if (hasIcon($(element), css.BUFFERING))
-                    toggleIcon($(element), css.BUFFERING);
-                    $(element).show();
-        });
-    }
-    function enable(element, data) {
-        resetBtns();
-        toggleIcon(element, css.BUFFERING);
-        testStream(element.data('id'), function(response) {
-            if (response.error) {
-                toggleIcon(element, css.BUFFERING);
-            } else {
-              toggleIcon(element, css.BUFFERING);
-              window.location = response.stream_url;
-            }
-        });
-    }
     var intervals = {};
     function processing(element, data) {
         if (!intervals[data.id]) {
             toggleIcon(element, css.PROCESSING);
             intervals[data.id] = setInterval(function() {
                 $.get(data.url, function(response) {
-                    if (response.media_url) {
-                        tracks[data.id].media_url = response.media_url;
+                    if (response.stream_url) {
+                        tracks[data.id].stream_url = response.stream_url;
                         toggleIcon(element, css.PROCESSING);
                         clearInterval(intervals[data.id]);
-                        if (window.current_file == data.id)
-                            enable(element, data);
+                        window.location = response.stream_url;
                     }
                 });
             }, 2000);
@@ -73,8 +28,8 @@ function init_players(streams_path, tracks, css) {
             var data = tracks[parseInt($(element).data('id'))]
             $(element).click(function(e) {
                 window.current_file = data.id;
-                if (data.media_url) {
-                    enable($(element), data);
+                if (data.stream_url) {
+                    window.location = data.stream_url;
                 } else {
                     processing($(element), data);
                 }

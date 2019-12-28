@@ -11,8 +11,6 @@ Rails.application.routes.draw do
 
   resources :tracks, only: [:show]
 
-  resources :streams, only: [:create]
-
   resources :uploads, only: [:new, :create]
 
   require 'sidekiq/web'

@@ -55,7 +55,7 @@ class MusicController < ApplicationController
   end
 
   def search_params
-    @search_params ||= get_search_params params.slice(:q, :folder, :subfolder)
+    @search_params ||= get_search_params params.permit(:q, :folder, :subfolder)
   end
 
   def search_releases

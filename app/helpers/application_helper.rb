@@ -15,13 +15,12 @@ module ApplicationHelper
      permitted_params[:q].split(/ and | or /) if permitted_params[:q]
   end
 
-  def track_files release, tracks
+  def track_files tracks
     tracks.each_with_object({}) do |track, hash|
       hash[track.id] = {
         id: track.id,
-        media_url: track.media_url,
         url: track_path(track, format: :json)
-      }
+      }.merge(track.url_infos)
     end
   end
 end
