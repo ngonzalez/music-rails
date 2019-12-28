@@ -89,7 +89,7 @@ module TaskHelpers
       release.update! year: release.tracks[0].year.to_i
     end
     Release.where("year::numeric = 0 OR year IS NULL").find_each do |release|
-      next unless year = name.split("-").select { |item| item.match(/(\d{4})/) }.last
+      next unless year = release.name.split("-").select { |item| item.match(/(\d{4})/) }.last
       release.tracks.each { |track| track.update!(year: year) if track.year != year }
       release.update!(year: year) if release.year != year
     end
