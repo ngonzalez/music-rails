@@ -121,7 +121,8 @@ CREATE TABLE public.m3u_files (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     deleted_at timestamp without time zone,
-    source character varying
+    source character varying,
+    base_path character varying
 );
 
 
@@ -209,7 +210,8 @@ CREATE TABLE public.sfv_files (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     deleted_at timestamp without time zone,
-    source character varying
+    source character varying,
+    base_path character varying
 );
 
 
@@ -612,6 +614,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171111112943'),
 ('20171111115428'),
 ('20171118103631'),
-('20180519084659');
+('20180519084659'),
+('20191228074102');
 
 
