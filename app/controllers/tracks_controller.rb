@@ -28,7 +28,7 @@ class TracksController < ApplicationController
   def create_m3u8
     if @track.file && !@track.decorate.m3u8_exists? && !redis_db.get("streams:#{@track.id}")
       redis_db.setex "streams:#{@track.id}", 120, 1
-      StreamWorker.perform_async @track.id
+      StreamWorker.perform_async @track.id, @track.file.path
     end
   end
 end
