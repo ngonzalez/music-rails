@@ -16,6 +16,20 @@ class TrackDecorator < Draper::Decorator
       h.highlight object.send(name), h.search_terms_array
     end
   end
+  def format_name
+    case object.format_info
+      when /FLAC/ then "FLAC"
+      when /ALAC/ then "ALAC"
+      when /WAV/ then "WAV"
+      when /AIFF/ then "AIFF"
+      when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/ then "MP3"
+      when /WAVE audio/ then "WAV"
+      when /iTunes AAC/ then "iTunes AAC"
+      when /MPEG v4/ then "MPEG4"
+      when /clip art|BINARY|data/ then "DATA"
+      else "UNKNOWN"
+    end
+  end
   def m3u8_exists?
     File.exists? m3u8_path rescue false
   end

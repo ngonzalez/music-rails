@@ -16,8 +16,7 @@
         %li
           %h5
             .label.label-primary= link_to item.year, item.year_url, default_transition
-            .label.label-info= item.format_name
-            %span.label.label-default.label-as-badge
+            %span.label.label-info
               = link_to item.folder_name, item.folder_url, default_transition
               - if item.subfolder_url
                 |

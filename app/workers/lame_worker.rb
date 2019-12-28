@@ -5,7 +5,7 @@ class LameWorker
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
   def perform track_id
-    track = Track.find track_id
+    track = Track.find(track_id).decorate
     if !track.file
       if track.format_name =~ /MP3/ || ["iTunes AAC", "ALAC"].include?(track.format_name)
         begin
