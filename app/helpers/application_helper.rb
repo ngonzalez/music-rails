@@ -19,8 +19,8 @@ module ApplicationHelper
     tracks.each_with_object({}) do |track, hash|
       hash[track.id] = {
         id: track.id,
-        url: track_path(track, format: :json)
-      }.merge(track.url_infos)
+        url: track_path(track, format: :json),
+      }
     end
   end
 end
