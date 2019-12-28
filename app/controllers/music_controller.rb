@@ -2,7 +2,6 @@ class MusicController < ApplicationController
   require Rails.root.join "lib/helpers/search_helpers"
   include SearchHelpers
 
-  before_action :session_clear, only: [:index]
   before_action :session_store, only: [:create]
   before_action :session_load
 
@@ -77,10 +76,6 @@ class MusicController < ApplicationController
     if session[:search_params]
       @search_params = get_search_params  JSON.parse(session[:search_params], symbolize_names: true)
     end
-  end
-
-  def session_clear
-    session[:search_params] = {}.to_json
   end
 
   def search_releases

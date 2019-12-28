@@ -3,7 +3,7 @@
 
 %div{ 'data-role': 'page', 'id': 'search' }
   .container
-    = form_tag music_index_path, default_transition.merge('data-method': :post) do
+    = form_tag music_index_path, default_transition.merge('data-method': :get) do
       .form-group
         .col-md-5
           = text_field_tag :q, search_params[:q], class: 'form-control'
