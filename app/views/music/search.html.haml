@@ -6,7 +6,7 @@
     = form_tag music_index_path, default_transition.merge('data-method': :get) do
       .form-group
         .col-md-5
-          = text_field_tag :q, search_params[:q], class: 'form-control'
+          = text_field_tag :q, search_params[:q], class: 'form-control', type: 'search'
         .col-md-5
           %button.btn.btn-default{ type: 'submit' } Search
     .clear
