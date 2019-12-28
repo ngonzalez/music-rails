@@ -73,8 +73,10 @@ class MusicController < ApplicationController
   end
 
   def session_load
-    if session[:search_params]
-      @search_params = get_search_params JSON.parse(session[:search_params], symbolize_names: true)
+    @search_params = if session[:search_params]
+      get_search_params JSON.parse(session[:search_params], symbolize_names: true)
+    else
+      {}
     end
   end
 
