@@ -7,11 +7,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :stats, only: [:index]
-
   resources :tracks, only: [:show]
-
-  resources :uploads, only: [:new, :create]
 
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
