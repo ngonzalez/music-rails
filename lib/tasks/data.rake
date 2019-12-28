@@ -5,7 +5,10 @@ namespace :data do
   desc 'update'
   task update: :environment do
     clear_deleted_folders
-    update_releases
+    Release.find_each do |release|
+      update_release_path release
+      update_release_folder_dates release
+    end
     import_folders
     import_subfolders
     update_releases_year

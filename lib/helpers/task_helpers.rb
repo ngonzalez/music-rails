@@ -5,13 +5,6 @@ module TaskHelpers
     end
   end
 
-  def update_releases
-    Release.find_each do |release|
-      update_release_path release
-      update_release_folder_dates release
-    end
-  end
-
   def import_folders
     items = Release.pluck :name
     FOLDERS.each do |folder|
