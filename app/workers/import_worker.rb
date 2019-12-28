@@ -14,6 +14,8 @@ class ImportWorker
 
   def set_release options
     @release = Release.create! options.slice(*[:name, :folder, :subfolder, :source])
+    f = File::Stat.new release.decorate.public_path
+    release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
   rescue Exception => exception
     Rails.logger.error exception
   end

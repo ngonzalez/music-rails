@@ -51,7 +51,7 @@ module SearchHelpers
     search.hits.each_with_object([]) { |hit, array|
       item = accessor ? hit.result.send(accessor) : hit.result
       next if item.nil?
-      item = item.decorate.search_infos
+      item = item.decorate.details
       array << item unless array.include? item
     }
   end
