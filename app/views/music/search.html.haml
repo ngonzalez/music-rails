@@ -15,14 +15,14 @@
       - @releases.each do |item|
         %li
           %h5
-            .label.label-primary= link_to item.year, item.year_url, default_transition
+            .label.label-primary= link_to item.year, item.year_url, default_transition.merge('data-method': :post)
             %span.label.label-info
-              = link_to item.folder_name, item.folder_url, default_transition
+              = link_to item.folder_name, item.folder_url, default_transition.merge('data-method': :post)
               - if item.subfolder_url
                 |
-                = link_to item.subfolder_name, item.subfolder_url, default_transition
+                = link_to item.subfolder_name, item.subfolder_url, default_transition.merge('data-method': :post)
             %span.search_link
-              = link_to highlight(item.formatted_name, search_terms_array), item.url, default_transition
+              = link_to highlight(item.formatted_name, search_terms_array), item.url
 
     %small.margin-20
       = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
