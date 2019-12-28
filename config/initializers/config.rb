@@ -14,10 +14,16 @@ FOLDERS_WITH_SUBFOLDERS = ["backup"]
 EXCEPT_GRPS = /EXAMPLE/
 EXCEPT_RLS = []
 FORMAT_NAME_STRINGS = [
-  "7INCH", "VINYL", "VLS", "CDA", "CDS", "CDM", "2CD", "Bootleg",
-  "(Bootleg)", "(Promo_CD)", "(Promo_CDS)", "(Promo_WEB)",
-  "VA", "EP", "Repack", "REPACK", "Retail", "RETAiL",
-  "BONUS_TRACKS", "Proper", "PROPER", "READNFO",
-  "BR", "ES", "FR", "IT", "SP",
-  "WAV", "FLAC", "AIFF", "ALAC",
+  "7INCH", "VINYL", "VLS", "CDA", "CDS", "CDM", "2CD", "Bootleg", "EP", "CDEP", "LP", "CDR", "DVD",
+  "(Bootleg)", "(Promo_CD)", "(Promo_CDS)", "(Promo_WEB)", "VA", "Repack", "REPACK", "Retail", "RETAiL",
+  "BONUS_TRACKS", "Proper", "PROPER", "READNFO", "BR", "ES", "FR", "IT", "SP", "JP",
 ]
+SUPPORTED_AUDIO_FORMATS = {
+  'MPEG ADTS' => 'MP3',
+  'Audio file with ID3' => 'MP3',
+  'AAC' => 'AAC',
+  'AIFF' => 'AIFF',
+  'ALAC' => 'ALAC',
+  'FLAC' => 'FLAC',
+  'WAV' => 'WAV',
+}
