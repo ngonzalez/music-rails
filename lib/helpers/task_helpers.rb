@@ -109,8 +109,8 @@ module TaskHelpers
   end
 
   def update_releases_format_name
-    Release.where(format_name: nil).each do |release|
-      release.update! format_name: get_format_from_release_name(release) || format_track_format(release)
+    Release.joins(:tracks).where(format_name: nil).each do |release|
+      release.update! format_name: format_track_format(release.tracks[0])
     end
   end
 
@@ -135,7 +135,9 @@ module TaskHelpers
 
   def update_tracks_format_name
     Release.includes(:tracks).where(tracks: { format_name: nil }).each do |release|
-      release.tracks.each{|track| track.update! format_name: format_track_format(release) }
+      release.tracks.each do |track|
+        track.update! format_name: format_track_format(track)
+      end
     end
   end
 

@@ -15,15 +15,14 @@ module ReleaseHelpers
     array[0..array.index(year)-1].join(" ").gsub("_", " ")
   end
 
-  def format_track_format release
-    return if release.tracks.empty?
-    case release.tracks[0].format_info
+  def format_track_format track
+    case track.format_info
       when /FLAC/ then "FLAC"
-      when /MPEG ADTS, layer III, v1, 192 kbps/ then "MP3-192CBR"
-      when /MPEG ADTS, layer III, v1, 256 kbps/ then "MP3-256CBR"
-      when /MPEG ADTS, layer III, v1, 320 kbps/ then "MP3-320CBR"
+      when /ALAC/ then "ALAC"
+      when /WAV/ then "WAV"
+      when /AIFF/ then "AIFF"
       when /MPEG ADTS, layer III|MPEG ADTS, layer II|Audio file with ID3/
-        case release.tracks.map(&:bitrate).sum.to_f / release.tracks.length
+        case track.release.tracks.map(&:bitrate).sum.to_f / track.release.tracks.length
           when 192.0 then "MP3-192CBR"
           when 256.0 then "MP3-256CBR"
           when 320.0 then "MP3-320CBR"
@@ -33,15 +32,7 @@ module ReleaseHelpers
       when /iTunes AAC/ then "iTunes AAC"
       when /MPEG v4/ then "MPEG4"
       when /clip art|BINARY|data/ then "DATA"
-    end
-  end
-
-  def get_format_from_release_name release
-    case release.name
-      when /\-FLAC\-/ then "FLAC"
-      when /\-ALAC\-/ then "ALAC"
-      when /\-WAV\-/ then "WAV"
-      when /\-AIFF\-/ then "AIFF"
+      else "UNKNOWN"
     end
   end
 
