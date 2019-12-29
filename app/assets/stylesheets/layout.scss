@@ -18,7 +18,24 @@ small {
   background-size: 100% 1.3em;
   color: #000;
 }
-.label-primary, .label-info {
+ul li a :hover {
+  text-decoration: none;
+}
+.margin-20 {
+  margin: 20px;
+}
+.margin-10 {
+  margin: 10px;
+}
+.polaroid-images a {
+	background: white;
+	display: inline;
+	float: left;
+	margin: 0 15px 30px;
+	padding: 10px 10px 25px;
+	box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
+}
+.label-primary, .label-info, .badge {
   opacity: 0.7;
 }
 .label-default {
@@ -40,9 +57,30 @@ ul {
   list-style-type: none;
 }
 i.fa-4 {
-  font-size: 50px !important;
+  font-size: 40px;
+}
+i.fa-3 {
+  font-size: 30px;
+}
+i.fa-list {
+  margin: 20px 0;
+}
+i.fa-google-play, i.fa-circle-notch {
+  margin: -5px 0 20px 0;
+}
+div.badge.duration {
+  margin-bottom: 10px;
 }
 span.search_link {
   margin: 0 10px;
   vertical-align: -webkit-baseline-middle;
+}
+div.row ul {
+  margin: 20px 0;
+}
+div.row.odd {
+  background-color: rgba(89, 89, 89, 0.05);
+}
+div.row.even {
+  background-color: rgba(216, 216, 216, 0.05);
 }

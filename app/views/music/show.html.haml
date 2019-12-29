@@ -6,7 +6,7 @@
     %ul
       %li
         = link_to music_index_path(permitted_params), default_transition.merge('data-method': :post) do
-          %i.fa.fa-list.fa-4
+          %i.fas.fa-list.fa-4
 
   = stylesheet_link_tag :music
 
@@ -32,12 +32,11 @@
         - @release.nfo_files.each do |nfo|
           %li
             = link_to nfo.file.url, target: "_blank" do
-              %i.fa.fa-sticky-note.fa-4.shadow-light.margin-10
+              %i.fab.fa-sticky-note.fa-4.shadow-light.margin-10
 
   .tracks
     - @tracks.each do |track|
-      .spacer
-      .row
+      .row{ class: cycle('odd', 'even') }
         %ul
           %li
             .col-md-2
@@ -51,10 +50,10 @@
             .col-md-1
               = track.link_to_search :year
             .col-md-1
-              .badge= track.duration
+              .badge.duration= track.duration
             .col-md-1
-              %i.fa.fa-gear.fa-4.fa-spin.processing.hidden.grey-dark
-              %i.fa.fa-play-circle.fa-4.play-btn{ "data-id" => track.id }
+              %i.fas.fa-3.fa-circle-notch.fa-spin.processing.hidden
+              %i.fab.fa-3.fa-google-play.play-btn{ "data-id" => track.id }
 
   :javascript
     $(document).ready(function(e) {

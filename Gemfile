@@ -4,7 +4,7 @@ source 'https://rubygems.org' do
   gem 'coffee-rails'
   gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
   gem 'draper'
-  gem 'font-awesome-sass', '4.7.0'
+  gem 'font-awesome-sass', '~> 5.12.0'
   gem 'friendly_id'
   gem 'haml-rails'
   gem 'jquery-rails'
