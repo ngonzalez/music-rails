@@ -20,7 +20,7 @@ function init_players(tracks, css) {
         }, 1500);
     }
     function observe() {
-        $.each($('.play-btn'), function(i, element) {
+        $.each($('.' + css.PLAY_BTN), function(i, element) {
             var data = tracks[parseInt($(element).data('id'))]
             $(element).click(function(e) {
                 processing($(element), data);

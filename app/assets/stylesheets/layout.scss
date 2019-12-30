@@ -18,9 +18,6 @@ small {
   background-size: 100% 1.3em;
   color: #000;
 }
-ul li a :hover {
-  text-decoration: none;
-}
 .margin-20 {
   margin: 20px;
 }
@@ -56,18 +53,14 @@ ul li a :hover {
 ul {
   list-style-type: none;
 }
+ul li a :hover {
+  text-decoration: none;
+}
 i.fa-4 {
-  font-size: 40px;
+  font-size: 45px;
 }
 i.fa-3 {
   font-size: 30px;
-}
-div.badge.duration {
-  margin-bottom: 10px;
-}
-span.search_link {
-  margin: 0 10px;
-  vertical-align: -webkit-baseline-middle;
 }
 div.row ul {
   margin: 20px 0;
@@ -77,4 +70,14 @@ div.row.odd {
 }
 div.row.even {
   background-color: rgba(216, 216, 216, 0.05);
+}
+div.badge.duration {
+  margin-bottom: 10px;
+}
+span.search_link {
+  margin: 0 10px;
+  vertical-align: -webkit-baseline-middle;
+}
+div.tracks div.row:last-child {
+  padding-bottom: 70px;
 }

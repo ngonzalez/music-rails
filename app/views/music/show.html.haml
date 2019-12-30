@@ -59,6 +59,6 @@
     $(document).ready(function(e) {
       init_players(
         #{track_files(@tracks).to_json.html_safe},
-        { HIDDEN: 'hidden', PROCESSING: 'processing' }
+        { HIDDEN: 'hidden', PROCESSING: 'processing', PLAY_BTN: 'play-btn' }
       );
     });
