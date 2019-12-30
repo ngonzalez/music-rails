@@ -51,8 +51,8 @@
             .col-md-1
               .badge.duration= track.duration
             .col-md-1
-              %i.fas.fa-3.fa-cog.fa-spin.processing.hidden
-              %i.fab.fa-3.fa-google-play.play-btn{ "data-id" => track.id }
+              = processing_btn
+              = play_btn track
 
   :javascript
-    window.data = #{@release.track_urls.to_json.html_safe}
+    new App.Tracks(#{@release.track_urls.to_json.html_safe})

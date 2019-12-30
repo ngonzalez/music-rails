@@ -1,31 +1,29 @@
 
-css = <%= tracks_css.to_json.html_safe %>
+class App.Tracks
+    constructor: (data) ->
+        @data = data
+        @intervals = {}
+        @css = <%= tracks_css.to_json.html_safe %>
+        @observeRows()
 
-hasIcon = (element, className) ->
-    element.parent().find('.' + className).is ':visible'
+    observeRows: () ->
+        $.each $('.' + @css.play_btn), (i, element) =>
+            $(element).click (e) =>
+                $('.' + @css.play_btn).off 'click'
+                @handle_click_event $(element), @data[parseInt($(element).data('id'))]
 
-toggleIcon = (element, className) ->
-    if hasIcon(element, className) then element.show() else element.hide()
-    element.parent().find('.' + className).toggleClass css.hidden
+    handle_click_event: (element, item) ->
+        @toggleIcon element, @css.processing
+        @intervals[item.id] = setInterval () =>
+            $.get item.url, (response) =>
+                if response.stream_url
+                    @toggleIcon element, @css.processing
+                    @observeRows()
+                    clearInterval @intervals[item.id]
+                    window.location = response.stream_url
+        , 1000
 
-intervals = {}
-toggleProcessing = (element, item) ->
-    toggleIcon element, css.processing
-    intervals[item.id] = setInterval () ->
-        $.get item.url, (response) ->
-            if response.stream_url
-                toggleIcon element, css.processing
-                clearInterval intervals[item.id]
-                observeRows()
-                window.location = response.stream_url
-    , 1000
+    toggleIcon: (element, className) ->
+        element.toggleClass @css.hidden
+        element.parent().find('.' + className).toggleClass @css.hidden
 
-observeRows = () ->
-    $.each $('.' + css.play_btn), (i, element) ->
-        $(element).click (e) ->
-            $('.' + css.play_btn).off 'click'
-            toggleProcessing $(element), window.data[parseInt($(element).data('id'))]
-
-
-$(document).ready ->
-    observeRows()
