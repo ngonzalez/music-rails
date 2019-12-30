@@ -11,7 +11,7 @@
           %button.btn.btn-default{ type: 'submit' } Search
     .clear
 
-    %ol
+    %ol.search
       - @releases.each do |item|
         %li
           %h5
@@ -21,7 +21,7 @@
               - if item.subfolder_url
                 |
                 = link_to item.subfolder_name, item.subfolder_url, default_transition.merge('data-method': :post)
-            %span.search_link
+            %span.link
               = link_to highlight(item.formatted_name, search_terms_array), item.url
 
     %small.margin-20

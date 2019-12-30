@@ -9,6 +9,12 @@ body {
 small {
   font-size: 12px;
 }
+ul {
+  list-style-type: none;
+}
+ul li a :hover {
+  text-decoration: none;
+}
 .ui-page {
   background-attachment: fixed;
   background-color: #FFF; 
@@ -18,11 +24,20 @@ small {
   background-size: 100% 1.3em;
   color: #000;
 }
+.margin-10 {
+  margin: 10px;
+}
 .margin-20 {
   margin: 20px;
 }
-.margin-10 {
-  margin: 10px;
+.clear {
+  clear: both;
+}
+i.fa-4 {
+  font-size: 45px;
+}
+i.fa-3 {
+  font-size: 30px;
 }
 .polaroid-images a {
 	background: white;
@@ -32,51 +47,38 @@ small {
 	padding: 10px 10px 25px;
 	box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
 }
-.label-primary, .label-info, .badge {
+ol.search .label-primary,
+ol.search .label-info,
+ol.search .badge {
   opacity: 0.7;
 }
-.label-default {
+ol.search .label-default {
   background-color: rgba(71, 164, 70, 0.5);
 }
-.label-success {
+ol.search .label-success {
   background-color: rgba(65, 191, 63, 0.7);
 }
-.label a,
-.label a:hover,
-.label a:visited {
+ol.search .label a,
+ol.search .label a:hover,
+ol.search .label a:visited {
   color: #FFF;
   text-decoration: none;
 }
-.clear {
-  clear: both;
+ol.search span.link {
+  margin: 0 10px;
+  vertical-align: middle;
 }
-ul {
-  list-style-type: none;
+div.tracks div.row {
+  margin: 10px 0;
 }
-ul li a :hover {
-  text-decoration: none;
-}
-i.fa-4 {
-  font-size: 45px;
-}
-i.fa-3 {
-  font-size: 30px;
-}
-div.row ul {
-  margin: 20px 0;
-}
-div.row.odd {
+div.tracks div.row.odd {
   background-color: rgba(89, 89, 89, 0.05);
 }
-div.row.even {
+div.tracks div.row.even {
   background-color: rgba(216, 216, 216, 0.05);
 }
-div.badge.duration {
+div.tracks div.badge.duration {
   margin-bottom: 10px;
-}
-span.search_link {
-  margin: 0 10px;
-  vertical-align: -webkit-baseline-middle;
 }
 div.tracks div.row:last-child {
   padding-bottom: 70px;
