@@ -19,15 +19,15 @@ class TracksController < ApplicationController
   end
 
   def create_file
-    if !@track.file && !redis_db.get("tracks:#{@track.id}")
-      redis_db.setex "tracks:#{@track.id}", 120, 1
+    if !@track.file && !RedisDb.client.get("tracks:#{@track.id}")
+      RedisDb.client.setex "tracks:#{@track.id}", 120, 1
       LameWorker.perform_async @track.id
     end
   end
 
   def create_m3u8
-    if @track.file && !@track.decorate.m3u8_exists? && !redis_db.get("streams:#{@track.id}")
-      redis_db.setex "streams:#{@track.id}", 120, 1
+    if @track.file && !@track.decorate.m3u8_exists? && !RedisDb.client.get("streams:#{@track.id}")
+      RedisDb.client.setex "streams:#{@track.id}", 120, 1
       StreamWorker.perform_async @track.id, @track.file.path
     end
   end
