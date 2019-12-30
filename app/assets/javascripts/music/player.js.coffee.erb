@@ -1,0 +1,31 @@
+
+css = <%= tracks_css.to_json.html_safe %>
+
+hasIcon = (element, className) ->
+    element.parent().find('.' + className).is ':visible'
+
+toggleIcon = (element, className) ->
+    if hasIcon(element, className) then element.show() else element.hide()
+    element.parent().find('.' + className).toggleClass css.hidden
+
+intervals = {}
+toggleProcessing = (element, item) ->
+    toggleIcon element, css.processing
+    intervals[item.id] = setInterval () ->
+        $.get item.url, (response) ->
+            if response.stream_url
+                toggleIcon element, css.processing
+                clearInterval intervals[item.id]
+                observeRows()
+                window.location = response.stream_url
+    , 1000
+
+observeRows = () ->
+    $.each $('.' + css.play_btn), (i, element) ->
+        $(element).click (e) ->
+            $('.' + css.play_btn).off 'click'
+            toggleProcessing $(element), window.data[parseInt($(element).data('id'))]
+
+
+$(document).ready ->
+    observeRows()

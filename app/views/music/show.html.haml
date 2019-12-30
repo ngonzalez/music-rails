@@ -55,9 +55,4 @@
               %i.fab.fa-3.fa-google-play.play-btn{ "data-id" => track.id }
 
   :javascript
-    $(document).ready(function(e) {
-      init_players(
-        #{@release.track_urls.to_json.html_safe},
-        { HIDDEN: 'hidden', PROCESSING: 'processing', PLAY_BTN: 'play-btn' }
-      );
-    });
+    window.data = #{@release.track_urls.to_json.html_safe}
