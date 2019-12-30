@@ -7,9 +7,9 @@ class App.Tracks
         @observeRows()
 
     observeRows: () ->
-        $.each $('.' + @css.play_btn), (i, element) =>
+        $.each $('.' + @css.play), (i, element) =>
             $(element).click (e) =>
-                $('.' + @css.play_btn).off 'click'
+                $('.' + @css.play).off 'click'
                 @handleClickEvent $(element), @data[parseInt($(element).data('id'))]
 
     handleClickEvent: (element, item) ->
