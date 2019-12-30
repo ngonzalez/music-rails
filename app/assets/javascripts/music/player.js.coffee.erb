@@ -3,7 +3,7 @@ class App.Tracks
     constructor: (data) ->
         @data = data
         @intervals = {}
-        @css = <%= tracks_css.to_json.html_safe %>
+        @css = <%= fa_css.to_json.html_safe %>
         @observeRows()
 
     observeRows: () ->
@@ -26,4 +26,3 @@ class App.Tracks
     toggleIcon: (element, className) ->
         element.toggleClass @css.hidden
         element.parent().find('.' + className).toggleClass @css.hidden
-
