@@ -51,13 +51,8 @@
             .col-md-1
               .badge.duration= track.duration
             .col-md-1
-              %i.fas.fa-3.fa-cog.fa-spin.processing.hidden
-              %i.fab.fa-3.fa-google-play.play-btn{ "data-id" => track.id }
+              = processing_btn
+              = play_btn track
 
   :javascript
-    $(document).ready(function(e) {
-      init_players(
-        #{@release.track_urls.to_json.html_safe},
-        { HIDDEN: 'hidden', PROCESSING: 'processing', PLAY_BTN: 'play-btn' }
-      );
-    });
+    new App.Tracks(#{@release.track_urls.to_json.html_safe})

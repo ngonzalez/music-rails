@@ -1,0 +1,29 @@
+
+class App.Tracks
+    constructor: (data) ->
+        @data = data
+        @intervals = {}
+        @css = <%= tracks_css.to_json.html_safe %>
+        @observeRows()
+
+    observeRows: () ->
+        $.each $('.' + @css.play_btn), (i, element) =>
+            $(element).click (e) =>
+                $('.' + @css.play_btn).off 'click'
+                @handleClickEvent $(element), @data[parseInt($(element).data('id'))]
+
+    handleClickEvent: (element, item) ->
+        @toggleIcon element, @css.processing
+        @intervals[item.id] = setInterval () =>
+            $.get item.url, (response) =>
+                if response.stream_url
+                    @toggleIcon element, @css.processing
+                    @observeRows()
+                    clearInterval @intervals[item.id]
+                    window.location = response.stream_url
+        , 1000
+
+    toggleIcon: (element, className) ->
+        element.toggleClass @css.hidden
+        element.parent().find('.' + className).toggleClass @css.hidden
+
