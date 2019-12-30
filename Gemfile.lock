@@ -205,6 +205,9 @@ GEM
     redis-rack (2.0.6)
       rack (>= 1.5, < 3)
       redis-store (>= 1.2, < 2)
+    redis-rack-cache (2.2.1)
+      rack-cache (>= 1.10, < 2)
+      redis-store (>= 1.6, < 2)
     redis-rails (5.0.2)
       redis-actionpack (>= 5.0, < 6)
       redis-activesupport (>= 5.0, < 6)
@@ -304,6 +307,7 @@ DEPENDENCIES
   rack-cors!
   rails (= 5.2.3)!
   redis!
+  redis-rack-cache!
   redis-rails!
   sass-rails!
   sidekiq!
