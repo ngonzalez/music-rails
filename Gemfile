@@ -16,7 +16,6 @@ source 'https://rubygems.org' do
   gem 'pg'
   gem 'pry'
   gem 'puma'
-  gem 'rack-cache', require: 'rack/cache'
   gem 'rack-cors', require: 'rack/cors'
   gem 'rails', '6.0.2.1'
   gem 'redis'
@@ -30,7 +29,6 @@ source 'https://rubygems.org' do
   gem 'swipebox', git: "git@github.com:ngonzalez/swipebox.git"
   gem 'taglib-ruby'
   gem 'tilt', require: 'tilt/sass'
-  gem 'typhoeus'
   gem 'uglifier'
   gem 'uuid'
   gem 'whenever'

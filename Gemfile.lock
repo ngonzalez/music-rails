@@ -107,8 +107,6 @@ GEM
       request_store (>= 1.0)
     erubi (1.9.0)
     erubis (2.7.0)
-    ethon (0.12.0)
-      ffi (>= 1.3.0)
     execjs (2.7.0)
     faraday (0.17.1)
       multipart-post (>= 1.2, < 3)
@@ -288,8 +286,6 @@ GEM
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    typhoeus (1.3.1)
-      ethon (>= 0.9.0)
     tzinfo (1.2.6)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
@@ -324,7 +320,6 @@ DEPENDENCIES
   pg!
   pry!
   puma!
-  rack-cache!
   rack-cors!
   rails (= 6.0.2.1)!
   redis!
@@ -338,7 +333,6 @@ DEPENDENCIES
   swipebox!
   taglib-ruby!
   tilt!
-  typhoeus!
   uglifier!
   uuid!
   whenever!
