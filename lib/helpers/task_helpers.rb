@@ -94,12 +94,14 @@ module TaskHelpers
   def update_releases_formatted_name
     Release.where(formatted_name: nil).each do |release|
       next unless release.year
-      array = release.name.gsub("_-_", "-").gsub(".", "").split("-")
+      array = release.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
       array -= ALLOWED_SOURCES
-      array -= FORMAT_NAME_STRINGS
       array -= SUPPORTED_AUDIO_FORMATS.map &:last
+      FORMAT_NAME_STRINGS.each do |string|
+        array.reject! { |str| str.downcase == string.downcase }
+      end
       next unless array.index(release.year)
-      formatted_name = array[0..array.index(release.year)-1].join(" ").gsub("_", " ")
+      formatted_name = array[0..array.index(release.year)-1].join(' ').gsub('_', ' ')
       release.update! formatted_name: formatted_name
     end
   end

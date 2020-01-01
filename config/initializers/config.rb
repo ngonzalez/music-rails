@@ -14,7 +14,7 @@ EXCEPT_GRPS = /EXAMPLE/
 EXCEPT_RLS = []
 FORMAT_NAME_STRINGS = [
   "7INCH", "VINYL", "VLS", "CDA", "CDS", "CDM", "2CD", "EP", "CDEP", "LP", "CDR", "DVD",
-  "(Bootleg)", "(Promo_CD)", "(Promo_CDS)", "(Promo_WEB)", "(Full)",
+  "(Bootleg)", "(Promo_CD)", "(Promo_CDS)", "(Promo_WEB)", "(Full)", "(WEB)",
   "Bootleg", "Promo_CD", "Promo_CDS", "Promo_WEB", "Full",
   "Repack", "Promo", "Proper", "Single", "Retail",
   "VA", "REPACK", "RETAIL", "SINGLE", "BONUS_TRACKS", "PROPER", "READNFO",
