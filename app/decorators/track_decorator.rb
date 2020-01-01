@@ -3,18 +3,8 @@ class TrackDecorator < Draper::Decorator
   def public_path
     [BASE_PATH, release.decorate.path, name].join("/")
   end
-  def link_to_search name
-    h.link_to h.music_index_path(q: object.send(name)), h.default_transition do
-      h.highlight object.send(name), h.search_terms_array
-    end
-  end
   def duration
     Time.at(object.length).strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
-  end
-  [:title, :album, :genre].each do |name|
-    define_method name do
-      h.highlight object.send(name), h.search_terms_array
-    end
   end
   def format_name
     SUPPORTED_AUDIO_FORMATS.detect { |format, _| track.format_info =~ /#{format}/ }[1]

@@ -41,15 +41,17 @@
         %ul
           %li
             .col-md-2
-              = track.link_to_search :artist
+              = link_to highlight(track.artist, search_terms_array),
+                  music_index_path(q: track.artist), default_transition
             .col-md-2
-              = track.title
+              = highlight track.title, search_terms_array
             .col-md-2
-              = track.album
+              = highlight track.album, search_terms_array
             .col-md-1
-              = track.genre
+              = highlight track.genre, search_terms_array
             .col-md-1
-              = track.link_to_search :year
+              = link_to highlight(track.year, search_terms_array),
+                  music_index_path(q: track.year), default_transition
             .col-md-1
               .badge.duration= track.duration
             .col-md-1
