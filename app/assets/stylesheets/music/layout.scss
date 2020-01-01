@@ -74,8 +74,11 @@ div.images {
 div.images div.row {
   margin: 20px;
 }
+div.tracks {
+  margin: 0 0 70px 0;
+}
 div.tracks div.row {
-  margin: 10px 0;
+  padding: 5px;
 }
 div.tracks div.row.odd {
   background-color: rgba(89, 89, 89, 0.05);
@@ -85,7 +88,4 @@ div.tracks div.row.even {
 }
 div.tracks div.badge.duration {
   margin-bottom: 10px;
-}
-div.tracks div.row:last-child {
-  padding-bottom: 70px;
 }
