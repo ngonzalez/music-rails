@@ -1,5 +1,9 @@
 class ListDecorator < Draper::Decorator
   def file_names
-    File.read(file.path).split("\n").reject{ |line| line =~ /^#/ }.reject(&:blank?).grep(/#{ALLOWED_AUDIO_FORMATS.join("|")}/).map(&:strip)
+    files = File.read(file.path).split("\n")
+    files = files.reject { |line| line =~ /^#/ }.reject(&:blank?)
+    files = files.grep(/#{ALLOWED_AUDIO_FORMATS.flat_map { |_, format| format[:extensions] }.join("|")}/)
+    files = files.map(&:strip).collect { |line| line.split(' ')[0] }
+    files
   end
 end

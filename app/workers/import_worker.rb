@@ -31,7 +31,7 @@ class ImportWorker
   end
 
   def import_tracks
-    ALLOWED_AUDIO_FORMATS.each do |format|
+    ALLOWED_AUDIO_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
       list_files(release.decorate.public_path, format) do |path, file_name|
         next if release.tracks.detect { |track| track.name == file_name }
         create_track release, path, file_name

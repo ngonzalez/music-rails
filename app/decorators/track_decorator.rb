@@ -7,7 +7,7 @@ class TrackDecorator < Draper::Decorator
     Time.at(object.length).strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
   end
   def format_name
-    SUPPORTED_AUDIO_FORMATS.detect { |format, _| track.format_info =~ /#{format}/ }[1]
+    ALLOWED_AUDIO_FORMATS.detect { |_, format| format[:tags].any? { |tag| object.format_info =~ /#{tag}/ } }[0]
   end
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]

@@ -95,8 +95,8 @@ module TaskHelpers
     Release.where(formatted_name: nil).each do |release|
       next unless release.year
       array = release.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
+      array -= ALLOWED_AUDIO_FORMATS.keys
       array -= ALLOWED_SOURCES
-      array -= SUPPORTED_AUDIO_FORMATS.map &:last
       EXCEPT_NAMES.each do |string|
         array.reject! { |str| str == string }
       end

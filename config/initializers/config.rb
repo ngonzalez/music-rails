@@ -9,4 +9,3 @@ FOLDERS                 = YAML.load_file Rails.root.join('config/yaml/folders.ya
 FOLDERS_WITH_SUBFOLDERS = YAML.load_file Rails.root.join('config/yaml/folders_with_subfolders.yaml')
 EXCEPT_RLS              = YAML.load_file Rails.root.join('config/yaml/except_rls.yaml')
 EXCEPT_NAMES            = YAML.load_file Rails.root.join('config/yaml/except_names.yaml')
-SUPPORTED_AUDIO_FORMATS = YAML.load_file Rails.root.join('config/yaml/supported_audio_formats.yaml')
