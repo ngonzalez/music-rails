@@ -2,7 +2,7 @@
   = javascript_include_tag :music
   = stylesheet_link_tag :music
 
-%div{ "data-role": "page", "id": "release-#{@release.id}" }
+%div{ 'data-role': 'page' }
   .back
     .row
       %ul
@@ -11,5 +11,5 @@
             %i.fas.fa-4.fa-list
 
   - cache @release do
-    = render partial: "music/images"
-    = render partial: "music/tracks"
+    = render partial: 'music/images'
+    = render partial: 'music/tracks'

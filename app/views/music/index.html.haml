@@ -2,7 +2,7 @@
   = javascript_include_tag :music
   = stylesheet_link_tag :music
 
-%div{ 'data-role': 'page', 'id': 'search' }
+%div{ 'data-role': 'page' }
   .container
     = form_tag music_index_path, default_transition.merge(method: :get) do
       .form-group
