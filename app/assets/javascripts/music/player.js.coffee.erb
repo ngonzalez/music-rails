@@ -1,7 +1,6 @@
 
 class App.Tracks
-    constructor: (data) ->
-        @data = data
+    constructor: (@data) ->
         @intervals = {}
         @css = <%= fa_css.to_json.html_safe %>
         @observeRows()

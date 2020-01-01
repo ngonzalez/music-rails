@@ -36,7 +36,7 @@ module SearchHelpers
   end
 
   def parse_search_params params
-    q = params[:q].strip.titleize if params[:q]
+    q = params[:q].strip if params[:q]
     if q && year = q.scan(/\b\d{4}\b/)[0].to_i
       year = nil if year && year <= 0
       year = nil if year && year.to_s.length != 4
