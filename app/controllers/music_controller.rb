@@ -53,20 +53,14 @@ class MusicController < ApplicationController
   end
 
   def session_store
-    if permitted_params.to_hash.compact.any?
-      session[:search_params] = permitted_params.to_hash.compact.to_json
-    end
+    session[:search_params] = permitted_params.to_hash.compact.to_json if permitted_params.to_hash.compact.any?
   end
 
   def session_load
-    @search_params = if session[:search_params]
-      parse_search_params JSON.parse(session[:search_params], symbolize_names: true)
-    else
-      {}
-    end
+    @search_params = session[:search_params] ? JSON.parse(session[:search_params], symbolize_names: true) : {}
   end
 
   def search_releases
-    @releases = search_params.values.all?(&:blank?) ? [] : search_db(search_params)
+    @releases = search_params.values.all?(&:blank?) ? [] : search_db(parse_search_params(search_params))
   end
 end
