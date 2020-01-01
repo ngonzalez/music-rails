@@ -1,5 +1,7 @@
 ---
-  - jpg
-  - JPG
-  - jpeg
-  - JPEG
+  JPEG:
+    :extensions:
+      - jpg
+      - JPG
+      - jpeg
+      - JPEG

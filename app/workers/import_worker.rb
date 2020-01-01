@@ -39,7 +39,7 @@ class ImportWorker
     end
   end
   def import_images
-    ALLOWED_IMAGE_FORMATS.each do |format|
+    ALLOWED_IMAGE_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
       list_files(release.decorate.public_path, format) do |path, file_name|
         next if release.images.detect { |image| image.file_name == file_name }
         create_image release, path, file_name
