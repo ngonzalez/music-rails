@@ -7,7 +7,6 @@ ALLOWED_IMAGE_FORMATS   = YAML.load_file Rails.root.join('config/yaml/allowed_im
 ALLOWED_SOURCES         = YAML.load_file Rails.root.join('config/yaml/allowed_sources.yaml')
 FOLDERS                 = YAML.load_file Rails.root.join('config/yaml/folders.yaml')
 FOLDERS_WITH_SUBFOLDERS = YAML.load_file Rails.root.join('config/yaml/folders_with_subfolders.yaml')
-EXCEPT_GRPS             = YAML.load_file Rails.root.join('config/yaml/except_grp.yaml')
 EXCEPT_RLS              = YAML.load_file Rails.root.join('config/yaml/except_rls.yaml')
 EXCEPT_NAMES            = YAML.load_file Rails.root.join('config/yaml/except_names.yaml')
 SUPPORTED_AUDIO_FORMATS = YAML.load_file Rails.root.join('config/yaml/supported_audio_formats.yaml')
