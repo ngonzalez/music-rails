@@ -6,7 +6,7 @@
   .row
     %ul
       %li
-        = link_to music_index_path(permitted_params), default_transition.merge('data-method': :post) do
+        = link_to music_index_path(search_params), default_transition.merge('data-method': :post) do
           %i.fas.fa-list.fa-4.margin-20
 
   :scss

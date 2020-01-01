@@ -6,7 +6,7 @@ class MusicController < ApplicationController
   before_action :session_load
 
   attr_accessor :search_params
-  helper_method :search_params, :permitted_params
+  helper_method :search_params
 
   before_action :set_release, only: [:show]
   before_action :set_tracks, only: [:show]
