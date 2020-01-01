@@ -1,6 +1,5 @@
 BASE_PATH               = "/Volumes/External\ Drive"
 HLS_FOLDER              = "/tmp/hls"
-DEFAULT_ENCODING        = "mp3"
 HOST_NAME               = "example.com"
 ALLOWED_AUDIO_FORMATS   = YAML.load_file Rails.root.join('config/yaml/allowed_audio_formats.yaml')
 ALLOWED_IMAGE_FORMATS   = YAML.load_file Rails.root.join('config/yaml/allowed_image_formats.yaml')

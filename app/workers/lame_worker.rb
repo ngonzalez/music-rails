@@ -10,7 +10,7 @@ class LameWorker
       if ["AAC", "ALAC", "MP3"].include? track.format_name
         begin
           file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          temp_file = "/tmp/#{track.id}.#{default_encoding}"
           strip_metadata file_path, temp_file
           track.update! file: File.open(temp_file)
         ensure
@@ -19,7 +19,7 @@ class LameWorker
       elsif ["FLAC"].include? track.format_name
         begin
           file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          temp_file = "/tmp/#{track.id}.#{default_encoding}"
           temp_file_flac = "/tmp/#{track.id}.flac"
           temp_file_wav = "/tmp/#{track.id}.wav"
           copy_file file_path, temp_file_flac
@@ -34,7 +34,7 @@ class LameWorker
       elsif ["AIFF", "WAV"].include? track.format_name
         begin
           file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{DEFAULT_ENCODING}"
+          temp_file = "/tmp/#{track.id}.#{default_encoding}"
           encode file_path, temp_file
           track.update! file: File.open(temp_file)
         ensure
@@ -48,12 +48,16 @@ class LameWorker
 
   private
 
+  def default_encoding
+    ALLOWED_AUDIO_FORMATS.deep_symbolize_keys.flat_map { |_, format| format[:extensions] if format[:default] }.compact.pop
+  end
+
   def strip_metadata source, destination
     `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats -loglevel 0`
   end
 
   def encode source, destination
-    case DEFAULT_ENCODING
+    case default_encoding
       when "mp3"
         `lame --silent -b 320 -ms #{source} #{destination}`
       when "aac"
