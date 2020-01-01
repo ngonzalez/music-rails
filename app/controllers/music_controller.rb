@@ -8,11 +8,11 @@ class MusicController < ApplicationController
   attr_accessor :search_params
   helper_method :search_params
 
+  before_action :set_time, only: [:index]
+  before_action :search_releases, only: [:index]
+
   before_action :set_release, only: [:show]
   before_action :set_tracks, only: [:show]
-
-  before_action :set_time, only: [:index, :create]
-  before_action :search_releases, only: [:index, :create]
 
   def index
     respond_to do |format|
