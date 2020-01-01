@@ -4,10 +4,10 @@
 
 %div{ 'data-role': 'page', 'id': 'search' }
   .container
-    = form_tag music_index_path, default_transition.merge('data-method': :get) do
+    = form_tag music_index_path, default_transition.merge(method: :get, 'data-method': :get) do
       .form-group
         .col-md-5
-          = text_field_tag :q, search_params[:q], class: 'form-control', type: 'search'
+          = text_field_tag :q, params[:q], class: 'form-control', type: 'search'
         .col-md-5
           %button.btn.btn-default{ type: 'submit' } Search
     .clear
@@ -16,12 +16,12 @@
       - @releases.each do |item|
         %li
           %h5
-            .label.label-primary= link_to item.year, item.year_url, default_transition.merge('data-method': :post)
+            .label.label-primary= link_to item.year, item.year_url, default_transition
             %span.label.label-info
-              = link_to item.folder_name, item.folder_url, default_transition.merge('data-method': :post)
+              = link_to item.folder_name, item.folder_url, default_transition
               - if item.subfolder_url
                 |
-                = link_to item.subfolder_name, item.subfolder_url, default_transition.merge('data-method': :post)
+                = link_to item.subfolder_name, item.subfolder_url, default_transition
             %span.link
               = link_to highlight(item.formatted_name, search_terms_array), item.url
 

@@ -18,16 +18,6 @@ class MusicController < ApplicationController
     respond_to do |format|
       format.html { render :search }
       format.json do
-        render json: {}.to_json,
-          layout: false
-      end
-    end
-  end
-
-  def create
-    respond_to do |format|
-      format.html { render :search }
-      format.json do
         render json: @releases.map(&:marshal_dump).to_json,
           layout: false
       end
