@@ -25,5 +25,6 @@
             %span.link
               = link_to highlight(item.formatted_name, search_terms_array), item.url
 
-    %small.margin-20
-      = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
+    .footer
+      %small
+        = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]

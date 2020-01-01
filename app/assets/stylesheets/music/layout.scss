@@ -15,7 +15,7 @@ ul {
 ul li a :hover {
   text-decoration: none;
 }
-.ui-page {
+div.ui-page {
   background-attachment: fixed;
   background-color: #FFF; 
   background-image: 
@@ -24,13 +24,7 @@ ul li a :hover {
   background-size: 100% 1.3em;
   color: #000;
 }
-.margin-10 {
-  margin: 10px;
-}
-.margin-20 {
-  margin: 20px;
-}
-.clear {
+div.clear {
   clear: both;
 }
 i.fa-4 {
@@ -39,13 +33,16 @@ i.fa-4 {
 i.fa-3 {
   font-size: 30px;
 }
-.polaroid-images a {
+div.polaroid-images a {
 	background: white;
 	display: inline;
 	float: left;
 	margin: 0 15px 30px;
 	padding: 10px 10px 25px;
 	box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
+}
+div.footer {
+  margin: 20px;
 }
 ol.search .label-primary,
 ol.search .label-info,
@@ -67,6 +64,12 @@ ol.search .label a:visited {
 ol.search span.link {
   margin: 0 10px;
   vertical-align: middle;
+}
+div.back div.row {
+  margin: 20px 0;
+}
+div.images div.row {
+  margin: 20px;
 }
 div.tracks div.row {
   margin: 10px 0;

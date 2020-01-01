@@ -3,35 +3,37 @@
   = stylesheet_link_tag :music
 
 %div{ "data-role": "page", "id": "release-#{@release.id}" }
-  .row
-    %ul
-      %li
-        = link_to music_index_path(authorized_search_params), default_transition do
-          %i.fas.fa-list.fa-4.margin-20
-
-  :scss
-    #{render partial: "music/images.css"}
-
-  - if @release.images.any?
-    .row.margin-20
-      .polaroid-images.margin-20
-        - @release.images.each do |image|
-          = link_to image.file.url, class: :swipebox do
-            %div{ id: "img-#{image.id}" }
-
-  :javascript
-    $(document).ready(function(e) {
-      observe_polaroids();
-      $(".swipebox").swipebox();
-    });
-
-  - if @release.nfo_files.any?
+  .back
     .row
       %ul
-        - @release.nfo_files.each do |nfo|
-          %li
-            = link_to nfo.file.url, target: "_blank" do
-              %i.fab.fa-sticky-note.fa-4.shadow-light.margin-10
+        %li
+          = link_to music_index_path(authorized_search_params), default_transition do
+            %i.fas.fa-4.fa-list
+
+  .images
+    :scss
+      #{render partial: "music/images.css"}
+
+    - if @release.images.any?
+      .row
+        .polaroid-images
+          - @release.images.each do |image|
+            = link_to image.file.url, class: :swipebox do
+              %div{ id: "img-#{image.id}" }
+
+    :javascript
+      $(document).ready(function(e) {
+        observe_polaroids();
+        $(".swipebox").swipebox();
+      });
+
+    - if @release.nfo_files.any?
+      .row
+        %ul
+          - @release.nfo_files.each do |nfo|
+            %li
+              = link_to nfo.file.url, target: "_blank" do
+                %i.fas.fa-4.fa-sticky-note
 
   .tracks
     - @tracks.each do |track|
