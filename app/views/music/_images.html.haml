@@ -1,0 +1,24 @@
+:scss
+  #{render partial: "music/images.css"}
+
+.images
+  - if @release.images.any?
+    .row
+      .polaroid-images
+        - @release.images.each do |image|
+          = link_to image.file.url, class: :swipebox do
+            %div{ id: "img-#{image.id}" }
+
+  - if @release.nfo_files.any?
+    .row
+      %ul
+        - @release.nfo_files.each do |nfo|
+          %li
+            = link_to nfo.file.url, target: "_blank" do
+              %i.fas.fa-4.fa-sticky-note
+
+:javascript
+  $(document).ready(function(e) {
+    observe_polaroids();
+    $(".swipebox").swipebox();
+  });

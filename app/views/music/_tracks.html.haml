@@ -1,0 +1,25 @@
+.tracks
+  - @tracks.each do |track|
+    .row{ class: cycle('odd', 'even') }
+      %ul
+        %li
+          .col-md-2
+            = link_to highlight(track.artist, search_terms_array),
+                music_index_path(q: track.artist), default_transition
+          .col-md-2
+            = highlight track.title, search_terms_array
+          .col-md-2
+            = highlight track.album, search_terms_array
+          .col-md-1
+            = highlight track.genre, search_terms_array
+          .col-md-1
+            = link_to highlight(track.year, search_terms_array),
+                music_index_path(q: track.year), default_transition
+          .col-md-1
+            .badge.duration= track.duration
+          .col-md-1
+            = fa_processing_btn
+            = fa_play_btn({ id: track.id })
+
+:javascript
+  new App.Tracks(#{@release.track_urls.to_json.html_safe})

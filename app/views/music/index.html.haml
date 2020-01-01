@@ -12,18 +12,19 @@
           %button.btn.btn-default{ type: 'submit' } Search
     .clear
 
-    %ol.search
-      - @releases.each do |item|
-        %li
-          %h5
-            .label.label-primary= link_to item.year, item.year_url, default_transition
-            %span.label.label-info
-              = link_to item.folder_name, item.folder_url, default_transition
-              - if item.subfolder_url
-                |
-                = link_to item.subfolder_name, item.subfolder_url, default_transition
-            %span.link
-              = link_to highlight(item.formatted_name, search_terms_array), item.url
+    - cache search_params do
+      %ol.search
+        - @releases.each do |item|
+          %li
+            %h5
+              .label.label-primary= link_to item.year, item.year_url, default_transition
+              %span.label.label-info
+                = link_to item.folder_name, item.folder_url, default_transition
+                - if item.subfolder_url
+                  |
+                  = link_to item.subfolder_name, item.subfolder_url, default_transition
+              %span.link
+                = link_to highlight(item.formatted_name, search_terms_array), item.url
 
     .footer
       %small
