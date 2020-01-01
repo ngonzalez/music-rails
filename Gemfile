@@ -18,7 +18,7 @@ source 'https://rubygems.org' do
   gem 'puma'
   gem 'rack-cache', require: 'rack/cache'
   gem 'rack-cors', require: 'rack/cors'
-  gem 'rails', '5.2.3'
+  gem 'rails', '6.0.2.1'
   gem 'redis'
   gem 'redis-rails'
   gem 'redis-rack-cache'
@@ -27,7 +27,7 @@ source 'https://rubygems.org' do
   gem 'sinatra', require: nil
   gem 'sunspot_rails'
   gem 'sunspot_solr'
-  gem 'swipebox'
+  gem 'swipebox', git: "git@github.com:ngonzalez/swipebox.git"
   gem 'taglib-ruby'
   gem 'tilt', require: 'tilt/sass'
   gem 'typhoeus'
