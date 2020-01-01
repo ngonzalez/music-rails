@@ -16,7 +16,7 @@ class MusicController < ApplicationController
 
   def index
     respond_to do |format|
-      format.html { render :search }
+      format.html
       format.json do
         render json: @releases.map(&:marshal_dump).to_json,
           layout: false
