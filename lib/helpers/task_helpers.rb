@@ -110,9 +110,18 @@ module TaskHelpers
       .select { |release| !release.details.has_key?(:sfv) }
   end
 
+  def run_check_sfv release, sfv_file
+    case Dir.chdir([release.decorate.public_path, sfv_file.base_path].join('/')) { %x[cfv -f #{sfv_file.file.path}] }
+      when /#{sfv_file.file_names.length} files, #{sfv_file.file_names.length} OK/ then :ok
+      when /badcrc/ then :bad_crc
+      when /chksum file errors/ then :chksum_file_errors
+      when /not found|No such file/ then :missing_files
+    end
+  end
+
   def check_sfv release
     return if release.last_verified_at || release.details[:sfv]
-    results = release.sfv_files.decorate.collect &:check
+    results = release.sfv_files.decorate.collect { |sfv_file| run_check_sfv(release, sfv_file) }
     if results.all? { |result| result == :ok }
       release.details.delete(:sfv) if release.details.has_key?(:sfv)
       release.update!(last_verified_at: Time.now) if !release.last_verified_at
