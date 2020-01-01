@@ -47,19 +47,19 @@ class ImportWorker
     end
   end
   def import_nfo
-    list_files(release.decorate.public_path, NFO_TYPE) do |path, file_name|
+    list_files(release.decorate.public_path, "nfo") do |path, file_name|
       next if release.nfo_files.detect { |nfo| nfo.file_name == file_name }
       create_nfo release, path, file_name
     end
   end
   def import_sfv
-    list_files(release.decorate.public_path, SFV_TYPE) do |path, file_name|
+    list_files(release.decorate.public_path, "sfv") do |path, file_name|
       next if release.sfv_files.detect { |sfv| sfv.file_name == file_name }
       import_file release, :sfv_files, path, file_name
     end
   end
   def import_m3u
-    list_files(release.decorate.public_path, M3U_TYPE) do |path, file_name|
+    list_files(release.decorate.public_path, "m3u") do |path, file_name|
       next if release.m3u_files.detect { |m3u| m3u.file_name == file_name }
       import_file release, :m3u_files, path, file_name
     end

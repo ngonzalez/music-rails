@@ -92,18 +92,17 @@ module TaskHelpers
   end
 
   def update_releases_formatted_name
-    format_name_strings = YAML.load_file Rails.root.join('config/format/name.yaml')
     Release.where(formatted_name: nil).each do |release|
       next unless release.year
       array = release.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
       array -= ALLOWED_SOURCES
       array -= SUPPORTED_AUDIO_FORMATS.map &:last
-      format_name_strings.each do |string|
+      EXCEPT_NAMES.each do |string|
         array.reject! { |str| str == string }
       end
       array.each_with_index do |item, i|
         array_item = item.split '_'
-        format_name_strings.each do |string|
+        EXCEPT_NAMES.each do |string|
           array_item.reject! { |str| str == string }
         end
         array[i] = array_item.join ' '
