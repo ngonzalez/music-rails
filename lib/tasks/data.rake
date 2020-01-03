@@ -29,7 +29,5 @@ namespace :data do
     Track.update_all file_uid: nil, file_name: nil
     FileUtils.rm_rf Rails.root + 'public/system/dragonfly/tracks'
     FileUtils.rm_rf '/tmp/dragonfly'
-    FileUtils.rm_rf '/tmp/rack-cache'
-    Rails.cache.clear
   end
 end
