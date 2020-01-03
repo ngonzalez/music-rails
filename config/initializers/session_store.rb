@@ -3,4 +3,4 @@
 Rails.application.config.session_store :redis_store,
   servers: ["redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}/#{ENV['REDIS_DB']}/session"],
   expire_after: 90.minutes,
-  key: "_#{Rails.application.class.parent_name.downcase}_session"
+  key: "_#{Rails.application.class.module_parent_name.downcase}_session"
