@@ -114,7 +114,7 @@ module TaskHelpers
   end
 
   def unchecked_releases
-    Release.includes([:sfv_files, :tracks])
+    Release.includes([:sfv_files])
       .where(last_verified_at: nil)
       .select { |release| !release.details.has_key?(:sfv) }
   end
