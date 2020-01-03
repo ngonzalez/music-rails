@@ -39,7 +39,7 @@ class ReleaseDecorator < Draper::Decorator
   def details
     OpenStruct.new(
       object.attributes.deep_symbolize_keys
-      .slice(:id, :formatted_name, :folder, :format_name, :subfolder, :folder_created_at)
+      .slice(:id, :formatted_name, :folder, :subfolder)
       .merge(year: year)
       .merge(url_infos)
     )
