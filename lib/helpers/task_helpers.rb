@@ -56,6 +56,7 @@ module TaskHelpers
   end
 
   def update_release_folder_dates release
+    return unless File.exists?(release.decorate.public_path)
     f = File::Stat.new release.decorate.public_path
     if f.birthtime != release.folder_created_at || f.mtime != release.folder_updated_at
       release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
