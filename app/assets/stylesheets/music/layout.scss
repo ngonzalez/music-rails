@@ -80,6 +80,10 @@ div.tracks {
 div.tracks div.row {
   padding: 5px;
 }
+div.tracks div.row.odd:hover,
+div.tracks div.row.even:hover {
+  background-color: rgba(143, 152, 172, 0.15);
+}
 div.tracks div.row.odd {
   background-color: rgba(89, 89, 89, 0.05);
 }
@@ -88,4 +92,7 @@ div.tracks div.row.even {
 }
 div.tracks div.badge.duration {
   margin-bottom: 10px;
+}
+div.tracks .disabled {
+  color: #999;
 }

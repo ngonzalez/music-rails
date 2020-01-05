@@ -1,0 +1,19 @@
+
+class App.TrackRows
+    constructor: () ->
+        @css = <%= fa_css.to_json.html_safe %>
+        @observeRows()
+
+    observeRows: () ->
+        $.each @getRows(), (i, element) =>
+            $(element).find('.' + @css.play).addClass @css.disabled
+            $(element).hover (=> @handlerIn(element)), (=> @handlerOut(element))
+
+    handlerIn: (element) ->
+        $(element).find('.' + @css.play).removeClass @css.disabled
+
+    handlerOut: (element) ->
+        $(element).find('.' + @css.play).addClass @css.disabled
+
+    getRows: () ->
+        $('.tracks').find('.row')
