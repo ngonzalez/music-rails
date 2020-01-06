@@ -12,7 +12,8 @@
           .col-md-1
             = track.genre
           .col-md-1
-            = link_to track.year, music_index_path(q: track.year), default_transition
+            .badge.year
+              = link_to track.year, music_index_path(q: track.year), default_transition
           .col-md-1
             .badge.duration= track.duration
           .col-md-1
