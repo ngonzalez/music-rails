@@ -1,11 +1,12 @@
 
 class App.TrackRows
-    constructor: () ->
+    constructor: (@className) ->
         @css = <%= FA_CSS.to_json.html_safe %>
+        @rows = $(@className)
         @observeRows()
 
     observeRows: () ->
-        $.each @getRows(), (i, element) =>
+        $.each @rows, (i, element) =>
             $(element).find('.' + @css.play).addClass @css.disabled
             $(element).hover (=> @handlerIn(element)), (=> @handlerOut(element))
 
@@ -14,6 +15,3 @@ class App.TrackRows
 
     handlerOut: (element) ->
         $(element).find('.' + @css.play).addClass @css.disabled
-
-    getRows: () ->
-        $('.<%= Track.name.downcase.pluralize %>').find('.row')
