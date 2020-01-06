@@ -43,6 +43,7 @@ end
 ALLOWED_AUDIO_FORMATS   = YAML.load_file File.expand_path('../config/yaml/allowed_audio_formats.yaml', __dir__)
 ALLOWED_IMAGE_FORMATS   = YAML.load_file File.expand_path('../config/yaml/allowed_image_formats.yaml', __dir__)
 ALLOWED_SOURCES         = YAML.load_file File.expand_path('../config/yaml/allowed_sources.yaml', __dir__)
+FA_CSS                  = YAML.load_file File.expand_path('../config/yaml/fa_css.yaml', __dir__)
 FOLDERS                 = YAML.load_file File.expand_path('../config/yaml/folders.yaml', __dir__)
 FOLDERS_WITH_SUBFOLDERS = YAML.load_file File.expand_path('../config/yaml/folders_with_subfolders.yaml', __dir__)
 EXCEPT_RLS              = YAML.load_file File.expand_path('../config/yaml/except_rls.yaml', __dir__)

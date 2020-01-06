@@ -1,7 +1,7 @@
 
 class App.TrackRows
     constructor: () ->
-        @css = <%= fa_css.to_json.html_safe %>
+        @css = <%= FA_CSS.to_json.html_safe %>
         @observeRows()
 
     observeRows: () ->
@@ -16,4 +16,4 @@ class App.TrackRows
         $(element).find('.' + @css.play).addClass @css.disabled
 
     getRows: () ->
-        $('.tracks').find('.row')
+        $('.<%= Track.name.downcase.pluralize %>').find('.row')

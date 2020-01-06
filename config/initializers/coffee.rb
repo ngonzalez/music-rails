@@ -1,1 +1,1 @@
-Sprockets::Context.send :include, FontAwesomeHelper
+Sprockets::Context.send :include, ApplicationHelper
