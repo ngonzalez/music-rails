@@ -130,15 +130,13 @@ module TaskHelpers
   end
 
   def check_sfv release
-    return if release.last_verified_at || release.details[:sfv]
     results = if release.sfv_files.any?
       release.sfv_files.decorate.collect { |sfv_file| run_check_sfv(release, sfv_file) }
     else
       [:sfv_file_not_found]
     end
     if results.all? { |result| result == :ok }
-      release.details.delete(:sfv) if release.details.has_key?(:sfv)
-      release.update!(last_verified_at: Time.now) if !release.last_verified_at
+      release.update! last_verified_at: Time.now
     else
       release.details[:sfv] = results
       release.save!
