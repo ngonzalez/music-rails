@@ -50,8 +50,9 @@ module SearchHelpers
   def decorate search, accessor=nil
     item_ids = []
     search.hits.each_with_object([]) { |hit, array|
+      next if hit.result.nil?
       item = accessor ? hit.result.send(accessor) : hit.result
-      next if item.nil? || item_ids.include?(item.id)
+      next if item_ids.include?(item.id)
       array << item.decorate.details
       item_ids << item.id
     }.sort_by { |item| [item.year, item.folder_created_at] }.reverse
