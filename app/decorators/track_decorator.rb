@@ -1,8 +1,11 @@
 class TrackDecorator < Draper::Decorator
   delegate_all
   attr_accessor :m3u8_exists
+  def path
+    [release.decorate.path, name].join "/"
+  end
   def public_path
-    [BASE_PATH, release.decorate.path, name].join("/")
+    [BASE_PATH, path].join "/"
   end
   def year
     object.year.to_i
@@ -17,7 +20,7 @@ class TrackDecorator < Draper::Decorator
     h.music_index_path q: object.year
   end
   def duration
-    Time.at(object.length).strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
+    Time.at(object.length).strftime object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S"
   end
   def format_name
     ALLOWED_AUDIO_FORMATS.detect { |_, format| format[:tags].any? { |tag| object.format_info =~ /#{tag}/ } }[0]
@@ -45,6 +48,7 @@ class TrackDecorator < Draper::Decorator
       .merge(duration: duration, year: year)
       .merge(url_infos)
       .merge(attr_infos)
+      .compact
     )
   end
   def to_json

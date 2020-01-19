@@ -1,10 +1,10 @@
 class ReleaseDecorator < Draper::Decorator
   delegate_all
   def path
-    [folder, subfolder, read_attribute(:source), name].reject(&:blank?).join("/")
+    [folder, subfolder, read_attribute(:source), name].compact.join "/"
   end
   def public_path
-    [BASE_PATH, path].join("/")
+    [BASE_PATH, path].join "/"
   end
   def year
     object.year.to_i
@@ -39,6 +39,7 @@ class ReleaseDecorator < Draper::Decorator
       .slice(:id, :folder, :subfolder, :folder_created_at)
       .merge(name: formatted_name, year: year)
       .merge(url_infos)
+      .compact
     )
   end
   def to_json
