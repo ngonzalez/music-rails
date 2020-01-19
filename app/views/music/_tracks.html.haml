@@ -12,10 +12,10 @@
           .col-md-1
             = track.genre
           .col-md-1
-            .badge.year
+            .badge
               = link_to track.year, track.year_url, default_transition
           .col-md-1
-            .badge.duration
+            .badge
               = track.duration
           .col-md-1
             %i{ class: "fas fa-3 fa-spin %s hidden" % FA_CSS[:processing] }
