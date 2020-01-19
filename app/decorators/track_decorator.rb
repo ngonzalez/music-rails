@@ -1,7 +1,20 @@
 class TrackDecorator < Draper::Decorator
   delegate_all
+  attr_accessor :m3u8_exists
   def public_path
     [BASE_PATH, release.decorate.path, name].join("/")
+  end
+  def year
+    object.year.to_i
+  end
+  def url
+    h.track_path object, format: :json
+  end
+  def artist_url
+    h.music_index_path q: object.artist
+  end
+  def year_url
+    h.music_index_path q: object.year
   end
   def duration
     Time.at(object.length).strftime(object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S")
@@ -12,22 +25,29 @@ class TrackDecorator < Draper::Decorator
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
   end
-  def m3u8_exists?
-    File.exists? m3u8_path rescue false
-  end
   def m3u8_path
      "#{HLS_FOLDER}/#{object.id}.m3u8"
   end
   def url_infos
-    hash = {}
-    hash.merge! stream_url: "http://#{HOST_NAME}/hls/#{object.id}.m3u8" if m3u8_exists?
-    return hash
+    hash = { url: url, artist_url: artist_url, year_url: year_url }
+    hash.merge! stream_url: "http://#{HOST_NAME}/hls/#{object.id}.m3u8"
+    hash
   end
-  def details
+  def attr_infos
+    hash = {}
+    hash.merge! m3u8_exists: m3u8_exists if m3u8_exists
+    hash
+  end
+  def attributes
     OpenStruct.new(
       object.attributes.deep_symbolize_keys
-      .slice(:id)
+      .slice(:id, :album, :artist, :title, :year, :genre)
+      .merge(duration: duration, year: year)
       .merge(url_infos)
+      .merge(attr_infos)
     )
+  end
+  def to_json
+    attributes.marshal_dump.to_json
   end
 end

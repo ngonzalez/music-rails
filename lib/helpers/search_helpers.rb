@@ -53,7 +53,7 @@ module SearchHelpers
       next if hit.result.nil?
       item = accessor ? hit.result.send(accessor) : hit.result
       next if item_ids.include?(item.id)
-      array << item.decorate.details
+      array << item.decorate.attributes
       item_ids << item.id
     }.sort_by { |item| [item.year, item.folder_created_at] }.reverse
   end

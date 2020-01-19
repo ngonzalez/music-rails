@@ -18,7 +18,7 @@ class MusicController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: @releases.map(&:marshal_dump).to_json,
+        render json: @releases.to_json,
           layout: false
       end
     end
@@ -41,7 +41,7 @@ class MusicController < ApplicationController
   end
 
   def set_tracks
-    @tracks = @release.tracks.decorate.sort { |a, b| a.number <=> b.number }
+    @tracks = @release.tracks.decorate.sort { |a, b| a.number <=> b.number }.map &:attributes
   end
 
   def set_time
