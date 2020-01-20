@@ -75,6 +75,27 @@ else
   raise "Missing ENV REDIS_DB"
 end
 
+# SUNSPOT_SOLR_HOSTNAME
+if ENV['SUNSPOT_SOLR_HOSTNAME'].present?
+  SUNSPOT_SOLR_HOSTNAME = ENV['SUNSPOT_SOLR_HOSTNAME']
+else
+  raise "Missing ENV SUNSPOT_SOLR_HOSTNAME"
+end
+
+# SUNSPOT_SOLR_PORT
+if ENV['SUNSPOT_SOLR_PORT'].present?
+  SUNSPOT_SOLR_PORT = ENV['SUNSPOT_SOLR_PORT'].to_i
+else
+  raise "Missing ENV SUNSPOT_SOLR_PORT"
+end
+
+# SUNSPOT_SOLR_PATH
+if ENV['SUNSPOT_SOLR_PATH'].present?
+  SUNSPOT_SOLR_PATH = ENV['SUNSPOT_SOLR_PATH']
+else
+  raise "Missing ENV SUNSPOT_SOLR_PATH"
+end
+
 ALLOWED_AUDIO_FORMATS   = YAML.load_file File.expand_path('../config/yaml/allowed_audio_formats.yaml', __dir__)
 ALLOWED_IMAGE_FORMATS   = YAML.load_file File.expand_path('../config/yaml/allowed_image_formats.yaml', __dir__)
 ALLOWED_SOURCES         = YAML.load_file File.expand_path('../config/yaml/allowed_sources.yaml', __dir__)
