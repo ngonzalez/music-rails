@@ -1,18 +1,15 @@
 local_defaults: &local-defaults
-  host: localhost
   adapter: postgresql
   encoding: utf8
-  username: enyo
-  password: 
+  host: <%= POSTGRESQL_HOST %>
+  port: <%= POSTGRESQL_PORT %>
+  username: <%= POSTGRESQL_USERNAME %>
+  password: <%= POSTGRESQL_PASSWORD %>
 
 development:
   <<: *local-defaults
-  database: music
-
-test:
-  <<: *local-defaults
-  database: music_test
+  database: <%= POSTGRESQL_DB %>
 
 production:
   <<: *local-defaults
-  database: music
+  database: <%= POSTGRESQL_DB %>
