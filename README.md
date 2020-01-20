@@ -17,14 +17,14 @@ bundle exec sunspot-solr start -p 8982
 
 #### Update data
 ```
-. ./environment.sh ; bundle exec rake data:clear RAILS_ENV=production
-. ./environment.sh ; bundle exec rake data:update RAILS_ENV=production
-. ./environment.sh ; bundle exec rake sunspot:solr:reindex RAILS_ENV=production
+. ./environment.sh ; bundle exec rake data:clear
+. ./environment.sh ; bundle exec rake data:update
+. ./environment.sh ; bundle exec rake sunspot:solr:reindex
 ```
 
 #### Precompile Assets
 ```
-rm -rf public/assets/ ; bundle exec rake assets:precompile RAILS_ENV=production
+rm -rf public/assets/ ; bundle exec rake assets:precompile
 ```
 
 #### Update crontab
