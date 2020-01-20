@@ -5,11 +5,10 @@ local_defaults: &local-defaults
   port: <%= POSTGRESQL_PORT %>
   username: <%= POSTGRESQL_USERNAME %>
   password: <%= POSTGRESQL_PASSWORD %>
+  database: <%= POSTGRESQL_DB %>
 
 development:
   <<: *local-defaults
-  database: <%= POSTGRESQL_DB %>
 
 production:
   <<: *local-defaults
-  database: <%= POSTGRESQL_DB %>

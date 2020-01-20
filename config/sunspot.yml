@@ -3,12 +3,12 @@ local_defaults: &local-defaults
     port: <%= SUNSPOT_SOLR_PORT %>
     path: <%= SUNSPOT_SOLR_PATH %>
 
-production:
-  solr:
-    <<: *local-defaults
-    log_level: WARNING
-
 development:
   solr:
     <<: *local-defaults
     log_level: INFO
+
+production:
+  solr:
+    <<: *local-defaults
+    log_level: WARNING
