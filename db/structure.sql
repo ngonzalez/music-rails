@@ -254,7 +254,8 @@ CREATE TABLE public.tracks (
     updated_at timestamp without time zone,
     file_uid character varying,
     file_name character varying,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    data_url character varying
 );
 
 
@@ -537,6 +538,13 @@ CREATE INDEX index_sfv_files_on_release_id ON public.sfv_files USING btree (rele
 
 
 --
+-- Name: index_tracks_on_data_url; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_tracks_on_data_url ON public.tracks USING btree (data_url);
+
+
+--
 -- Name: index_tracks_on_release_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -608,6 +616,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191228084501'),
 ('20191228090840'),
 ('20191228091356'),
-('20200101020530');
+('20200101020530'),
+('20200130223704');
 
 
