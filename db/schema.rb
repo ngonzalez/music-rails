@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_01_020530) do
+ActiveRecord::Schema.define(version: 2020_01_30_223704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,8 @@ ActiveRecord::Schema.define(version: 2020_01_01_020530) do
     t.string "file_uid"
     t.string "file_name"
     t.datetime "deleted_at"
+    t.string "data_url"
+    t.index ["data_url"], name: "index_tracks_on_data_url", unique: true
     t.index ["release_id"], name: "index_tracks_on_release_id"
   end
 

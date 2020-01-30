@@ -18,4 +18,8 @@ class Track < ActiveRecord::Base
       year.to_i
     end
   end
+
+  extend FriendlyId
+  friendly_id :data_url
+
 end

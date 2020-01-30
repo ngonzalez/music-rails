@@ -84,6 +84,24 @@ module TaskHelpers
     end
   end
 
+  def update_tracks_data_url
+    Track.where(data_url: nil).each do |track|
+      track = track.decorate
+      begin
+        data_url = track.format_name
+      rescue
+        next
+      end
+      data_url = track.name.gsub '.%s' % track.format_name.downcase, ''
+      begin
+        track.update! data_url: data_url
+      rescue ActiveRecord::RecordNotUnique
+        data_url = [data_url, rand(1000) * rand(1000)].join('-')
+        track.update! data_url: data_url
+      end
+    end
+  end
+
   def update_releases_year
     Release.where(year: nil).each do |release|
       next unless release.tracks.any?

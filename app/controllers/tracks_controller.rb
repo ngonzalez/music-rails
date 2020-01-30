@@ -16,7 +16,7 @@ class TracksController < ApplicationController
   private
 
   def set_track
-    @track = Track.find(params[:id]).decorate
+    @track = Track.friendly.find(params[:id]).decorate
   end
 
   def set_track_m3u8_exists
