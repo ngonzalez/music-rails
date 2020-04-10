@@ -21,6 +21,7 @@ namespace :data do
 
   desc 'clear'
   task clear: :environment do
+    RedisDb.client.flushall
     ActiveRecord::Base.connection.execute "DELETE FROM #{Release.table_name} WHERE deleted_at IS NOT NULL"
     ActiveRecord::Base.connection.execute "DELETE FROM #{Image.table_name} WHERE deleted_at IS NOT NULL"
     ActiveRecord::Base.connection.execute "DELETE FROM #{Track.table_name} WHERE deleted_at IS NOT NULL"
