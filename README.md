@@ -24,7 +24,7 @@ bundle exec sunspot-solr start -p 8982
 
 #### Precompile Assets
 ```
-rm -rf public/assets/ ; bundle exec rake assets:precompile
+. ./environment.sh ; rm -rf public/assets/ ; bundle exec rake assets:precompile
 ```
 
 #### Update crontab
