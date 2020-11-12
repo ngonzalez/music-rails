@@ -23,7 +23,6 @@ class ImportWorker
   def perform
     import_tracks
     import_images
-    import_nfo
     import_sfv
     import_m3u
   rescue Exception => exception
@@ -44,12 +43,6 @@ class ImportWorker
         next if release.images.detect { |image| image.file_name == file_name }
         create_image release, path, file_name
       end
-    end
-  end
-  def import_nfo
-    list_files(release.decorate.public_path, "nfo") do |path, file_name|
-      next if release.nfo_files.detect { |nfo| nfo.file_name == file_name }
-      create_nfo release, path, file_name
     end
   end
   def import_sfv

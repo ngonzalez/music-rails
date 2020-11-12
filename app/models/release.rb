@@ -1,7 +1,6 @@
 class Release < ActiveRecord::Base
   has_many :tracks, dependent: :destroy
   has_many :images, dependent: :destroy
-  has_many :nfo_files, dependent: :destroy
   has_many :sfv_files, dependent: :destroy
   has_many :m3u_files, dependent: :destroy
 
