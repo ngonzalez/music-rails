@@ -29,6 +29,7 @@ source 'https://rubygems.org' do
   gem 'sunspot_solr'
   gem 'swipebox', git: "git@github.com:ngonzalez/swipebox.git"
   gem 'taglib-ruby'
+  gem 'therubyracer'
   gem 'tilt', require: 'tilt/sass'
   gem 'uglifier'
   gem 'uuid'
