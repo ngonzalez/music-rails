@@ -5,7 +5,7 @@ sudo su - postgres -c "createdb music"
 ```
 
 ```
-sudo su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git"
+sudo su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git music-app"
 ```
 
 ```
@@ -13,32 +13,18 @@ apt-get install -yq build-essential patch zlib1g-dev liblzma-dev libpq-dev libta
 ```
 
 ```
-sudo su - $APP_USER -c "cd /home/$APP_USER/music-rails && /usr/bin/bundle2.7"
+sudo su - $APP_USER -c "cd /home/$APP_USER/music-app && /usr/bin/bundle2.7"
 ```
 
-#### Load environment settings
 ```
-source environment.sh
-```
-
-#### Start solr
-```
-bundle exec sunspot-solr start -p 8982
+mkdir /var/lib/music-app ; chown $APP_USER: /var/lib/music-app
+mkdir /var/log/music-app ; chown $APP_USER: /var/log/music-app
+mkdir /var/run/music-app ; chown $APP_USER: /var/run/music-app
 ```
 
-#### Start puma
 ```
-bundle exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
-```
-
-#### Start sidekiq
-```
-bundle exec sidekiq -C config/sidekiq.yml -e production
-```
-
-#### Precompile assets
-```
-rm -rf public/assets ; bundle exec rake assets:precompile
+cp /home/$APP_USER/music-app/config/music-app.service /etc/systemd/system/music-app.service
+cp /home/$APP_USER/music-app/config/music-app.target /etc/systemd/system/music-app.target
 ```
 
 #### Update crontab

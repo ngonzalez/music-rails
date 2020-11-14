@@ -1,0 +1,6 @@
+
+[Unit]
+Description=Music App
+Requires=music-app.target systemd-networkd.service
+After=music-app.target systemd-networkd.service
+AllowIsolate=yes
