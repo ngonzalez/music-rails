@@ -5,7 +5,7 @@ sudo su - postgres -c "createdb music"
 ```
 
 ```
-sudo su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git music-app"
+sudo su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git /var/www/music-app"
 ```
 
 ```
@@ -13,7 +13,7 @@ apt-get install -yq build-essential patch zlib1g-dev liblzma-dev libpq-dev libta
 ```
 
 ```
-sudo su - $APP_USER -c "cd /home/$APP_USER/music-app && /usr/bin/bundle2.7"
+sudo su - $APP_USER -c "cd /var/www/music-app && /usr/bin/bundle2.7"
 ```
 
 ```
@@ -23,8 +23,9 @@ mkdir /var/run/music-app ; chown $APP_USER: /var/run/music-app
 ```
 
 ```
-cp /home/$APP_USER/music-app/config/music-app.service /etc/systemd/system/music-app.service
-cp /home/$APP_USER/music-app/config/music-app.target /etc/systemd/system/music-app.target
+cp /home/$APP_USER/music-app/config/systemd/music-app.conf /etc/music-app.conf
+cp /home/$APP_USER/music-app/config/systemd/music-app.service /etc/systemd/system/music-app.service
+cp /home/$APP_USER/music-app/config/systemd/music-app.target /etc/systemd/system/music-app.target
 ```
 
 #### Update crontab

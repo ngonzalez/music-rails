@@ -1,0 +1,26 @@
+[Unit]
+Description=Music App
+After=network.target
+Documentation=http://github.com/ngonzalez
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/music-app
+ExecStart=bundle2.7 exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
+EnvironmentFile=/etc/music-app.conf
+PIDFile=/var/www/music-app/tmp/pids/server.pid
+TimeoutStopSec=0
+Restart=always
+User=debian
+Group=debian
+LimitNOFILE=65535
+LogsDirectory=/var/log/music-app
+LogsDirectoryMode=0755
+RuntimeDirectory=/var/run/music-app
+RuntimeDirectoryMode=0755
+StateDirectory=/var/lib/music-app
+StateDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
+Alias=music-app.service
