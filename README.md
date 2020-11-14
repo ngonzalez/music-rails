@@ -5,6 +5,8 @@ sudo su - postgres -c "createdb music"
 ```
 
 ```
+mkdir -p /var/www/music-app
+chown $APP_USER: /var/www/music-app
 sudo su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git /var/www/music-app"
 ```
 
@@ -23,9 +25,19 @@ mkdir /var/run/music-app ; chown $APP_USER: /var/run/music-app
 ```
 
 ```
-cp /home/$APP_USER/music-app/config/systemd/music-app.conf /etc/music-app.conf
-cp /home/$APP_USER/music-app/config/systemd/music-app.service /etc/systemd/system/music-app.service
-cp /home/$APP_USER/music-app/config/systemd/music-app.target /etc/systemd/system/music-app.target
+cp /var/www/music-app/config/systemd/music-app.conf /etc/music-app.conf
+cp /var/www/music-app/config/systemd/music-app.service /etc/systemd/system/music-app.service
+cp /var/www/music-app/config/systemd/music-app.target /etc/systemd/system/music-app.target
+```
+
+#### Start the application
+```
+systemctl start music-app
+```
+
+#### Stop the application
+```
+systemctl stop music-app
 ```
 
 #### Update crontab
