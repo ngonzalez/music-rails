@@ -6,7 +6,7 @@ Documentation=http://github.com/ngonzalez
 [Service]
 Type=simple
 WorkingDirectory=/var/www/music-app
-ExecStart=bundle2.7 exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
+ExecStart=/usr/bin/bundle2.7 exec puma -C config/puma.rb -e production -b unix:///tmp/puma.sock
 EnvironmentFile=/etc/music-app.conf
 PIDFile=/var/www/music-app/tmp/pids/server.pid
 TimeoutStopSec=0

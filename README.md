@@ -19,12 +19,6 @@ sudo su - $APP_USER -c "cd /var/www/music-app && /usr/bin/bundle2.7"
 ```
 
 ```
-mkdir /var/lib/music-app ; chown $APP_USER: /var/lib/music-app
-mkdir /var/log/music-app ; chown $APP_USER: /var/log/music-app
-mkdir /var/run/music-app ; chown $APP_USER: /var/run/music-app
-```
-
-```
 cp /var/www/music-app/config/systemd/music-app.conf /etc/music-app.conf
 cp /var/www/music-app/config/systemd/music-app.service /etc/systemd/system/music-app.service
 cp /var/www/music-app/config/systemd/music-app.target /etc/systemd/system/music-app.target
@@ -45,12 +39,17 @@ systemctl stop music-app
 whenever --update-crontab
 ```
 
-#### Import data
+#### Clear data
 ```
 bundle exec rake data:clear
+```
+
+#### Import data
+```
 bundle exec rake data:update
 ```
 
+#### Reindex
 ```
 bundle exec rake sunspot:solr:reindex
 ```
