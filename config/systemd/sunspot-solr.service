@@ -5,11 +5,13 @@ Documentation=http://github.com/ngonzalez
 
 [Service]
 Type=simple
+WorkingDirectory=/var/www/music-app
 ExecStart=/usr/bin/bundle2.7 exec sunspot-solr start -p 8982
 TimeoutStopSec=0
 Restart=always
 User=debian
 Group=debian
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target
