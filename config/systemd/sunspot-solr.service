@@ -1,0 +1,16 @@
+[Unit]
+Description=Sunspot Solr
+After=network.target
+Documentation=http://github.com/ngonzalez
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bundle2.7 exec sunspot-solr start -p 8982
+TimeoutStopSec=0
+Restart=always
+User=debian
+Group=debian
+
+[Install]
+WantedBy=multi-user.target
+Alias=sunspot-solr.service

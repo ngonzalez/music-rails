@@ -1,0 +1,5 @@
+[Unit]
+Description=Sunspot Solr
+Requires=sunspot-solr.target systemd-networkd.service
+After=sunspot-solr.target systemd-networkd.service
+AllowIsolate=yes
