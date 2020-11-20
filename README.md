@@ -20,7 +20,7 @@ apt-get install -yq build-essential patch zlib1g-dev liblzma-dev libpq-dev libta
 
 ### Run bundle
 ```
-runuser -l $APP_USER -c "cd /var/www/music-app && /usr/bin/bundle2.7"
+runuser -l $APP_USER -c "cd /var/www/music-app && /usr/bin/bundle2.7 install --path=vendor/cache"
 ```
 
 ### Add sunspot solr systemd files
