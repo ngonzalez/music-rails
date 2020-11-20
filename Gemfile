@@ -2,7 +2,7 @@ source 'https://rubygems.org' do
   gem 'bootsnap'
   gem 'bootstrap-sass'
   gem 'coffee-rails'
-  gem 'dragonfly', git: 'git@github.com:markevans/dragonfly.git'
+  gem 'dragonfly'
   gem 'draper'
   gem 'execjs'
   gem 'font-awesome-sass', '~> 5.12.0'
