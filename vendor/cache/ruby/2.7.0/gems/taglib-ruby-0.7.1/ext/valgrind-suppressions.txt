@@ -1,0 +1,170 @@
+{
+   taglib_base SWIG_InitializeModule
+   exp-ptrcheck:SorG
+   fun:Init_taglib_base
+   fun:dln_load
+}
+{
+   taglib_id3v2 SWIG_InitializeModule
+   exp-ptrcheck:SorG
+   fun:Init_taglib_id3v2
+   fun:dln_load
+}
+{
+   taglib_mpeg SWIG_InitializeModule
+   exp-ptrcheck:SorG
+   fun:Init_taglib_mpeg
+   fun:dln_load
+}
+# Ruby 1.9 VM supressions
+{
+   r1
+   Memcheck:Cond
+   fun:gc_mark
+}
+{
+   r2
+   Memcheck:Cond
+   fun:gc_mark_children
+}
+{
+   r3
+   Memcheck:Cond
+   fun:mark_current_machine_context
+}
+{
+   r4
+   Memcheck:Value8
+   fun:gc_mark
+}
+{
+   r5
+   Memcheck:Value8
+   fun:gc_mark_children
+}
+{
+   r6
+   Memcheck:Value8
+   fun:mark_current_machine_context
+}
+{
+   r7
+   Memcheck:Value8
+   fun:vm_exec_core
+}
+{
+   r8
+   Memcheck:Value4
+   fun:find_derivation
+}
+{
+   r9
+   Memcheck:Value8
+   fun:__gconv_read_conf
+}
+{
+   r10
+   Memcheck:Leak
+   fun:malloc
+   fun:vm_xmalloc
+   fun:ruby_strdup
+}
+{
+   r11
+   Memcheck:Leak
+   fun:malloc
+   fun:vm_xmalloc
+   fun:rb_include_module
+}
+{
+   r12
+   Memcheck:Leak
+   ...
+   fun:ruby_init
+   fun:main
+}
+{
+   r20
+   exp-ptrcheck:SorG
+   fun:insert_module
+}
+{
+   r21
+   exp-ptrcheck:SorG
+   fun:find_derivation
+}
+{
+   r22
+   exp-ptrcheck:SorG
+   fun:vm_exec_core
+}
+{
+   r23
+   exp-ptrcheck:SorG
+   fun:__gconv_read_conf
+}
+{
+   r24
+   exp-ptrcheck:SorG
+   fun:mark_current_machine_context
+}
+# Ruby 1.8 suppressions
+{
+   r18_1
+   Memcheck:Cond
+   fun:mark_locations_array
+   ...
+   fun:yycompile
+}
+{
+   r18_2
+   Memcheck:Cond
+   fun:mark_locations_array
+   ...
+   fun:rb_eval
+}
+{
+   r18_3
+   Memcheck:Leak
+   fun:malloc
+   fun:ruby_xmalloc
+   fun:scope_dup
+}
+{
+   r18_4
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:yycompile
+}
+{
+   r18_5
+   exp-ptrcheck:SorG
+   fun:mark_locations_array
+   fun:garbage_collect
+   ...
+   fun:yycompile
+}
+{
+   r18_6
+   exp-ptrcheck:Heap
+   ...
+   fun:rb_intern
+   fun:rb_str_intern
+   fun:rb_to_id
+   fun:rb_mod_alias_method
+}
+{
+   r18_7
+   exp-ptrcheck:SorG
+   fun:ruby_yyparse
+   fun:yycompile
+}
+{
+   r18_8
+   exp-ptrcheck:SorG
+   fun:ruby_re_compile_pattern
+   fun:rb_reg_initialize
+   ...
+   fun:rb_class_new_instance
+}

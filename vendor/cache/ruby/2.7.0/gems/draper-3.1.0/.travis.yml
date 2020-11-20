@@ -1,0 +1,17 @@
+language: ruby
+sudo: false
+cache: bundler
+
+services:
+  - mongodb
+
+rvm:
+  - 2.3.5
+  - 2.4.3
+  - 2.5.4
+  - 2.6.2
+  - ruby-head
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
