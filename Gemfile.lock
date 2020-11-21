@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:ngonzalez/swipebox.git
+  remote: http://github.com/ngonzalez/swipebox.git
   revision: 4ac1b5312fde3327bdd65ec44736455afd59a007
   specs:
     swipebox (1.4.4)
