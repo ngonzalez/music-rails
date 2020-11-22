@@ -8,6 +8,7 @@ su - postgres -c "createdb music"
 
 ### Clone repository
 ```
+rm -rf /var/www/music-app
 mkdir -p /var/www/music-app
 chown $APP_USER: /var/www/music-app
 su - $APP_USER -c "git clone https://github.com/ngonzalez/music-rails.git /var/www/music-app"
