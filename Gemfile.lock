@@ -1,11 +1,3 @@
-GIT
-  remote: http://github.com/ngonzalez/swipebox.git
-  revision: 4ac1b5312fde3327bdd65ec44736455afd59a007
-  specs:
-    swipebox (1.4.4)
-      rails
-      sass-rails
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -331,7 +323,6 @@ DEPENDENCIES
   sinatra!
   sunspot_rails!
   sunspot_solr!
-  swipebox!
   taglib-ruby!
   therubyracer!
   tilt!

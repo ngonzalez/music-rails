@@ -27,7 +27,6 @@ source 'https://rubygems.org' do
   gem 'sinatra', require: nil
   gem 'sunspot_rails'
   gem 'sunspot_solr'
-  gem 'swipebox', git: "http://github.com/ngonzalez/swipebox.git"
   gem 'taglib-ruby'
   gem 'therubyracer'
   gem 'tilt', require: 'tilt/sass'
