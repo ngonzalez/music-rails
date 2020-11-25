@@ -1,4 +1,4 @@
-class M3uFiles < ActiveRecord::Migration[6.0]
+class CreateM3uFiles < ActiveRecord::Migration[6.0]
   def change
     create_table :m3u_files do |t|
       t.integer :music_folder_id, null: false
