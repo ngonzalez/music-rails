@@ -74,34 +74,34 @@ div.images {
 div.images div.row {
   margin: 20px;
 }
-div.tracks {
+div.audio_files {
   margin: 0 0 70px 0;
 }
-div.tracks div.row {
+div.audio_files div.row {
   padding: 5px;
 }
-div.tracks div.row.odd:hover,
-div.tracks div.row.even:hover {
+div.audio_files div.row.odd:hover,
+div.audio_files div.row.even:hover {
   background-color: rgba(143, 152, 172, 0.15);
 }
-div.tracks div.row.odd {
+div.audio_files div.row.odd {
   background-color: rgba(89, 89, 89, 0.05);
 }
-div.tracks div.row.even {
+div.audio_files div.row.even {
   background-color: rgba(216, 216, 216, 0.05);
 }
-div.tracks div.badge {
+div.audio_files div.badge {
   font-weight: normal;
   margin: 7px 0;
   background-color: rgba(120, 120, 120, 0.05);
   color: #000;
   box-shadow: 0 2px 5px rgba(50, 50, 50, 0.20);
 }
-div.tracks i.fas,
-div.tracks i.fab {
+div.audio_files i.fas,
+div.audio_files i.fab {
   padding: 5px;
 }
-div.tracks i.fas.disabled,
-div.tracks i.fab.disabled {
+div.audio_files i.fas.disabled,
+div.audio_files i.fab.disabled {
   color: #444;
 }

@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_223704) do
   end
 
   create_table "images", id: :serial, force: :cascade do |t|
-    t.integer "release_id", null: false
+    t.integer "music_folder_id", null: false
     t.string "file_uid", null: false
     t.string "file_name", null: false
     t.datetime "created_at"
@@ -38,11 +38,11 @@ ActiveRecord::Schema.define(version: 2020_01_30_223704) do
     t.string "thumb_uid"
     t.string "thumb_high_uid"
     t.string "type"
-    t.index ["release_id"], name: "index_images_on_release_id"
+    t.index ["music_folder_id"], name: "index_images_on_music_folder_id"
   end
 
   create_table "m3u_files", id: :serial, force: :cascade do |t|
-    t.integer "release_id", null: false
+    t.integer "music_folder_id", null: false
     t.string "file_uid", null: false
     t.string "file_name", null: false
     t.datetime "created_at"
@@ -50,10 +50,10 @@ ActiveRecord::Schema.define(version: 2020_01_30_223704) do
     t.datetime "deleted_at"
     t.string "source"
     t.string "base_path"
-    t.index ["release_id"], name: "index_m3u_files_on_release_id"
+    t.index ["music_folder_id"], name: "index_m3u_files_on_music_folder_id"
   end
 
-  create_table "releases", id: :serial, force: :cascade do |t|
+  create_table "music_folders", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "folder"
     t.datetime "last_verified_at"
@@ -68,24 +68,12 @@ ActiveRecord::Schema.define(version: 2020_01_30_223704) do
     t.datetime "folder_created_at"
     t.datetime "folder_updated_at"
     t.string "data_url"
-    t.index ["data_url"], name: "index_releases_on_data_url", unique: true
-    t.index ["name"], name: "index_releases_on_name", unique: true
+    t.index ["data_url"], name: "index_music_folders_on_data_url", unique: true
+    t.index ["name"], name: "index_music_folders_on_name", unique: true
   end
 
-  create_table "sfv_files", id: :serial, force: :cascade do |t|
-    t.integer "release_id", null: false
-    t.string "file_uid", null: false
-    t.string "file_name", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "deleted_at"
-    t.string "source"
-    t.string "base_path"
-    t.index ["release_id"], name: "index_sfv_files_on_release_id"
-  end
-
-  create_table "tracks", id: :serial, force: :cascade do |t|
-    t.integer "release_id", null: false
+  create_table "audio_files", id: :serial, force: :cascade do |t|
+    t.integer "music_folder_id", null: false
     t.string "name", null: false
     t.string "format_info", null: false
     t.string "artist"
@@ -103,16 +91,8 @@ ActiveRecord::Schema.define(version: 2020_01_30_223704) do
     t.string "file_name"
     t.datetime "deleted_at"
     t.string "data_url"
-    t.index ["data_url"], name: "index_tracks_on_data_url", unique: true
-    t.index ["release_id"], name: "index_tracks_on_release_id"
-  end
-
-  create_table "uploads", id: :serial, force: :cascade do |t|
-    t.string "file_uid", null: false
-    t.string "file_name", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "deleted_at"
+    t.index ["data_url"], name: "index_audio_files_on_data_url", unique: true
+    t.index ["music_folder_id"], name: "index_audio_files_on_release_id"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|

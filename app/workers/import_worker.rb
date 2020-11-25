@@ -30,26 +30,26 @@ class ImportWorker
 
   def import_audio_files
     ALLOWED_AUDIO_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
-      list_files(folder.decorate.public_path, format) do |path, file_name|
-        next if folder.tracks.detect { |track| track.name == file_name }
-        create_audio_file folder, path, file_name
+      list_files(music_folder.decorate.public_path, format) do |path, file_name|
+        next if music_folder.audio_files.detect { |audio_file| audio_file.name == file_name }
+        create_audio_file music_folder, path, file_name
       end
     end
   end
 
   def import_images
     ALLOWED_IMAGE_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
-      list_files(folder.decorate.public_path, format) do |path, file_name|
-        next if folder.images.detect { |image| image.file_name == file_name }
-        create_image folder, path, file_name
+      list_files(music_folder.decorate.public_path, format) do |path, file_name|
+        next if music_folder.images.detect { |image| image.file_name == file_name }
+        create_image music_folder, path, file_name
       end
     end
   end
 
   def import_m3u_files
-    list_files(folder.decorate.public_path, "m3u") do |path, file_name|
-      next if folder.m3u_files.detect { |m3u| m3u.file_name == file_name }
-      import_file folder, :m3u_files, path, file_name
+    list_files(music_folder.decorate.public_path, "m3u") do |path, file_name|
+      next if music_folder.m3u_files.detect { |m3u| m3u.file_name == file_name }
+      import_file music_folder, :m3u_files, path, file_name
     end
   end
 end

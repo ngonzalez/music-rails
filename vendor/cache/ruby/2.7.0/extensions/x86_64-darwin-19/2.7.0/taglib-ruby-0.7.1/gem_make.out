@@ -1,0 +1,61 @@
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/taglib-ruby-0.7.1/ext/taglib_wav
+/Users/ngonzalez/.rbenv/versions/2.7.2/bin/ruby -I /Users/ngonzalez/.rbenv/versions/2.7.2/lib/ruby/2.7.0 -r ./siteconf20201125-48148-1m12xch.rb extconf.rb
+checking for -lstdc++... yes
+checking for -ltag... yes
+creating Makefile
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/taglib-ruby-0.7.1/ext/taglib_wav
+make "DESTDIR=" clean
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/taglib-ruby-0.7.1/ext/taglib_wav
+make "DESTDIR="
+compiling taglib_wav_wrap.cxx
+In file included from taglib_wav_wrap.cxx:1870:
+In file included from /usr/local/include/taglib/wavfile.h:30:
+In file included from /usr/local/include/taglib/id3v2tag.h:32:
+In file included from /usr/local/include/taglib/tlist.h:263:
+In file included from /usr/local/include/taglib/tlist.tcc:27:
+/usr/local/include/taglib/trefcounter.h:83:18: warning: 'OSAtomicIncrement32Barrier' is deprecated: first deprecated in macOS 10.12 - Use std::atomic_fetch_add() from <atomic> instead [-Wdeprecated-declarations]
+    void ref() { OSAtomicIncrement32Barrier(const_cast<int32_t*>(&refCount)); }
+                 ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/OSAtomicDeprecated.h:182:9: note: 'OSAtomicIncrement32Barrier' has been explicitly marked deprecated here
+int32_t OSAtomicIncrement32Barrier( volatile int32_t *__theValue );
+        ^
+In file included from taglib_wav_wrap.cxx:1870:
+In file included from /usr/local/include/taglib/wavfile.h:30:
+In file included from /usr/local/include/taglib/id3v2tag.h:32:
+In file included from /usr/local/include/taglib/tlist.h:263:
+In file included from /usr/local/include/taglib/tlist.tcc:27:
+/usr/local/include/taglib/trefcounter.h:84:29: warning: 'OSAtomicDecrement32Barrier' is deprecated: first deprecated in macOS 10.12 - Use std::atomic_fetch_sub() from <atomic> instead [-Wdeprecated-declarations]
+    bool deref() { return ! OSAtomicDecrement32Barrier(const_cast<int32_t*>(&refCount)); }
+                            ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/OSAtomicDeprecated.h:201:9: note: 'OSAtomicDecrement32Barrier' has been explicitly marked deprecated here
+int32_t OSAtomicDecrement32Barrier( volatile int32_t *__theValue );
+        ^
+taglib_wav_wrap.cxx:2024:9: warning: 'rb_rescue' is deprecated: Use of ANYARGS in this function is deprecated [-Wdeprecated-declarations]
+    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2LONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
+        ^
+/Users/ngonzalez/.rbenv/versions/2.7.2/include/ruby-2.7.0/ruby/backward/cxxanyargs.hpp:184:1: note: 'rb_rescue' has been explicitly marked deprecated here
+RUBY_CXX_DEPRECATED("Use of ANYARGS in this function is deprecated")
+^
+/Users/ngonzalez/.rbenv/versions/2.7.2/include/ruby-2.7.0/x86_64-darwin19/ruby/config.h:150:49: note: expanded from macro 'RUBY_CXX_DEPRECATED'
+#define RUBY_CXX_DEPRECATED(msg) __attribute__((__deprecated__(msg)))
+                                                ^
+taglib_wav_wrap.cxx:2119:9: warning: 'rb_rescue' is deprecated: Use of ANYARGS in this function is deprecated [-Wdeprecated-declarations]
+    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2ULONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
+        ^
+/Users/ngonzalez/.rbenv/versions/2.7.2/include/ruby-2.7.0/ruby/backward/cxxanyargs.hpp:184:1: note: 'rb_rescue' has been explicitly marked deprecated here
+RUBY_CXX_DEPRECATED("Use of ANYARGS in this function is deprecated")
+^
+/Users/ngonzalez/.rbenv/versions/2.7.2/include/ruby-2.7.0/x86_64-darwin19/ruby/config.h:150:49: note: expanded from macro 'RUBY_CXX_DEPRECATED'
+#define RUBY_CXX_DEPRECATED(msg) __attribute__((__deprecated__(msg)))
+                                                ^
+4 warnings generated.
+linking shared-object taglib_wav.bundle
+ld: warning: directory not found for option '-L/opt/local/lib'
+ld: warning: directory not found for option '-L/sw/lib'
+ld: warning: directory not found for option '-L/Users/ngonzalez/Sites/music-rails/vendor/taglib/lib'
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/taglib-ruby-0.7.1/ext/taglib_wav
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 taglib_wav.bundle ./.gem.20201125-48148-1uoh89n
