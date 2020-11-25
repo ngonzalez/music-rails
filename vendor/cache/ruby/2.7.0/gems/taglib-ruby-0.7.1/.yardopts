@@ -1,9 +1,0 @@
---markup markdown
---markup-provider kramdown
---charset UTF-8
---template-path docs
-docs/**/*.rb
--
-README.md
-CHANGES.md
-LICENSE.txt
