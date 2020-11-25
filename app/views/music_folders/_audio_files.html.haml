@@ -23,4 +23,4 @@
 
 :javascript
   new App.AudioFiles(#{@audio_files.map(&:marshal_dump).to_json.html_safe})
-  new App.AudioFilesRows('.tracks > .row')
+  new App.AudioFilesRows('.audio_files > .row')
