@@ -6,16 +6,16 @@ class ImportWorker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
-  attr_accessor :folder
+  attr_accessor :music_folder
 
   def initialize options={}
-    set_folder options
+    set_music_folder options
   end
 
-  def set_folder options
-    @folder = Folder.create! options.slice(*[:name, :folder, :subfolder, :source])
-    f = File::Stat.new folder.decorate.public_path
-    folder.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+  def set_music_folder options
+    music_folder = MusicFolder.create! options.slice(*[:name, :folder, :subfolder, :source])
+    f = File::Stat.new music_folder.decorate.public_path
+    music_folder.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
   rescue Exception => exception
     Rails.logger.error exception
   end
@@ -32,10 +32,11 @@ class ImportWorker
     ALLOWED_AUDIO_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
       list_files(folder.decorate.public_path, format) do |path, file_name|
         next if folder.tracks.detect { |track| track.name == file_name }
-        create_track folder, path, file_name
+        create_audio_file folder, path, file_name
       end
     end
   end
+
   def import_images
     ALLOWED_IMAGE_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
       list_files(folder.decorate.public_path, format) do |path, file_name|
@@ -44,6 +45,7 @@ class ImportWorker
       end
     end
   end
+
   def import_m3u_files
     list_files(folder.decorate.public_path, "m3u") do |path, file_name|
       next if folder.m3u_files.detect { |m3u| m3u.file_name == file_name }

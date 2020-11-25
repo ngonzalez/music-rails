@@ -1,0 +1,15 @@
+- content_for :head do
+  = javascript_include_tag :music
+  = stylesheet_link_tag :music
+
+%div{ 'data-role': 'page' }
+  .back
+    .row
+      %ul
+        %li
+          = link_to music_index_path(search_params), default_transition do
+            %i.fas.fa-4.fa-list
+
+  - cache @music_folder do
+    = render partial: 'music/images'
+    = render partial: 'music/audio_files'

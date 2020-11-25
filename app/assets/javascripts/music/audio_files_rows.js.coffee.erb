@@ -1,0 +1,17 @@
+
+class App.AudioFilesRows
+    constructor: (@className) ->
+        @css = <%= FA_CSS.to_json.html_safe %>
+        @rows = $(@className)
+        @observeRows()
+
+    observeRows: () ->
+        $.each @rows, (i, element) =>
+            $(element).find('.' + @css.play).addClass @css.disabled
+            $(element).hover (=> @handlerIn(element)), (=> @handlerOut(element))
+
+    handlerIn: (element) ->
+        $(element).find('.' + @css.play).removeClass @css.disabled
+
+    handlerOut: (element) ->
+        $(element).find('.' + @css.play).addClass @css.disabled

@@ -1,0 +1,7 @@
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/disable-building-tests.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/disable-werror-on-osx.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/disable-xcode-debugging.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/do-not-imply-vfp3-and-armv7.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/do-not-use-MAP_NORESERVE-on-freebsd.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/do-not-use-vfp2.patch
+/Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/libv8-3.16.14.19/patches/fPIC-for-static.patch

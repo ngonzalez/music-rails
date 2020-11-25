@@ -1,0 +1,26 @@
+.audio_files
+  - @audio_files.each do |audio_file|
+    .row{ class: cycle('odd', 'even') }
+      %ul
+        %li
+          .col-md-2
+            = link_to audio_file.artist, audio_file.artist_url, default_transition
+          .col-md-2
+            = track.title
+          .col-md-2
+            = track.album
+          .col-md-1
+            = track.genre
+          .col-md-1
+            .badge
+              = link_to audio_file.year, audio_file.year_url, default_transition
+          .col-md-1
+            .badge
+              = audio_file.duration
+          .col-md-1
+            %i{ class: "fas fa-3 fa-spin %s hidden" % FA_CSS[:processing] }
+            %i{ class: "fab fa-3 %s" % FA_CSS[:play], data: { id: audio_file.id } }
+
+:javascript
+  new App.AudioFiles(#{@audio_files.map(&:marshal_dump).to_json.html_safe})
+  new App.AudioFilesRows('.tracks > .row')

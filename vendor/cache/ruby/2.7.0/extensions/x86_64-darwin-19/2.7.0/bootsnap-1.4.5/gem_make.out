@@ -1,0 +1,22 @@
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/bootsnap-1.4.5/ext/bootsnap
+/Users/ngonzalez/.rbenv/versions/2.7.2/bin/ruby -I /Users/ngonzalez/.rbenv/versions/2.7.2/lib/ruby/2.7.0 -r ./siteconf20201125-5763-74d4ll.rb extconf.rb
+creating Makefile
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/bootsnap-1.4.5/ext/bootsnap
+make "DESTDIR=" clean
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/bootsnap-1.4.5/ext/bootsnap
+make "DESTDIR="
+compiling bootsnap.c
+bootsnap.c:810:7: warning: incompatible pointer types passing 'VALUE (VALUE)' (aka 'unsigned long (unsigned long)') to parameter of type 'VALUE (*)(VALUE, VALUE)' (aka 'unsigned long (*)(unsigned long, unsigned long)') [-Wincompatible-pointer-types]
+      rescue_input_to_storage, Qnil,
+      ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/ngonzalez/.rbenv/versions/2.7.2/include/ruby-2.7.0/ruby/ruby.h:1988:47: note: passing argument to parameter here
+VALUE rb_rescue2(VALUE(*)(VALUE),VALUE,VALUE(*)(VALUE,VALUE),VALUE,...);
+                                              ^
+1 warning generated.
+linking shared-object bootsnap/bootsnap.bundle
+
+current directory: /Users/ngonzalez/Sites/music-rails/vendor/cache/ruby/2.7.0/gems/bootsnap-1.4.5/ext/bootsnap
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 bootsnap.bundle ./.gem.20201125-5763-mgv88q/bootsnap

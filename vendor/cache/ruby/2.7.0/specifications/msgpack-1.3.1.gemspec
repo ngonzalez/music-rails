@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.files = ["ext/msgpack/extconf.rb".freeze]
   s.homepage = "http://msgpack.org/".freeze
   s.licenses = ["Apache 2.0".freeze]
-  s.rubygems_version = "3.2.0.rc.2".freeze
+  s.rubygems_version = "3.1.4".freeze
   s.summary = "MessagePack, a binary-based efficient data interchange format.".freeze
 
-  s.installed_by_version = "3.2.0.rc.2" if s.respond_to? :installed_by_version
+  s.installed_by_version = "3.1.4" if s.respond_to? :installed_by_version
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

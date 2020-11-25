@@ -1,0 +1,15 @@
+:scss
+  #{render partial: "music/images.scss"}
+
+.images
+  - if @music_folder.images.any?
+    .row
+      .polaroid-images
+        - @music_folder.images.each do |image|
+          = link_to image.file.url, class: :swipebox do
+            %div{ id: "img-#{image.id}" }
+
+:javascript
+  $(document).ready(function(e) {
+    observe_polaroids();
+  });

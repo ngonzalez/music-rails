@@ -1,0 +1,31 @@
+- content_for :head do
+  = javascript_include_tag :music
+  = stylesheet_link_tag :music
+
+%div{ 'data-role': 'page' }
+  .container
+    = form_tag music_folders_index_path, default_transition.merge(method: :get) do
+      .form-group
+        .col-md-5
+          = text_field_tag :q, search_params[:q], class: 'form-control', type: 'search'
+        .col-md-5
+          %button.btn.btn-default{ type: 'submit' } Search
+    .clear
+
+    - cache search_params do
+      %ol.search
+        - @music_folders.each do |item|
+          %li
+            %h5
+              .label.label-primary= link_to item.year, item.year_url, default_transition
+              %span.label.label-info
+                = link_to item.folder_name, item.folder_url, default_transition
+                - if item.subfolder
+                  |
+                  = link_to item.subfolder_name, item.subfolder_url, default_transition
+              %span.link
+                = link_to item.name, item.url
+
+    .footer
+      %small
+        = 'Page rendered in %s seconds - %s' % [ Time.now - @t1, Time.now ]
