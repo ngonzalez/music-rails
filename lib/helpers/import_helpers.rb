@@ -1,7 +1,7 @@
 module ImportHelpers
   require 'taglib'
   def create_track release, track_path, file_name
-    track = release.tracks.new name: file_name
+    track = folder.tracks.new name: file_name
     track.format_info = `file -b #{Shellwords.escape(track_path)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
     TagLib::FileRef.open(track_path) do |infos|
       tag = infos.tag
@@ -16,22 +16,22 @@ module ImportHelpers
     track.save!
   end
   def create_image release, image_path, file_name
-    release.images.create! file: File.open(image_path), file_name: file_name
+    folder.images.create! file: File.open(image_path), file_name: file_name
   rescue Dragonfly::Shell::CommandFailed => e
-    Rails.logger.info "Failed to generate Image: %s" % release.name
+    Rails.logger.info "Failed to generate Image: %s" % folder.name
   end
   def clear_text string
     string.force_encoding('Windows-1252').encode('UTF-8').gsub("\C-M", "")
   end
   def base_path release, path
     array = path.split "/"
-    array = array[array.index(release.name)..array.length] - [release.name]
+    array = array[array.index(folder.name)..array.length] - [folder.name]
     array.length > 1 ? array[0] : nil
   end
   def import_file release, collection, path, file_name
     f = Tempfile.new
     f.write(clear_text(File.read(path))) ; f.rewind
-    release.send(collection).create! file: f, file_name: file_name, base_path: base_path(release, path)
+    folder.send(collection).create! file: f, file_name: file_name, base_path: base_path(release, path)
   ensure
     f.try :unlink
   end

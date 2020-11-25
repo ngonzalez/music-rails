@@ -4,13 +4,13 @@ module SearchHelpers
     # Search by folder, subfolder
     if search_params[:folder]
       if search_params[:subfolder]
-        search = Release.search {
+        search = Folder.search {
           paginate :page => 1, :per_page => 100000
           with(:folder, search_params[:folder])
           with(:subfolder, search_params[:subfolder])
         }
       else
-        search = Release.search {
+        search = Folder.search {
           paginate :page => 1, :per_page => 100000
           with(:folder, search_params[:folder])
         }
@@ -19,7 +19,7 @@ module SearchHelpers
     #
     # Search by year
     elsif search_params[:year]
-      search = Release.search {
+      search = Folder.search {
         paginate :page => 1, :per_page => 100000
         with(:year, search_params[:year])
       }
@@ -27,7 +27,7 @@ module SearchHelpers
     #
     # Fulltext search
     elsif search_params[:q]
-      search = Track.search(include: [:release]) {
+      search = AudioFile.search(include: [:release]) {
         fulltext search_params[:q]
         paginate :page => 1, :per_page => 100000
       }

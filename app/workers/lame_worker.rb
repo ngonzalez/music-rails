@@ -4,42 +4,20 @@ class LameWorker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
-  def perform track_id
-    track = Track.find(track_id).decorate
-    if !track.file
-      if ["AAC", "ALAC", "MP3"].include? track.format_name
-        begin
-          file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{default_encoding}"
+  def perform audio_file_id
+    audio_file = AudioFile.find(audio_file_id).decorate
+    if !audio_file.file
+      begin
+        file_path = Shellwords.escape audio_file.decorate.public_path
+        temp_file = "/tmp/#{audio_file.id}.#{default_encoding}"
+        if ["AAC", "ALAC", "MP3"].include? audio_file.format_name
           strip_metadata file_path, temp_file
-          track.update! file: File.open(temp_file)
-        ensure
-          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
-        end
-      elsif ["FLAC"].include? track.format_name
-        begin
-          file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{default_encoding}"
-          temp_file_flac = "/tmp/#{track.id}.flac"
-          temp_file_wav = "/tmp/#{track.id}.wav"
-          copy_file file_path, temp_file_flac
-          decode_file temp_file_flac
-          encode temp_file_wav, temp_file
-          track.update! file: File.open(temp_file)
-        ensure
-          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
-          FileUtils.rm_f temp_file_flac if temp_file_flac && File.exists?(temp_file_flac)
-          FileUtils.rm_f temp_file_wav if temp_file_wav && File.exists?(temp_file_wav)
-        end
-      elsif ["AIFF", "WAV"].include? track.format_name
-        begin
-          file_path = Shellwords.escape track.decorate.public_path
-          temp_file = "/tmp/#{track.id}.#{default_encoding}"
+        elsif ["AIFF", "WAV"].include? audio_file.format_name
           encode file_path, temp_file
-          track.update! file: File.open(temp_file)
-        ensure
-          FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
         end
+        audio_file.update! file: File.open(temp_file)
+      ensure
+        FileUtils.rm_f temp_file if temp_file && File.exists?(temp_file)
       end
     end
   rescue Exception => e
@@ -65,11 +43,4 @@ class LameWorker
     end
   end
 
-  def copy_file source, destination
-    `cp #{source} #{destination}`
-  end
-
-  def decode_file source
-    `flac -d -s -f #{source}`
-  end
 end

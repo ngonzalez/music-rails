@@ -6,55 +6,48 @@ class ImportWorker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
-  attr_accessor :release
+  attr_accessor :folder
 
   def initialize options={}
-    set_release options
+    set_folder options
   end
 
-  def set_release options
-    @release = Release.create! options.slice(*[:name, :folder, :subfolder, :source])
-    f = File::Stat.new release.decorate.public_path
-    release.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
+  def set_folder options
+    @folder = Folder.create! options.slice(*[:name, :folder, :subfolder, :source])
+    f = File::Stat.new folder.decorate.public_path
+    folder.update! folder_created_at: f.birthtime, folder_updated_at: f.mtime
   rescue Exception => exception
     Rails.logger.error exception
   end
 
   def perform
-    import_tracks
+    import_audio_files
     import_images
-    import_sfv
-    import_m3u
+    import_m3u_files
   rescue Exception => exception
     Rails.logger.error exception
   end
 
-  def import_tracks
+  def import_audio_files
     ALLOWED_AUDIO_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
-      list_files(release.decorate.public_path, format) do |path, file_name|
-        next if release.tracks.detect { |track| track.name == file_name }
-        create_track release, path, file_name
+      list_files(folder.decorate.public_path, format) do |path, file_name|
+        next if folder.tracks.detect { |track| track.name == file_name }
+        create_track folder, path, file_name
       end
     end
   end
   def import_images
     ALLOWED_IMAGE_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
-      list_files(release.decorate.public_path, format) do |path, file_name|
-        next if release.images.detect { |image| image.file_name == file_name }
-        create_image release, path, file_name
+      list_files(folder.decorate.public_path, format) do |path, file_name|
+        next if folder.images.detect { |image| image.file_name == file_name }
+        create_image folder, path, file_name
       end
     end
   end
-  def import_sfv
-    list_files(release.decorate.public_path, "sfv") do |path, file_name|
-      next if release.sfv_files.detect { |sfv| sfv.file_name == file_name }
-      import_file release, :sfv_files, path, file_name
-    end
-  end
-  def import_m3u
-    list_files(release.decorate.public_path, "m3u") do |path, file_name|
-      next if release.m3u_files.detect { |m3u| m3u.file_name == file_name }
-      import_file release, :m3u_files, path, file_name
+  def import_m3u_files
+    list_files(folder.decorate.public_path, "m3u") do |path, file_name|
+      next if folder.m3u_files.detect { |m3u| m3u.file_name == file_name }
+      import_file folder, :m3u_files, path, file_name
     end
   end
 end
