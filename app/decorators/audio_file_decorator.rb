@@ -2,7 +2,7 @@ class AudioFileDecorator < Draper::Decorator
   delegate_all
   attr_accessor :m3u8_exists
   def path
-    [folder.decorate.path, name].join "/"
+    [music_folder.decorate.path, name].join "/"
   end
   def public_path
     [BASE_PATH, path].join "/"
