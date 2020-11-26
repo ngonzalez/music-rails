@@ -13,7 +13,7 @@ class AudioFilesController < ApplicationController
     end
   end
 
-  private
+    private
 
   def set_audio_file
     @audio_file = AudioFile.friendly.find(params[:id]).decorate
@@ -36,4 +36,5 @@ class AudioFilesController < ApplicationController
       StreamWorker.perform_async @audio_file.id, @audio_file.file.path
     end
   end
+
 end
