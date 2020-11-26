@@ -1,3 +1,10 @@
+#### macOS
+```
+# Install Java Runtime by downloading the JDK for macOS x64
+# https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html
+brew install openjdk@8
+```
+
 #### Installation instructions for debian
 
 ### Create user and database
