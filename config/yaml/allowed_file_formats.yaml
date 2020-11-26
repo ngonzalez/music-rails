@@ -1,4 +1,4 @@
 ---
-  M3U:
-    :extensions:
-      - m3u
+M3U:
+  :extensions:
+    - m3u
