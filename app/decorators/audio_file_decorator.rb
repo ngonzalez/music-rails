@@ -11,13 +11,13 @@ class AudioFileDecorator < Draper::Decorator
     object.year.to_i
   end
   def url
-    h.track_path object, format: :json
+    h.audio_file_path object, format: :json
   end
   def artist_url
-    h.music_index_path q: object.artist
+    h.music_folders_path q: object.artist
   end
   def year_url
-    h.music_index_path q: object.year
+    h.music_folders_path q: object.year
   end
   def duration
     Time.at(object.length).strftime object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S"

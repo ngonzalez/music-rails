@@ -1,5 +1,5 @@
 class MusicFolder < ActiveRecord::Base
-  has_many :audio_tracks, dependent: :destroy
+  has_many :audio_files, dependent: :destroy
   has_many :images, dependent: :destroy
   has_many :m3u_files, dependent: :destroy
 

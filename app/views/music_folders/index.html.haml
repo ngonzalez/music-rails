@@ -4,7 +4,7 @@
 
 %div{ 'data-role': 'page' }
   .container
-    = form_tag music_folders_index_path, default_transition.merge(method: :get) do
+    = form_tag music_folders_path, default_transition.merge(method: :get) do
       .form-group
         .col-md-5
           = text_field_tag :q, search_params[:q], class: 'form-control', type: 'search'

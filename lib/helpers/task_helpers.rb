@@ -1,7 +1,7 @@
 module TaskHelpers
   def clear_deleted_folders
-    (Folder.pluck(:folder).uniq - FOLDERS - FOLDERS_WITH_SUBFOLDERS).each do |folder|
-      Folder.where(folder: folder).destroy_all
+    (MusicFolder.pluck(:folder).uniq - FOLDERS - FOLDERS_WITH_SUBFOLDERS).each do |folder|
+      MusicFolder.where(folder: folder).destroy_all
     end
   end
 
@@ -11,7 +11,6 @@ module TaskHelpers
       ALLOWED_SOURCES.each do |source|
         Dir["#{BASE_PATH}/#{folder}/#{source}/**"].each do |path|
           name = path.split("/").last
-          next if EXCEPT_RLS.include?(name) || items.include?(name)
           ImportWorker.new(path: path, name: name,
             folder: folder, source: source).perform
         end
@@ -28,7 +27,6 @@ module TaskHelpers
             name = path.split("/").last
             subfolder = subfolder_path.split("/").last
             folder = subfolder_path.gsub("#{BASE_PATH}/", "").gsub("/#{subfolder}", "")
-            next if EXCEPT_RLS.include?(name) || items.include?(name)
             ImportWorker.new(path: path, name: name,
               folder: folder, source: source, subfolder: subfolder).perform
           end
@@ -51,7 +49,7 @@ module TaskHelpers
           end
         end
       end
-      folder.destroy if !File.directory? folder.decorate.public_path
+      music_folder.destroy if !File.directory? music_folder.decorate.public_path
     end
   end
 
@@ -84,7 +82,7 @@ module TaskHelpers
     end
   end
 
-  def update_music_folders_data_url
+  def update_audio_files_data_url
     AudioFile.where(data_url: nil).each do |audio_file|
       audio_file = audio_file.decorate
       data_url = audio_file.format_name rescue next

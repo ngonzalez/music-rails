@@ -102,5 +102,4 @@ ALLOWED_SOURCES         = YAML.load_file File.expand_path('../config/yaml/allowe
 FA_CSS                  = YAML.load_file File.expand_path('../config/yaml/fa_css.yaml', __dir__)
 FOLDERS                 = YAML.load_file File.expand_path('../config/yaml/folders.yaml', __dir__)
 FOLDERS_WITH_SUBFOLDERS = YAML.load_file File.expand_path('../config/yaml/folders_with_subfolders.yaml', __dir__)
-EXCEPT_RLS              = YAML.load_file File.expand_path('../config/yaml/except_rls.yaml', __dir__)
 EXCEPT_NAMES            = YAML.load_file File.expand_path('../config/yaml/except_names.yaml', __dir__)

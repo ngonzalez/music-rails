@@ -10,16 +10,16 @@ class MusicFolderDecorator < Draper::Decorator
     object.year.to_i
   end
   def url
-    h.music_path object
+    h.music_folder_path object
   end
   def year_url
-    h.music_index_path q: object.year
+    h.music_folders_path q: object.year
   end
   def folder_url
-    h.music_index_path folder: object.folder
+    h.music_folders_path folder: object.folder
   end
   def subfolder_url
-    h.music_index_path folder: object.folder, subfolder: object.subfolder
+    h.music_folders_path folder: object.folder, subfolder: object.subfolder
   end
   def folder_name
     object.folder.titleize.truncate 20, omission: "…#{object.folder.titleize.last(10)}"

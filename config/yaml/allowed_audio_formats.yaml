@@ -16,11 +16,6 @@
       - ALAC
     :extensions:
       - m4a
-  FLAC:
-    :tags:
-      - FLAC
-    :extensions:
-      - flac
   MP3:
     default: true
     :tags:
