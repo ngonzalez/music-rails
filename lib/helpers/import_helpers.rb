@@ -4,7 +4,12 @@ module ImportHelpers
 
   def create_audio_file music_folder, file_path, file_name
     audio_file = music_folder.audio_files.new name: file_name
-    audio_file.format_info = `file -b #{Shellwords.escape(file_path)}`.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
+    begin
+      file_infos = `file -b #{Shellwords.escape(file_path)}`
+      audio_file.format_info = file_infos.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
+    rescue Encoding::UndefinedConversionError => e
+      Rails.logger.error e
+    end
     TagLib::FileRef.open(file_path) do |infos|
       tag = infos.tag
       ["artist", "title", "album", "genre", "year"].each do |name|
