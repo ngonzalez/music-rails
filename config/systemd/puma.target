@@ -1,5 +1,5 @@
 [Unit]
-Description=Music App
-Requires=music-app.target systemd-networkd.service
-After=music-app.target systemd-networkd.service
+Description=Puma
+Requires=puma.target systemd-networkd.service
+After=puma.target systemd-networkd.service
 AllowIsolate=yes
