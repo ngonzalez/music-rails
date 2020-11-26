@@ -28,9 +28,6 @@ class AudioFileDecorator < Draper::Decorator
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
   end
-  def m3u8_path
-     "#{HLS_FOLDER}/#{object.id}.m3u8"
-  end
   def url_infos
     hash = { url: url, artist_url: artist_url, year_url: year_url }
     hash.merge! stream_url: "http://#{HOST_NAME}/hls/#{object.id}.m3u8"

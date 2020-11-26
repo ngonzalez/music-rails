@@ -82,6 +82,8 @@ GEM
     concurrent-ruby (1.1.7)
     connection_pool (2.2.3)
     crass (1.0.6)
+    down (5.2.0)
+      addressable (~> 2.5)
     dragonfly (1.2.1)
       addressable (~> 2.3)
       multi_json (~> 1.0)
@@ -300,6 +302,7 @@ DEPENDENCIES
   bootsnap!
   bootstrap-sass!
   coffee-rails!
+  down!
   dragonfly!
   draper!
   execjs!

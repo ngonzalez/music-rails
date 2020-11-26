@@ -1,8 +1,8 @@
 
 # App
-export BASE_PATH='/Volumes/Untitled'
+export HOST_NAME='127.0.0.1'
 export HLS_FOLDER='/tmp/hls'
-export HOST_NAME='link12.ddns.net'
+export BASE_PATH='/Volumes/Untitled'
 
 # PostgreSQL
 export POSTGRESQL_HOST='127.0.0.1'

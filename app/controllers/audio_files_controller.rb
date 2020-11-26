@@ -20,7 +20,7 @@ class AudioFilesController < ApplicationController
   end
 
   def set_audio_file_m3u8_exists
-    @audio_file.m3u8_exists = File.exists? @audio_file.m3u8_path rescue false
+    @audio_file.m3u8_exists = File.exists? "#{HLS_FOLDER}/#{@audio_file.id}.m3u8" rescue false
   end
 
   def create_file

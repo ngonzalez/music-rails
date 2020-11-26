@@ -2,6 +2,7 @@ source 'https://rubygems.org' do
   gem 'bootsnap'
   gem 'bootstrap-sass'
   gem 'coffee-rails'
+  gem 'down'
   gem 'dragonfly'
   gem 'draper'
   gem 'execjs'
