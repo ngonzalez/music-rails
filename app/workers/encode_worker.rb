@@ -15,9 +15,6 @@ class EncodeWorker
     encode file.path, temp_file if ['AIFF', 'WAV'].include? audio_file.format_name
     audio_file.update! file: File.open(temp_file)
     FileUtils.rm_f temp_file
-  rescue
-    binding.pry
-    raise
   end
 
     private
