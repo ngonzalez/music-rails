@@ -73,11 +73,7 @@ module TaskHelpers
   def update_music_folders_data_url
     MusicFolder.where(data_url: nil).each do |music_folder|
       next unless music_folder.formatted_name
-      data_url = music_folder.formatted_name.downcase
-        .gsub(' ', '-')
-        .gsub('_', '-')
-        .gsub('__', '-')
-        .gsub('--', '-')
+      data_url = music_folder.formatted_name.downcase.gsub(' ', '-').gsub('_', '-').gsub('__', '-').gsub('--', '-')
       begin
         music_folder.update!(data_url: data_url)
       rescue ActiveRecord::RecordNotUnique
@@ -112,11 +108,7 @@ module TaskHelpers
   def update_music_folders_formatted_name
     MusicFolder.where(formatted_name: nil).each do |music_folder|
       next unless music_folder.year
-      array = music_folder.name
-        .gsub('_-_', '-')
-        .gsub('.', '')
-        .gsub('-', ' ')
-        .split(' ')
+      array = music_folder.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
       array -= ALLOWED_AUDIO_FORMATS.keys
       array -= ALLOWED_SOURCES
       next unless array.index(music_folder.year)
