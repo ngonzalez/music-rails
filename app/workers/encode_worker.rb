@@ -1,4 +1,4 @@
-class LameWorker
+class EncodeWorker
   include Sidekiq::Worker
 
   sidekiq_options :queue => :default, :retry => false, :backtrace => true

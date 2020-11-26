@@ -24,15 +24,15 @@ class AudioFilesController < ApplicationController
   end
 
   def create_file
-    if !@audio_file.file && !RedisDb.client.get("audio_file:#{@audio_file.id}")
-      RedisDb.client.setex "audio_file:#{@audio_file.id}", 120, 1
-      LameWorker.perform_async @audio_file.id
+    if !@audio_file.file && !RedisDb.client.get("encode:#{@audio_file.id}")
+      RedisDb.client.setex "encode:#{@audio_file.id}", 120, 1
+      EncodeWorker.perform_async @audio_file.id
     end
   end
 
   def create_m3u8
-    if @audio_file.file && !@audio_file.m3u8_exists && !RedisDb.client.get("streams:#{@audio_file.id}")
-      RedisDb.client.setex "streams:#{@audio_file.id}", 120, 1
+    if @audio_file.file && !@audio_file.m3u8_exists && !RedisDb.client.get("stream:#{@audio_file.id}")
+      RedisDb.client.setex "stream:#{@audio_file.id}", 120, 1
       StreamWorker.perform_async @audio_file.id, @audio_file.file.path
     end
   end
