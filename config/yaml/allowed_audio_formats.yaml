@@ -1,8 +1,10 @@
 ---
 AAC:
+  default: true
   :tags:
     - AAC
   :extensions:
+    - aac
     - m4a
     - mp4
 AIFF:
@@ -17,7 +19,6 @@ ALAC:
   :extensions:
     - m4a
 MP3:
-  default: true
   :tags:
     - Audio file with ID3
     - MPEG ADTS
