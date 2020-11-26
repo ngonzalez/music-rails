@@ -1,0 +1,19 @@
+[Unit]
+Description=Sidekiq
+After=network.target
+Documentation=http://github.com/ngonzalez
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/music-app
+ExecStart=/usr/bin/bundle2.7 exec sidekiq -d -L /tmp/sidekiq.log -e production
+PIDFile=/var/www/music-app/tmp/pids/sidekiq.pid
+TimeoutStopSec=0
+Restart=always
+User=debian
+Group=debian
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+Alias=sidekiq.service
