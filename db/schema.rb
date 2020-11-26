@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2020_11_26_142911) do
     t.string "year"
     t.integer "bitrate"
     t.integer "channels"
-    t.integer "length"
+    t.integer "length_in_seconds"
     t.integer "sample_rate"
     t.datetime "created_at"
     t.datetime "updated_at"

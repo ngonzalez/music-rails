@@ -20,7 +20,7 @@ class AudioFileDecorator < Draper::Decorator
     h.music_folders_path q: object.year
   end
   def duration
-    Time.at(object.length).strftime object.length.to_i > 3600 ? "%H:%M:%S" : "%M:%S"
+    Time.at(object.length_in_seconds).strftime object.length_in_seconds.to_i > 3600 ? "%H:%M:%S" : "%M:%S"
   end
   def format_name
     ALLOWED_AUDIO_FORMATS.detect { |_, format| format[:tags].any? { |tag| object.format_info =~ /#{tag}/ } }[0]

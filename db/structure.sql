@@ -41,7 +41,7 @@ CREATE TABLE public.audio_files (
     year character varying,
     bitrate integer,
     channels integer,
-    length integer,
+    length_in_seconds integer,
     sample_rate integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
@@ -457,6 +457,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201125220429'),
 ('20201125220525'),
 ('20201125220616'),
-('20201125220714');
+('20201125220714'),
+('20201126142911');
 
 

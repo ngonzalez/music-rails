@@ -11,7 +11,7 @@ class CreateAudioFiles < ActiveRecord::Migration[6.0]
       t.string :year
       t.integer :bitrate
       t.integer :channels
-      t.integer :length
+      t.integer :length_in_seconds
       t.integer :sample_rate
       t.datetime :created_at
       t.datetime :updated_at

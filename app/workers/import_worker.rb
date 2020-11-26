@@ -69,7 +69,7 @@ class ImportWorker
       end
       audio_properties = infos.audio_properties
       ["bitrate", "channels", "length_in_seconds", "sample_rate"].each do |name|
-        audio_file.send "#{name}=", audio_properties.send(name) rescue binding.pry
+        audio_file.send "#{name}=", audio_properties.send(name)
       end
     end
     audio_file.save!
