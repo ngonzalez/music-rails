@@ -36,7 +36,7 @@ class MusicFoldersController < ApplicationController
 
   private
 
-  def set_folder
+  def set_music_folder
     @music_folder = MusicFolder.friendly.find(params[:id]).decorate
   end
 
@@ -49,7 +49,7 @@ class MusicFoldersController < ApplicationController
   end
 
   def permitted_params
-    params.permit :format, :q, :folder, :subfolder
+    params.permit :format, :q, :folder, :subfolder, :utf8
   end
 
   def session_store
@@ -63,4 +63,5 @@ class MusicFoldersController < ApplicationController
   def search_music_folders
     @music_folders = search_params.values.all?(&:blank?) ? [] : search_db(parse_search_params(search_params))
   end
+
 end

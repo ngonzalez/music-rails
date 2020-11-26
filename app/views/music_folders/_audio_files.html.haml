@@ -6,11 +6,11 @@
           .col-md-2
             = link_to audio_file.artist, audio_file.artist_url, default_transition
           .col-md-2
-            = track.title
+            = audio_file.title
           .col-md-2
-            = track.album
+            = audio_file.album
           .col-md-1
-            = track.genre
+            = audio_file.genre
           .col-md-1
             .badge
               = link_to audio_file.year, audio_file.year_url, default_transition
