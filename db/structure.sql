@@ -142,42 +142,6 @@ ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
 
 
 --
--- Name: m3u_files; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.m3u_files (
-    id bigint NOT NULL,
-    music_folder_id integer NOT NULL,
-    file_uid character varying NOT NULL,
-    file_name character varying NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    deleted_at timestamp without time zone,
-    source character varying,
-    base_path character varying
-);
-
-
---
--- Name: m3u_files_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.m3u_files_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: m3u_files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.m3u_files_id_seq OWNED BY public.m3u_files.id;
-
-
---
 -- Name: music_folders; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -284,13 +248,6 @@ ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.image
 
 
 --
--- Name: m3u_files id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.m3u_files ALTER COLUMN id SET DEFAULT nextval('public.m3u_files_id_seq'::regclass);
-
-
---
 -- Name: music_folders id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -334,14 +291,6 @@ ALTER TABLE ONLY public.friendly_id_slugs
 
 ALTER TABLE ONLY public.images
     ADD CONSTRAINT images_pkey PRIMARY KEY (id);
-
-
---
--- Name: m3u_files m3u_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.m3u_files
-    ADD CONSTRAINT m3u_files_pkey PRIMARY KEY (id);
 
 
 --
@@ -418,13 +367,6 @@ CREATE INDEX index_images_on_music_folder_id ON public.images USING btree (music
 
 
 --
--- Name: index_m3u_files_on_music_folder_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_m3u_files_on_music_folder_id ON public.m3u_files USING btree (music_folder_id);
-
-
---
 -- Name: index_music_folders_on_data_url; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -455,7 +397,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201125215953'),
 ('20201125220124'),
 ('20201125220429'),
-('20201125220525'),
 ('20201125220616'),
 ('20201125220714'),
 ('20201126142911');
