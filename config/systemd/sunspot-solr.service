@@ -7,6 +7,7 @@ Documentation=http://github.com/ngonzalez
 Type=simple
 WorkingDirectory=/var/www/music-app
 ExecStart=/usr/bin/bundle2.7 exec sunspot-solr start -p 8982
+EnvironmentFile=/etc/music-app.conf
 PIDFile=/var/www/music-app/tmp/pids/sunspot-solr.pid
 TimeoutStopSec=0
 Restart=always
