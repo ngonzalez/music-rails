@@ -110,16 +110,6 @@ module TaskHelpers
       array = music_folder.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
       array -= ALLOWED_AUDIO_FORMATS.keys
       array -= ALLOWED_SOURCES
-      EXCEPT_NAMES.each do |string|
-        array.reject! { |str| str == string }
-      end
-      array.each_with_index do |item, i|
-        array_item = item.split '_'
-        EXCEPT_NAMES.each do |string|
-          array_item.reject! { |str| str == string }
-        end
-        array[i] = array_item.join ' '
-      end
       next unless array.index(folder.year)
       formatted_name = array[0..array.index(folder.year)-1].join(' ').gsub('_', ' ')
       music_folder.update! formatted_name: formatted_name
