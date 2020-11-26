@@ -110,8 +110,8 @@ module TaskHelpers
       array = music_folder.name.gsub('_-_', '-').gsub('.', '').gsub('-', ' ').split(' ')
       array -= ALLOWED_AUDIO_FORMATS.keys
       array -= ALLOWED_SOURCES
-      next unless array.index(folder.year)
-      formatted_name = array[0..array.index(folder.year)-1].join(' ').gsub('_', ' ')
+      next unless array.index(music_folder.year)
+      formatted_name = array[0..array.index(music_folder.year)-1].join(' ').gsub('_', ' ')
       music_folder.update! formatted_name: formatted_name
     end
   end
