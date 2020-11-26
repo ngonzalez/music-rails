@@ -13,6 +13,8 @@ source 'https://rubygems.org' do
   gem 'nokogiri'
   gem 'paper_trail'
   gem 'paranoia'
+  gem 'progress_bar'
+  gem 'pry'
   gem 'pg'
   gem 'puma'
   gem 'rack-cors', require: 'rack/cors'
