@@ -8,7 +8,7 @@ module ImportHelpers
       file_infos = `file -b #{Shellwords.escape(file_path)}`
       audio_file.format_info = file_infos.force_encoding('Windows-1252').encode('UTF-8').gsub("\n", "").strip
     rescue Encoding::UndefinedConversionError => e
-      Rails.logger.error e
+      raise e
     end
     TagLib::FileRef.open(file_path) do |infos|
       tag = infos.tag
