@@ -1,6 +1,5 @@
 ---
 AAC:
-  :default: true
   :tags:
     - AAC
   :extensions:
