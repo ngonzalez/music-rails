@@ -37,7 +37,7 @@ class MusicFoldersController < ApplicationController
   private
 
   def set_music_folder
-    @music_folder = MusicFolder.friendly.find(params[:id]).decorate
+    @music_folder = MusicFolder.find_by(data_url: params[:id]).decorate
   end
 
   def set_audio_files

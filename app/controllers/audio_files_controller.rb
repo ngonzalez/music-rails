@@ -16,7 +16,7 @@ class AudioFilesController < ApplicationController
     private
 
   def set_audio_file
-    @audio_file = AudioFile.friendly.find(params[:id]).decorate
+    @audio_file = AudioFile.find_by(data_url: params[:id]).decorate
   end
 
   def set_audio_file_m3u8_exists
