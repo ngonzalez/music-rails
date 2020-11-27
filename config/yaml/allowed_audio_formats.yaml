@@ -1,12 +1,12 @@
 ---
 AAC:
-  default: true
+  :default: true
   :tags:
     - AAC
   :extensions:
-    - aac
     - m4a
     - mp4
+    - aac
 AIFF:
   :tags:
     - AIFF
