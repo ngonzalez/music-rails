@@ -42,18 +42,6 @@ class ImportWorker
         end
       end
     end
-
-    ALLOWED_FILE_FORMATS.flat_map { |_, format| format[:extensions] }.each do |format|
-      list_files(music_folder.decorate.public_path, format) do |path, file_name|
-        next if music_folder.send("#{format}_files".to_sym).detect { |item| item.file_name == file_name }
-        begin
-          import_file music_folder, "#{format}_files".to_sym, path, file_name
-        rescue => e
-          Rails.logger.error e
-          next
-        end
-      end
-    end
   end
 
     private
