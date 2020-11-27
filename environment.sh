@@ -1,6 +1,6 @@
 
 # App
-export HOST_NAME='127.0.0.1'
+export HOST_NAME='link12.ddns.net'
 export HLS_FOLDER='/tmp/hls'
 export BASE_PATH='/Volumes/Untitled'
 
