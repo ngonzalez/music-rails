@@ -12,3 +12,4 @@ sunspot-solr.pid
 node_modules
 tmp/pids/server.pid
 vendor/cache
+public/Volumes/
