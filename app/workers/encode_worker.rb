@@ -24,7 +24,7 @@ class EncodeWorker
   end
 
   def encode source, destination
-    `ffmpeg -i #{source} -c:a aac -strict -2 #{destination}`
+    `lame --silent -b 320 -ms #{source} #{destination}`
   end
 
 end
