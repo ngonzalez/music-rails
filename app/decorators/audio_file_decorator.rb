@@ -33,12 +33,21 @@ class AudioFileDecorator < Draper::Decorator
     hash.merge! stream_url: "http://#{HOST_NAME}/hls/#{object.id}.m3u8"
     hash
   end
+  def m3u8_exists?
+    File.exists? "#{HLS_FOLDER}/#{object.id}.m3u8" rescue false
+  end
+  def attr_infos
+    hash = {}
+    hash.merge! m3u8_exists: m3u8_exists?
+    hash
+  end
   def attributes
     OpenStruct.new(
       object.attributes.deep_symbolize_keys
       .slice(:id, :album, :artist, :title, :year, :genre)
       .merge(duration: duration, year: year)
       .merge(url_infos)
+      .merge(attr_infos)
       .compact
     )
   end

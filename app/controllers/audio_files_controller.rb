@@ -1,6 +1,5 @@
 class AudioFilesController < ApplicationController
   before_action :set_audio_file
-  before_action :set_audio_file_m3u8_exists
   before_action :create_file
   before_action :create_m3u8
 
@@ -17,10 +16,6 @@ class AudioFilesController < ApplicationController
 
   def set_audio_file
     @audio_file = AudioFile.find_by(data_url: params[:id]).decorate
-  end
-
-  def set_audio_file_m3u8_exists
-    @audio_file.m3u8_exists = File.exists? "#{HLS_FOLDER}/#{@audio_file.id}.m3u8" rescue false
   end
 
   def create_file
