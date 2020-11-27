@@ -1,0 +1,22 @@
+current directory: /var/www/music-app/vendor/cache/ruby/2.7.0/gems/bootsnap-1.5.1/ext/bootsnap
+/usr/bin/ruby2.7 -I /usr/lib/ruby/vendor_ruby -r ./siteconf20201127-33570-qsr4g8.rb extconf.rb
+creating Makefile
+
+current directory: /var/www/music-app/vendor/cache/ruby/2.7.0/gems/bootsnap-1.5.1/ext/bootsnap
+make "DESTDIR=" clean
+
+current directory: /var/www/music-app/vendor/cache/ruby/2.7.0/gems/bootsnap-1.5.1/ext/bootsnap
+make "DESTDIR="
+compiling bootsnap.c
+bootsnap.c: In function ‘bs_cache_path’:
+bootsnap.c:277:39: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+  277 |   sprintf(*cache_path, "%s/%02x/%014llx", cachedir, first_byte, remainder);
+      |                                 ~~~~~~^                         ~~~~~~~~~
+      |                                       |                         |
+      |                                       long long unsigned int    uint64_t {aka long unsigned int}
+      |                                 %014lx
+linking shared-object bootsnap/bootsnap.so
+
+current directory: /var/www/music-app/vendor/cache/ruby/2.7.0/gems/bootsnap-1.5.1/ext/bootsnap
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 bootsnap.so ./.gem.20201127-33570-10oalky/bootsnap
