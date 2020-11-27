@@ -1,5 +1,0 @@
-[Unit]
-Description=Puma
-Requires=puma.target systemd-networkd.service
-After=puma.target systemd-networkd.service
-AllowIsolate=yes

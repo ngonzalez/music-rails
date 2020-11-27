@@ -1,5 +1,0 @@
-[Unit]
-Description=Sidekiq
-Requires=sidekiq.target systemd-networkd.service
-After=sidekiq.target systemd-networkd.service
-AllowIsolate=yes
