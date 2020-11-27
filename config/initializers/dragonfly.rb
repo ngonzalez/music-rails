@@ -8,9 +8,10 @@ Dragonfly.app.configure do
 
   url_format "/media/:job/:id"
 
-  datastore :file,
-    root_path: Rails.root.join('public/system/', 'dragonfly'),
-    server_root: Rails.root.join('public')
+  datastore :google,
+    project: 'hebe-001',
+    bucket: 'hebe-001.appspot.com',
+    keyfile: 'config/hebe-001-e4d79becbd35.json'
 end
 
 # Logger

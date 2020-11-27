@@ -4,6 +4,7 @@ source 'https://rubygems.org' do
   gem 'coffee-rails'
   gem 'down'
   gem 'dragonfly'
+  gem 'dragonfly-google_data_store'
   gem 'draper'
   gem 'execjs'
   gem 'font-awesome-sass'
