@@ -11,8 +11,8 @@ namespace :data do
     end
     import_folders
     import_subfolders
-    update_music_folders_formatted_name
     update_music_folders_year
+    update_music_folders_formatted_name
     update_music_folders_data_url
     update_audio_files_data_url
   end
