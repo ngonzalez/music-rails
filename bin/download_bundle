@@ -11,6 +11,10 @@ bucket = storage.bucket 'hebe-001.appspot.com'
 
 file = bucket.file 'cache/bundle.tar.bz2'
 
-file.download '/home/debian/.bundle.tar.bz2'
+if !file.nil?
+
+	file.download '/home/debian/.bundle.tar.bz2'
+
+end
 
 exit 0
