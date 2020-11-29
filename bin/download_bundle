@@ -9,10 +9,8 @@ storage = Google::Cloud::Storage.new(
 
 bucket = storage.bucket 'hebe-001.appspot.com'
 
-if bucket.file 'cache/bundle.tar.bz2'
+file = bucket.file 'cache/bundle.tar.bz2'
 
-	bucket.download 'cache/bundle.tar.bz2', '/home/debian/.bundle.tar.bz2'
-
-end
+file.download '/home/debian/.bundle.tar.bz2'
 
 exit 0
