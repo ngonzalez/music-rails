@@ -9,8 +9,8 @@ storage = Google::Cloud::Storage.new(
 
 bucket = storage.bucket 'hebe-001.appspot.com'
 
-file = bucket.file 'backup.sql'
+file = bucket.file '/tmp/bundle.tar.bz2'
 
-file.download 'cache/backup.sql'
+file.create_file '/tmp/bundle.tar.bz2', 'cache/bundle.tar.bz2'
 
 exit 0
