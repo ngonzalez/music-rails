@@ -11,7 +11,7 @@ Dragonfly.app.configure do
   datastore :google,
     project: 'hebe-001',
     bucket: 'hebe-001.appspot.com',
-    keyfile: 'config/gcp_key.json'
+    keyfile: 'gcp.json'
 end
 
 # Logger
