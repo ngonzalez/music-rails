@@ -86,6 +86,10 @@ GEM
     declarative-option (0.1.0)
     digest-crc (0.6.1)
       rake (~> 13.0)
+    dotenv (2.7.6)
+    dotenv-rails (2.7.6)
+      dotenv (= 2.7.6)
+      railties (>= 3.2)
     down (5.2.0)
       addressable (~> 2.5)
     dragonfly (1.2.1)
@@ -354,6 +358,7 @@ DEPENDENCIES
   bootsnap!
   bootstrap-sass!
   coffee-rails!
+  dotenv-rails!
   down!
   dragonfly!
   dragonfly-google_data_store!

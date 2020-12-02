@@ -2,6 +2,7 @@ source 'https://rubygems.org' do
   gem 'bootsnap'
   gem 'bootstrap-sass'
   gem 'coffee-rails'
+  gem 'dotenv-rails'
   gem 'down'
   gem 'dragonfly'
   gem 'dragonfly-google_data_store'
