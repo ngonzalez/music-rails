@@ -1,3 +1,5 @@
+require 'dotenv/load'
+
 # BASE_PATH
 if ENV['BASE_PATH'].present?
   BASE_PATH = ENV['BASE_PATH']
