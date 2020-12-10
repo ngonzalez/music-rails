@@ -13,6 +13,7 @@ source 'https://rubygems.org' do
   gem 'haml-rails'
   gem 'jquery-rails'
   gem 'listen'
+  gem 'mini_racer'
   gem 'nokogiri'
   gem 'paper_trail'
   gem 'paranoia'
@@ -29,9 +30,7 @@ source 'https://rubygems.org' do
   gem 'sidekiq'
   gem 'sinatra', require: nil
   gem 'sunspot_rails'
-  gem 'sunspot_solr'
   gem 'taglib-ruby'
-  gem 'therubyracer'
   gem 'tilt', require: 'tilt/sass'
   gem 'uglifier'
   gem 'uuid'
