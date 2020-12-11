@@ -27,11 +27,11 @@ class AudioFileDecorator < Draper::Decorator
   end
   def url_infos
     hash = { url: url, artist_url: artist_url, year_url: year_url }
-    hash.merge! stream_url: "http://#{APP_SERVER_HOST}:#{APP_SERVER_PORT}/hls/#{object.id}.m3u8"
+    hash.merge! stream_url: "http://#{APP_SERVER_HOST}:#{APP_SERVER_PORT}#{APP_SERVER_PATH}/#{object.id}.m3u8"
     hash
   end
   def m3u8_exists?
-    File.exists? "#{APP_SERVER_PATH}/#{object.id}.m3u8" rescue false
+    File.exists? "#{APP_SERVER_TMP_PATH}/#{object.id}.m3u8" rescue false
   end
   def attr_infos
     hash = {}

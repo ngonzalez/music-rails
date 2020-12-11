@@ -13,9 +13,9 @@ class StreamWorker
      -f segment \
      -segment_time 10 \
      -segment_format mpegts \
-     -segment_list "#{APP_SERVER_PATH}/#{audio_file_id}.m3u8" \
+     -segment_list "#{APP_SERVER_TMP_PATH}/#{audio_file_id}.m3u8" \
      -segment_list_type m3u8 \
-     "#{APP_SERVER_PATH}/#{audio_file_id}_%d.ts"`
+     "#{APP_SERVER_TMP_PATH}/#{audio_file_id}_%d.ts"`
   end
 
 end
