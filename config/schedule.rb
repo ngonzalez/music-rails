@@ -3,8 +3,6 @@
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
 
-HLS_FOLDER = "/tmp/hls"
-
 every 10.hours do
-  command "find #{HLS_FOLDER} -atime +10h -print0 | xargs -0 rm"
+  command "find #{APP_SERVER_PATH} -atime +10h -print0 | xargs -0 rm"
 end

@@ -1,7 +1,7 @@
 local_defaults: &local-defaults
-    hostname: <%= SUNSPOT_SOLR_HOSTNAME %>
-    port: <%= SUNSPOT_SOLR_PORT %>
-    path: <%= SUNSPOT_SOLR_PATH %>
+    hostname: <%= SOLR_HOST %>
+    port: <%= SOLR_PORT %>
+    path: <%= SOLR_PATH %>
 
 development:
   solr:

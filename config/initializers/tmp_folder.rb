@@ -1,3 +1,3 @@
-unless File.exists? HLS_FOLDER
-  FileUtils.mkdir HLS_FOLDER
+unless File.exists? APP_SERVER_PATH
+  FileUtils.mkdir APP_SERVER_PATH
 end

@@ -3,9 +3,6 @@ class MusicFolderDecorator < Draper::Decorator
   def path
     [folder, subfolder, read_attribute(:source), name].compact.join "/"
   end
-  def public_path
-    [BASE_PATH, path].join "/"
-  end
   def year
     object.year.to_i
   end
