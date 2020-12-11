@@ -1,10 +1,8 @@
-require 'down'
-
 class EncodeWorker
 
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :default, :retry => false, :backtrace => true
+  sidekiq_options :queue => :default, :retry => true, :backtrace => true
 
   def perform audio_file_id
     audio_file = AudioFile.find(audio_file_id).decorate
@@ -15,16 +13,18 @@ class EncodeWorker
     encode file.path, temp_file if ['AIFF', 'WAV'].include? audio_file.format_name
     audio_file.update! file: File.open(temp_file)
     FileUtils.rm_f temp_file
+  rescue => exception
+    Rails.logger.error exception
   end
 
     private
 
   def strip_metadata source, destination
-    `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats -loglevel 0`
+    `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats`
   end
 
   def encode source, destination
-    `lame --silent -b 320 -ms #{source} #{destination}`
+    `lame -b 320 -ms #{source} #{destination}`
   end
 
 end
