@@ -119,5 +119,6 @@ else
   raise "Missing ENV SOLR_PATH"
 end
 
+FA_CSS = YAML.load_file File.expand_path('../config/yaml/fa_css.yaml', __dir__)
 ALLOWED_AUDIO_FORMATS = YAML.load_file File.expand_path('../config/yaml/allowed_audio_formats.yaml', __dir__)
 ALLOWED_IMAGE_FORMATS = YAML.load_file File.expand_path('../config/yaml/allowed_image_formats.yaml', __dir__)
