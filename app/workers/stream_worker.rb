@@ -8,6 +8,7 @@ class StreamWorker
     `ffmpeg -y \
     -i #{file_path} \
     -codec copy \
+    -loglevel 0 \
     -map 0 \
     -f hls \
     -hls_time 10 \
