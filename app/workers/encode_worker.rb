@@ -20,11 +20,11 @@ class EncodeWorker
     private
 
   def strip_metadata source, destination
-    `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats`
+    `ffmpeg -i #{source} -map 0:a -codec:a copy -map_metadata -1 #{destination} -nostats -loglevel 0`
   end
 
   def encode source, destination
-    `lame -b 320 -ms #{source} #{destination}`
+    `lame --silent -b 320 -ms #{source} #{destination}`
   end
 
 end

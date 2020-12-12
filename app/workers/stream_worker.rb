@@ -9,6 +9,7 @@ class StreamWorker
      -i #{file_path} \
      -codec copy \
      -map 0 \
+     -loglevel 0 \
      -f segment \
      -segment_time 10 \
      -segment_format mpegts \
