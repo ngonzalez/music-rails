@@ -1,6 +1,5 @@
 class AudioFileDecorator < Draper::Decorator
   delegate_all
-  attr_accessor :m3u8_exists
   def path
     [music_folder.decorate.path, name].join "/"
   end
@@ -16,6 +15,12 @@ class AudioFileDecorator < Draper::Decorator
   def year_url
     h.music_folders_path q: object.year
   end
+  def stream_url
+    "http://#{APP_SERVER_HOST}:#{APP_SERVER_PORT}#{APP_SERVER_PATH}/#{object.id}.m3u8"
+  end
+  def m3u8_exists?
+    RedisDb.client.get "m3u8:#{object.id}" rescue false
+  end
   def duration
     Time.at(object.length_in_seconds).strftime object.length_in_seconds.to_i > 3600 ? "%H:%M:%S" : "%M:%S"
   end
@@ -25,26 +30,13 @@ class AudioFileDecorator < Draper::Decorator
   def number
     object.name.split("-").length > 2 ? object.name.split("-")[0] : object.name.split("_")[0]
   end
-  def url_infos
-    hash = { url: url, artist_url: artist_url, year_url: year_url }
-    hash.merge! stream_url: "http://#{APP_SERVER_HOST}:#{APP_SERVER_PORT}#{APP_SERVER_PATH}/#{object.id}.m3u8"
-    hash
-  end
-  def m3u8_exists?
-    File.exists? "#{APP_SERVER_TMP_PATH}/#{object.id}.m3u8" rescue false
-  end
-  def attr_infos
-    hash = {}
-    hash[:m3u8_exists] = m3u8_exists?
-    hash
-  end
   def attributes
     OpenStruct.new(
       object.attributes.deep_symbolize_keys
       .slice(:id, :album, :artist, :title, :year, :genre)
       .merge(duration: duration, year: year)
-      .merge(url_infos)
-      .merge(attr_infos)
+      .merge(url: url, artist_url: artist_url, year_url: year_url, stream_url: stream_url)
+      .merge(m3u8_exists: m3u8_exists?)
       .compact
     )
   end

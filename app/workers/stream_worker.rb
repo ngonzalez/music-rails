@@ -16,6 +16,8 @@ class StreamWorker
      -segment_list "#{APP_SERVER_TMP_PATH}/#{audio_file_id}.m3u8" \
      -segment_list_type m3u8 \
      "#{APP_SERVER_TMP_PATH}/#{audio_file_id}_%d.ts"`
+
+     RedisDb.client.set "m3u8:#{audio_file_id}", 1
    rescue => exception
      Rails.logger.error exception
   end
