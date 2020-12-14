@@ -4,6 +4,6 @@
 //
 //= link application.js
 //
-//= link music.css
+//= link layout.css
 //
-//= link music.js
+//= link layout.js
