@@ -13,3 +13,4 @@ node_modules
 tmp/pids/server.pid
 public/Volumes/
 vendor/cache
+yarn.lock
