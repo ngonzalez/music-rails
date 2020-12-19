@@ -1,8 +1,6 @@
 ---
-development:
-  :concurrency: 30
-production:
-  :concurrency: 50
-:pidfile: /tmp/sidekiq.pid
+:verbose: true
+:pidfile: ./tmp/pids/sidekiq.pid
+:concurrency: 25
 :queues:
   - default
