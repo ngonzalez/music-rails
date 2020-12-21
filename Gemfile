@@ -15,8 +15,6 @@ source 'https://rubygems.org' do
   gem 'listen'
   gem 'mini_racer'
   gem 'nokogiri'
-  gem 'paper_trail'
-  gem 'paranoia'
   gem 'pg'
   gem 'puma'
   gem 'rack-cors', require: 'rack/cors'

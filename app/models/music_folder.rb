@@ -4,10 +4,6 @@ class MusicFolder < ActiveRecord::Base
 
   serialize :details, Hash
 
-  has_paper_trail
-
-  acts_as_paranoid
-
   searchable do
     text :formatted_name
     string :folder

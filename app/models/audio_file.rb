@@ -5,10 +5,6 @@ class AudioFile < ActiveRecord::Base
     storage_options {|a| { path: "audio_files/%s" % [ UUID.new.generate ] } }
   end
 
-  has_paper_trail
-
-  acts_as_paranoid
-
   searchable do
     text :artist
     text :album
