@@ -1,8 +1,0 @@
-@mixin image-set($url_lowres, $url_highres) {
-  background-image: url($url_lowres);
-  background-image: -webkit-image-set(url($url_lowres) 1x, url($url_highres) 2x);
-  background-image:    -moz-image-set(url($url_lowres) 1x, url($url_highres) 2x);
-  background-image:     -ms-image-set(url($url_lowres) 1x, url($url_highres) 2x);
-  background-image:      -o-image-set(url($url_lowres) 1x, url($url_highres) 2x);
-  @content;
-}
