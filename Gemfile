@@ -17,7 +17,6 @@ source 'https://rubygems.org' do
   gem 'nokogiri'
   gem 'paper_trail'
   gem 'paranoia'
-  gem 'progress_bar'
   gem 'pg'
   gem 'puma'
   gem 'rack-cors', require: 'rack/cors'
@@ -33,5 +32,4 @@ source 'https://rubygems.org' do
   gem 'tilt', require: 'tilt/sass'
   gem 'uglifier'
   gem 'uuid'
-  gem 'whenever'
 end
