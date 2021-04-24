@@ -1,38 +1,19 @@
 module SearchHelpers
   def search_db search_params
-    #
-    # Search by folder, subfolder
-    if search_params[:folder]
+    search_results = if search_params[:folder]
       if search_params[:subfolder]
-        search = MusicFolder.search {
-          paginate :page => 1, :per_page => 100000
-          with(:folder, search_params[:folder])
-          with(:subfolder, search_params[:subfolder])
-        }
+        MusicFolder.where(folder: folder, subfolder: subfolder).take 100000
       else
-        search = MusicFolder.search {
-          paginate :page => 1, :per_page => 100000
-          with(:folder, search_params[:folder])
-        }
+        MusicFolder.where(folder: folder).take 100000
       end
-      return decorate(search)
-    #
-    # Search by year
     elsif search_params[:year]
-      search = MusicFolder.search {
-        paginate :page => 1, :per_page => 100000
-        with(:year, search_params[:year])
-      }
-      return decorate(search)
-    #
-    # Fulltext search
+      MusicFolder.where(year: year).take 100000
     elsif search_params[:q]
-      search = AudioFile.search(include: [:music_folder]) {
-        fulltext search_params[:q]
-        paginate :page => 1, :per_page => 100000
-      }
-      return decorate(search, :music_folder)
+      AudioFile.includes(:music_folder).search(params[:q]).map(&:music_folder).take 100000
+    else
+      []
     end
+    decorate search_results
   end
 
   def parse_search_params params
@@ -47,11 +28,9 @@ module SearchHelpers
     { q: q, year: year, folder: folder, subfolder: subfolder }.compact
   end
 
-  def decorate search, accessor=nil
+  def decorate search_results
     item_ids = []
-    search.hits.each_with_object([]) { |hit, array|
-      next if hit.result.nil?
-      item = accessor ? hit.result.send(accessor) : hit.result
+    search_results.each_with_object([]) { |item, array|
       next if item_ids.include?(item.id)
       array << item.decorate.attributes
       item_ids << item.id
