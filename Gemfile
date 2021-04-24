@@ -6,7 +6,6 @@ source 'https://rubygems.org' do
   gem 'dotenv-rails'
   gem 'down'
   gem 'dragonfly'
-  # gem 'dragonfly-google_data_store'
   gem 'draper'
   gem 'execjs'
   gem 'font-awesome-sass'
