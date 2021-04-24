@@ -1,15 +1,9 @@
 module SearchHelpers
   def search_db search_params
-    search_results = if search_params[:folder]
-      if search_params[:subfolder]
-        MusicFolder.where(folder: folder, subfolder: subfolder).take 100000
-      else
-        MusicFolder.where(folder: folder).take 100000
-      end
-    elsif search_params[:year]
-      MusicFolder.where(year: year).take 100000
+    search_results = if search_params[:folder] || search_params[:year]
+      MusicFolder.where(search_params)
     elsif search_params[:q]
-      AudioFile.includes(:music_folder).search(params[:q]).map(&:music_folder).take 100000
+      AudioFile.includes(:music_folder).search(search_params[:q]).map(&:music_folder)
     else
       []
     end
