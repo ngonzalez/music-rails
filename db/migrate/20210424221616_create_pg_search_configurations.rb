@@ -1,6 +1,5 @@
-class CreatePgSearchConfigurations < ActiveRecord::Migration
+class CreatePgSearchConfigurations < ActiveRecord::Migration[6.0]
   def change
-
     ActiveRecord::Base.connection.execute("CREATE EXTENSION IF NOT EXISTS unaccent;")
     [{ en: "english_stem"}, { fr: "french_stem" }].each do |hash|
       hash.each do |locale, stemmer|
@@ -10,6 +9,5 @@ class CreatePgSearchConfigurations < ActiveRecord::Migration
         ActiveRecord::Base.connection.execute("ALTER TEXT SEARCH CONFIGURATION search_cfg_#{locale} ADD MAPPING FOR asciiword WITH #{stemmer};")
       end
     end
-
   end
 end
