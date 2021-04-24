@@ -4,12 +4,7 @@ class MusicFolder < ActiveRecord::Base
 
   serialize :details, Hash
 
-  searchable do
-    text :formatted_name
-    string :folder
-    string :subfolder
-    integer :year
-  end
+  searchable :formatted_name, :folder, :subfolder, :year
 
   extend FriendlyId
   friendly_id :data_url

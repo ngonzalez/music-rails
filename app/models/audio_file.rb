@@ -4,16 +4,8 @@ class AudioFile < ActiveRecord::Base
   dragonfly_accessor :file do
     storage_options {|a| { path: "audio_files/%s" % [ UUID.new.generate ] } }
   end
-
-  searchable do
-    text :artist
-    text :album
-    text :title, :default_boost => 2
-    text :genre
-    integer :year do
-      year.to_i
-    end
-  end
+  
+  searchable :artist, :album, :title, :genre, :year
 
   extend FriendlyId
   friendly_id :data_url
