@@ -101,27 +101,6 @@ else
   raise "Missing ENV REDIS_DB"
 end
 
-# SOLR_HOST
-if ENV['SOLR_HOST'].present?
-  SOLR_HOST = ENV['SOLR_HOST']
-else
-  raise "Missing ENV SOLR_HOST"
-end
-
-# SOLR_PORT
-if ENV['SOLR_PORT'].present?
-  SOLR_PORT = ENV['SOLR_PORT']
-else
-  raise "Missing ENV SOLR_PORT"
-end
-
-# SOLR_PATH
-if ENV['SOLR_PATH'].present?
-  SOLR_PATH = ENV['SOLR_PATH']
-else
-  raise "Missing ENV SOLR_PATH"
-end
-
 FA_CSS = YAML.load_file File.expand_path('../config/yaml/fa_css.yaml', __dir__)
 ALLOWED_AUDIO_FORMATS = YAML.load_file File.expand_path('../config/yaml/allowed_audio_formats.yaml', __dir__)
 ALLOWED_IMAGE_FORMATS = YAML.load_file File.expand_path('../config/yaml/allowed_image_formats.yaml', __dir__)
