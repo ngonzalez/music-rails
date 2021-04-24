@@ -1,4 +1,7 @@
+require 'active_support'
+require 'active_support/core_ext'
 require 'dotenv/load'
+require 'yaml'
 
 # APP_SERVER_HOST
 if ENV['APP_SERVER_HOST'].present?
